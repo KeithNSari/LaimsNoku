@@ -152,12 +152,8 @@
             <div class="row mb-3">              
                 <div class="col-md-3">
                     <label asp-for="ClaimTypeID"><b>Select Claim Type</b></label>
-                    <select asp-for="ClaimTypeID" class="form-control" required aria-required="true">
+                    <select asp-for="ClaimTypeID" class="form-control" required aria-required="true" asp-items="Model.ClaimTypesList">
                         <option value="">Select Option</option>
-                        <option value=2>Maturity</option>
-                        <option value=3>Surrender</option>
-                        <option value=4>Partial Cash Withdrawal</option>                        
-                        <option value=7>Death</option>
                     </select>
                     <span asp-validation-for="ClaimTypeID" class="text-danger"></span>
                 </div>
