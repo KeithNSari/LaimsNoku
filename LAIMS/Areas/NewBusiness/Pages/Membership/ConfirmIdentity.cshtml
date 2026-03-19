@@ -1,0 +1,106 @@
+﻿@page
+@model LAIMS.Areas.NewBusiness.Pages.Membership.ConfirmIdentityModel
+@{
+}
+@{
+    Layout = "/Pages/Shared/_LayoutProducts.cshtml";
+}
+<h2>Confirm Member</h2>
+@if (!string.IsNullOrEmpty(ViewData["ErrorMessage"]?.ToString()))
+{
+    <p class="text-danger">@ViewData["ErrorMessage"]</p>
+}
+<div class="row mb-3">
+    <form method="post">
+        <h5>Please re-enter your IDs below</h5>
+        <div class="row mb-3">
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label asp-for="Member.NationalIDConfirm"><b>National ID</b></label>
+                    <input asp-for="Member.NationalIDConfirm" placeholder="00-1234567S00" class="form-control" onpaste="return preventPaste(event)" autocomplete="off" placeholder="Pasting not allowed" />
+                    <span asp-validation-for="Member.NationalIDConfirm" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label asp-for="Member.PassportConfirm"><b>Passport</b></label>
+                    <input asp-for="Member.PassportConfirm" class="form-control" onpaste="return preventPaste(event)" autocomplete="off" placeholder="Pasting not allowed" />
+                    <span asp-validation-for="Member.PassportConfirm" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label asp-for="Member.BirthCertificateConfirm"><b>Birth Certificate</b></label>
+                    <input asp-for="Member.BirthCertificateConfirm" class="form-control" onpaste="return preventPaste(event)" autocomplete="off" placeholder="Pasting not allowed" />
+                    <span asp-validation-for="Member.BirthCertificateConfirm" class="text-danger"></span>
+                </div>
+            </div>
+        </div>
+        <hr />
+        <div class="row mb-3">
+            <div class="col-md-4">
+                <div class="form-group">
+                    <b>First Name:</b> @Model.Member.Name1
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="form-group">
+                    <b>Middle Name:</b> @Model.Member.Name2
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <b>Surname:</b> @Model.Member.Name3
+                </div>
+            </div>
+            <!-- Add other fields of the Member model... -->
+
+            <div class="col-md-4">
+                <div class="form-group">
+                    <b>Gender:</b> @Model.Member.Gender
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="form-group">
+                    <b>Title:</b> @Model.Member.Title
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <b>Marital Status:</b> @Model.Member.MaritalStatus
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <b>DOB:</b> @Model.Member.DOB.Value.ToString("yyyy-MMM-dd")
+                </div>
+            </div>
+            <div class="col-md-4">
+                <b>Birth Country:</b> @Model.Member.BirthCountry
+            </div>
+            <div class="col-md-4">
+                <b>Place of Birth:</b>  @Model.Member.PlaceOfBirth
+            </div>
+            <div class="col-md-4">
+                <b>Citizenship:</b>  @Model.Member.Country
+            </div>
+            <div class="col-md-4">
+                <b>Member No:</b> @Model.Member.MemberNo
+            </div>
+        </div>
+        <hr />
+        <div class="form-group">
+            <input type="submit" value="Confirm" class="btn btn-primary" />
+            <a asp-page="Edit" asp-route-id="@Model.MemberID" class="btn btn-success">Edit</a>
+        </div>        
+    </form>
+</div> 
+<script>
+    function preventPaste(event) {
+        event.preventDefault();
+        alert("Pasting of IDs is not allowed!");
+        return false;
+    }
+</script>

@@ -1,0 +1,102 @@
+﻿@page
+@model LAIMS.Areas.NewBusiness.Pages.policies.test10Model
+@{
+}
+@{
+    Layout = "/Pages/Shared/_LayoutNewBusiness.cshtml";
+} 
+@Html.AntiForgeryToken()
+<button type="button" class="btn btn-info float-end mx-2 fixed-width-btn" data-bs-toggle="modal" data-bs-target="#servicesProviderModal">
+    Pay Service Provider
+</button>
+<!-- Modal structure -->
+<div class="modal fade" id="servicesProviderModal" tabindex="-1" aria-labelledby="servicesProviderModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-light">
+                <h5 class="modal-title" id="servicesProviderModalLabel">Service Provider Payment</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Search form -->
+                <form id="searchForm">
+                    <!-- Search input and button -->
+                    <input type="text" id="searchInput" />
+                    <button type="button" id="searchBtn">Search</button>
+                </form>
+                <form id="saveForm" method="post" style="display: none;">
+                    <!-- Dropdown for bank list -->
+                    <select id="bankDropdown" asp-for="@Model.BankId">
+                        <!-- Bank options will be dynamically filled -->
+                    </select>
+                    <div style="display: none;">
+                        <label for="accountNumberInput">Account Number:</label>
+                        <input type="text" id="accountNumberInput" />
+                    </div>
+                    <!-- Account number input -->
+                    <input type="text" id="accountNumberInput" asp-for="@Model.AccountNo" />
+
+                    <!-- Save button -->
+                    <button type="submit" id="saveBtn" asp-page-handler="SaveData">Save</button>
+                </form>
+                <div id="noResults" style="display: none;">
+                   <h4>No results found, please try again!</h4>
+               </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        </div>
+    </div>
+</div> 
+
+@section scripts {
+    <script>
+        // Function to perform AJAX search
+        function performSearch() {
+            // Get search input value
+            var searchValue = document.getElementById("searchInput").value;
+            // Perform AJAX request
+            // Example using jQuery AJAX
+            $.ajax({
+                url: "test10?handler=SearchProviders", 
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader("XSRF-TOKEN",
+                        $('input:hidden[name="__RequestVerificationToken"]').val());
+                },
+                type: "GET",
+                data: { searchValue: searchValue },
+                success: function (response) {
+                    // Handle success - populate bank dropdown with response data
+                    var saveForm = document.getElementById("saveForm");
+                    var noResults = document.getElementById("noResults");
+
+                    if (response.length > 0) {
+                        var bankDropdown = document.getElementById("bankDropdown");
+                        bankDropdown.innerHTML = ""; // Clear previous options
+                        response.forEach(function (bank) {
+                            var option = document.createElement("option");
+                            option.value = bank.value;
+                            option.text = bank.text;
+                            bankDropdown.appendChild(option);
+                        });
+                        saveForm.style.display = "block";
+                    }
+                    else 
+                    {
+                        noResults.style.display = "block";
+                    }
+                },
+                error: function (xhr, status, error) {
+                    // Handle error
+                    console.error("Error:", error);
+                }
+            });
+        }
+        // Event listener for search button click
+        document.getElementById("searchBtn").addEventListener("click", function () {
+            performSearch();
+        });  
+    </script>
+
+}

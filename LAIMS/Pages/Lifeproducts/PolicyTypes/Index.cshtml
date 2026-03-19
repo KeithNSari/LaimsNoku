@@ -1,0 +1,40 @@
+﻿@page
+@using System.Data; 
+@model LAIMS.Pages.Lifeproducts.PolicyTypes.IndexModel
+@{
+}
+<h1>Policy Definitions</h1>
+<h5>Active Policies.</h5>
+<hr />
+<table class="table table-hover">
+    <tr>
+        <th>Name</th>
+        <th>Open</th>
+        <th>Currency</th>
+        <th>Minimum Term</th>
+        <th>Minimum Term</th>
+        <th>Added On</th>
+        <th>Added By</th>       
+        <th></th>
+    </tr>
+    @if (Model.PolicyTypesDT != null)
+    {
+        @foreach (DataRow DR in Model.PolicyTypesDT.Rows)
+        {
+            <tr>
+                <td>@DR["Name"]</td>
+                <td>@DR["OpenForNewBusiness"]</td>
+                <td>@DR["Currency"]</td>
+                <td>@DR["MinimumTerm"]</td>
+                <td>@DR["MinimumTerm"]</td>
+                <td>@DR["AddedOn"]</td>
+                <td>@DR["UserName"]</td>              
+                <td class="text-end">
+                    <a asp-page="Edit" asp-route-id="@DR["ID"]" class="btn btn-outline-primary btn-sm">Edit</a>
+                    <a asp-page="Details" asp-route-id="@DR["ID"]" class="btn btn-info btn-sm">Details</a>
+                    <a asp-page="Delete" asp-route-id="@DR["ID"]" class="btn btn-danger btn-sm">Delete</a>
+                </td>
+            </tr>
+        }
+    }
+</table>

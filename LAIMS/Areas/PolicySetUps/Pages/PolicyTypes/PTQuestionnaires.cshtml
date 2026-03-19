@@ -1,0 +1,122 @@
+﻿@page
+@using System.Data;
+@using Microsoft.AspNetCore.Http.Extensions;
+@model LAIMS.Areas.PolicySetUps.Pages.PolicyTypes.PTQuestionnairesModel
+@{
+}
+@{
+    Layout = "/Pages/Shared/_LayoutProducts.cshtml";
+}
+<h2>Policy Questionnaires</h2>
+@if (!string.IsNullOrEmpty(ViewData["ErrorMessage"]?.ToString()))
+{
+    <p class="text-danger">@ViewData["ErrorMessage"]</p>
+}
+<hr />
+<div class="row mb-3">
+    <form method="post">
+        <input type="hidden" asp-for="ReturnUrl" />
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="row mb-3">
+            <label asp-for="PolicyTypeID" class="control-label"><b>Policy</b></label>
+            <select asp-for="PolicyTypeID" class="form-control" asp-items="Model.PolicyTypesList" onchange="PassSelectedValue(this)">
+                <option value="">Select Option</option>
+            </select>
+            <span asp-validation-for="PolicyTypeID" class="text-danger"></span>
+        </div>
+        <div class="row mb-3">
+            <div class="col-md-5">
+                <label asp-for="PTQuestionnaire.CoverRangeStart" class="control-label"><b>Cover Range Start</b></label>
+                <input asp-for="PTQuestionnaire.CoverRangeStart" min="0" required class="form-control" />
+                <span asp-validation-for="PTQuestionnaire.CoverRangeStart" class="text-danger"></span>
+            </div>
+            <div class="col-md-5">
+                <label asp-for="PTQuestionnaire.CoverRangeEnd" class="control-label"><b>Cover Range End</b></label>
+                <input asp-for="PTQuestionnaire.CoverRangeEnd" min="0" required class="form-control" />
+                <span asp-validation-for="PTQuestionnaire.CoverRangeEnd" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-md-5">
+                <label asp-for="PTQuestionnaire.StartAge" class="control-label"><b>Start Age</b></label>
+                <input asp-for="PTQuestionnaire.StartAge" min="0" required class="form-control" />
+                <span asp-validation-for="PTQuestionnaire.StartAge" class="text-danger"></span>
+            </div>
+            <div class="col-md-5">
+                <label asp-for="PTQuestionnaire.EndAge" class="control-label"><b>End Age</b></label>
+                <input asp-for="PTQuestionnaire.EndAge" min="0" required class="form-control" />
+                <span asp-validation-for="PTQuestionnaire.EndAge" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="row md-3">
+            <div class="col-md-5">
+                <label asp-for="PTQuestionnaire.TestedBusiness" class="control-label"><b>Un/Tested Business?</b></label>
+                <select asp-for="PTQuestionnaire.TestedBusiness" class="form-control" aria-required="true">
+                    <option value="">Select Option</option>
+                    <option value=0>Untested</option>
+                    <option value=1>Tested</option>
+                    <option value=2>All</option>
+                </select>
+                <span asp-validation-for="PTQuestionnaire.TestedBusiness" class="text-danger"></span>
+            </div>
+            <div class="col-md-5">
+                <label asp-for="PTQuestionnaire.QuestionnaireID"><b>Questionnaire</b></label> 
+                <select asp-for="PTQuestionnaire.QuestionnaireID" asp-items="@(new SelectList(Model.MyQuestionnaires, "ID", "Title"))" class="form-control" id="questionnairesDL">
+                    <option value="">Select Questionnaire</option>
+                </select>
+                <span asp-validation-for="PTQuestionnaire.QuestionnaireID" class="text-danger"></span>
+            </div>
+            <div class="col-md-2">
+                <br />
+                <input type="submit" value="Add" class="btn btn-primary" />
+            </div>
+        </div>
+    </form>
+</div>
+<div class="row">
+    <form method="post">
+        <input type="hidden" asp-for="ReturnUrl" />
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="row mb-3">
+            <h4>Entries</h4>
+            <table class="table table-striped">
+                <tr>
+                    <th>Questionnaire</th>
+                    <th>Un/Tested Business?</th> 
+                    <th>Start Age</th>
+                    <th>End Age</th>
+                    <th>Cover Range Start</th>
+                    <th>Cover Range End</th>
+                    <th></th>
+                </tr>
+                @if (Model.PTQuestionnairesDT.Rows.Count > 0)
+                {
+                    @foreach (DataRow DR in Model.PTQuestionnairesDT.Rows)
+                    {
+                        <tr>
+                            <td>@DR["Questionnaire"]</td>
+                            <td>@DR["TestedBusiness"]</td>
+                            <td>@DR["StartAge"]</td>
+                            <td>@DR["EndAge"]</td>
+                            <td>@DR["CoverRangeStart"]</td>
+                            <td>@DR["CoverRangeEnd"]</td>
+                            <td class="text-end">
+                                <button type="submit" asp-route-id="@DR["ID"]" asp-page-handler="Remove" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to archive this item?');">Archive</button>
+                            </td>
+                        </tr>
+                    }
+                }
+            </table>
+        </div>
+    </form>
+</div>
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        function PassSelectedValue(selectObject) {
+            window.location.href = "ptquestionnaires?policyid=" + selectObject.value;
+        }
+    </script>
+} 

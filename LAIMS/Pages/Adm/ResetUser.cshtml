@@ -1,0 +1,110 @@
+﻿@page
+@using System.Data;
+@model LAIMS.Pages.Adm.ResetUserModel
+@{
+}
+@{
+    Layout = "/Pages/Shared/_LayoutAdmin.cshtml";
+}
+<h2>Reset/ Unlock/ Remove User</h2>
+    <div class="row">
+        <div class="col-md-8">
+            <table class="table table-striped">
+                <tr>
+                    <th>Designation</th>
+                    <th>First Names</th>
+                    <th>Surname</th> 
+                    <th>Added On</th>
+                    <th>Added By</th>
+                </tr>
+                @if (Model.userDetails != null)
+                {
+                    <tr>
+                        <td>@Model.userDetails.Designation</td>
+                        <td>@Model.userDetails.FirstNames</td>
+                        <td>@Model.userDetails.Surname</td>
+                        <td>@Model.userDetails.AddedOn.ToString("yyyy-MM-dd")</td>
+                        <td>@Model.userDetails.AddedBy</td>
+                    </tr>
+                }
+            </table> 
+            <h3>User Roles</h3>
+            <table class="table table-striped">
+                <tr>
+                    <th>Role</th> 
+                </tr>
+                @if (Model.RolesDT!=null)
+                {
+                    @foreach (DataRow DR in Model.RolesDT.Rows)
+                    {
+                        <tr>
+                            <td>@DR["RoleName"]</td> 
+                        </tr>
+                    }
+                }                
+            </table>
+            <h3>Allowed Policies</h3>
+            <table class="table table-striped">
+                <tr>
+                    <th>Policy</th>
+                </tr>
+                @if (Model.PoliciesDT != null)
+                {
+                    @foreach (DataRow DR in Model.PoliciesDT.Rows)
+                    {
+                        <tr>
+                            <td>@DR["PolicyType"]</td>
+                        </tr>
+                    }
+                }
+            </table>
+        </div>
+        <div class="col-md-4">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            @if (Model.UserFound)
+            { 
+                <form id="registerForm" method="post" class="mb-3">
+                <div class="form-outline">
+                    <label asp-for="userDetails.Username" class="form-label"><b>Username</b></label>
+                    <input asp-for="userDetails.Username" readonly class="form-control form-control-lg" aria-required="true" />
+                     <span asp-validation-for="userDetails.Username" class="text-danger"></span>
+                </div>               
+                <div class="form-outline">
+                    <label asp-for="Password" class="form-label"><b>Password</b></label>
+                    <input asp-for="Password" required class="form-control form-control-lg"/> 
+                    <span asp-validation-for="Password" class="text-danger"></span>
+                </div>
+                <div class="form-outline mb-3">
+                    <label asp-for="ConfirmPassword" class="form-label"><b>ConfirmPassword</b></label>
+                    <input asp-for="ConfirmPassword" required class="form-control form-control-lg"/> 
+                    <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                </div>
+                <div class="form-outline mb-3">
+                    <button id="Submit" type="submit" asp-page-handler="Reset" class="w-100 btn btn-lg btn-primary">Update Password</button>
+                </div>
+              </form>
+              <form method="post">
+                <input type="hidden" asp-for="userDetails.Username" />
+                <div class="form-outline mb-3">
+                    <button id="Submit" type="submit" asp-page-handler="Unlock" class="w-100 btn btn-lg btn-success">Unlock</button>
+                </div>
+                <div class="form-outline mb-3">
+                    <button id="Submit" type="submit" asp-page-handler="Delete" class="w-100 btn btn-lg btn-danger">Remove</button>
+                </div>
+              </form>
+            }
+            else
+            {
+              <form method="post">
+                <div class="form-outline mb-3">
+                    <input asp-for="userDetails.Username" required class="form-control form-control-lg" aria-required="true" />
+                    <label asp-for="userDetails.Username" class="form-label"></label>
+                    <span asp-validation-for="userDetails.Username" class="text-danger"></span>
+                </div>
+                <div class="form-outline mb-3">
+                    <button id="Submit" type="submit" class="w-100 btn btn-lg btn-primary">Load User</button>
+                </div>
+              </form>
+            }
+        </div> 
+    </div> 

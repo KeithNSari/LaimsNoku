@@ -1,0 +1,226 @@
+﻿@page
+@using System.Data;
+@model LAIMS.Areas.PolicyServicing.Pages.Policies.UpdateBeneficiariesModel
+@{
+}
+@{
+    Layout = "/Pages/Shared/_LayoutProducts.cshtml";
+}
+<h1>Update Beneficiaries list</h1>
+<hr/>
+<div class="row">
+    <div class="col-md-6">
+        <h3>Policy Owner: @Model.Member.Name3 @Model.Member.Name1</h3>
+    </div>
+    <div class="col-md-6">
+        <<h3>National ID: @Model.Member.NationalID</h3>
+    </div>
+</div> 
+<hr/>
+<div class="row">
+    <div class="col-md-6">
+        <h4>Policy: @Model.Policy.PolicyName</h4>
+    </div>
+    <div class="col-md-6">
+        <h4>Policy No: @Model.Policy.PolicyNo</h4>
+    </div> 
+</div>
+<hr/>
+<div class="row">
+    <div class="col-md-5"> 
+        <h4>Currency: @Model.Policy.CurrencyName</h4>
+    </div>
+</div>
+<hr/>
+<h3>Beneficiaries</h3>
+<div class="row mb-3">
+    <table class="table table-striped">
+        <tr>
+            <th>Full Name</th>
+            <th>R\ship</th>
+            <th>D.O.B</th>
+            <th>ID Type</th>
+            <th>ID</th>
+            <th>Archived</th>
+            <th></th>
+        </tr>
+        @if (Model.BeneficiariesDT != null)
+        {
+            @foreach (DataRow DR in Model.BeneficiariesDT.Rows)
+            {
+                <tr>
+                    <td>@DR["FullName"]</td>
+                    <td>@DR["Relationship"]</td>
+                    <td>@DR["DOB"]</td>
+                    <td>@DR["IDType"]</td>
+                    <td>@DR["IDDocument"]</td>
+                    <td>@DR["Archived"]</td>
+                    <td class="text-end">
+                        <form method="post" class="inlineblockmbs">
+                             <button type="submit"asp-route-policyid="@DR["PolicyID"]" asp-route-Id="@DR["ID"]" asp-route-memberid="@Model.MemberID" asp-route-policytypeid="@Model.PolicyTypeID" asp-route-reqid="@Model.RequestID" asp-page-handler="ArchiveBeneficiary" class="btn btn-outline-danger" onclick="return confirm('Are you sure you want to archive this item?');">X</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        }
+    </table>
+</div> 
+<div class="row">
+    <div class="d-flex justify-content-end">
+        <button type="button" class="btn btn-primary float-end fixed-width-btn" data-bs-toggle="modal" data-bs-target="#memberModal">
+            Add Beneficiary
+        </button>
+    </div>
+</div>
+
+<!-- Modal -->
+<form method="post">
+    <input type="hidden" asp-for="ReturnUrl" />
+    <input type="hidden" asp-for="RequestID" />
+    <div class="modal fade" id="memberModal" tabindex="-1" aria-labelledby="memberModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-light">
+                    <h5 class="modal-title" id="memberModalLabel">Add Beneficiary</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <h2></h2>
+                    @if (TempData["PostbackSuccess"] != null && (bool)TempData["PostbackSuccess"])
+                    {
+                        <script>
+                            closeModal('memberModal');
+                        </script>
+                    }
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label asp-for="@Model.IDType" class="control-label"><b>ID Type</b></label>
+                                <select asp-for="@Model.IDType" class="form-control" aria-required="true">
+                                    <option value=1>National ID</option>
+                                </select>
+                                <span asp-validation-for="@Model.IDType" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label asp-for="@Model.IDContent"><b>ID</b></label>
+                                <input asp-for="@Model.IDContent" onpaste="return preventPaste(event)" class="form-control" autocomplete="off" />
+                                <span asp-validation-for="@Model.IDContent" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label asp-for="@Model.ConfirmIDContent"><b>Confirm ID</b></label>
+                                <input asp-for="@Model.ConfirmIDContent" onpaste="return preventPaste(event)" class="form-control" autocomplete="off" />
+                                <span asp-validation-for="@Model.ConfirmIDContent" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label asp-for="NewMember.Name1"><b>First Name</b></label>
+                                <input asp-for="NewMember.Name1" class="form-control" autocomplete="off" />
+                                <span asp-validation-for="NewMember.Name1" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label asp-for="NewMember.Name2"><b>Middle Name</b></label>
+                                <input asp-for="NewMember.Name2" class="form-control" autocomplete="off" />
+                                <span asp-validation-for="NewMember.Name2" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label asp-for="NewMember.Name3"><b>Surname</b></label>
+                                <input asp-for="NewMember.Name3" class="form-control" autocomplete="off" />
+                                <span asp-validation-for="NewMember.Name3" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <!-- Add other fields of the NewMember model... -->
+
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label asp-for="NewMember.GenderID"><b>Gender</b></label>
+                                <select asp-for="NewMember.GenderID" asp-items="Model.GenderList" class="form-control">
+                                    <option value="">Select Gender</option>
+                                </select>
+                                <span asp-validation-for="NewMember.GenderID" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label asp-for="NewMember.TitleID"><b>Title</b></label>
+                                <select asp-for="NewMember.TitleID" asp-items="Model.TitleList" class="form-control" autocomplete="off">
+                                    <option value="">Select Title</option>
+                                </select>
+                                <span asp-validation-for="NewMember.TitleID" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label asp-for="NewMember.MaritalStatusID"><b>Marital Status</b></label>
+                                <select asp-for="NewMember.MaritalStatusID" asp-items="Model.MaritalStatiiSelectList" class="form-control" autocomplete="off">
+                                    <option value="">Select Status</option>
+                                </select>
+                                <span asp-validation-for="NewMember.MaritalStatusID" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label asp-for="NewMember.DOB"><b>D.O.B</b></label>
+                                <input asp-for="NewMember.DOB" type="date" class="form-control" autocomplete="off" />
+                                <span asp-validation-for="NewMember.DOB" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label asp-for="NewMember.BirthCountryID"><b>Birth Country</b></label>
+                                <select asp-for="NewMember.BirthCountryID" asp-items="Model.CountrySelectList" class="form-control">
+                                    <option value="">Select Birth Country</option>
+                                </select>
+                                <span asp-validation-for="NewMember.BirthCountryID" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label asp-for="NewMember.CountryID"><b>Citizenship</b></label>
+                                <select asp-for="NewMember.CountryID" asp-items="Model.CountrySelectList" class="form-control">
+                                    <option value="">Select Country</option>
+                                </select>
+                                <span asp-validation-for="NewMember.CountryID" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label asp-for="@Model.RelationshipID"><b>Relationship</b></label>
+                                <select asp-for="@Model.RelationshipID" required class="form-control" asp-items="Model.MyRelationships">
+                                    <option value="">Select Option</option>
+                                </select>
+                                <span asp-validation-for="@Model.RelationshipID" class="text-danger"></span>
+                            </div>
+                        </div> 
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <input type="submit" value="Save Changes" asp-route-policyid="@Model.PolicyID" asp-route-id="@Model.MemberID" asp-route-policytypeid="@Model.PolicyTypeID" asp-page-handler="AddParticipant" class="btn btn-primary" />
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+</form>
+<div class="row">
+    <form method="post">
+        <input type="hidden" asp-for="@Model.PolicyID" />
+        <input type="hidden" asp-for="@Model.PolicyTypeID" />
+        <input type="hidden" asp-for="@Model.MemberID" />
+        <input type="hidden" asp-for="ReturnUrl" />
+        <input type="hidden" asp-for="RequestID" />
+        <div class="d-flex justify-content-end">
+            <input type="submit" value="Submit" class="btn btn-primary" />
+        </div>
+    </form>
+</div>

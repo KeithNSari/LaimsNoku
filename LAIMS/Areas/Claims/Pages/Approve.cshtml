@@ -1,0 +1,78 @@
+﻿@page
+@using System.Data
+@model LAIMS.Areas.Claims.Pages.ApproveModel
+@{
+}
+@{
+    Layout = "/Pages/Shared/_LayoutSearch.cshtml";
+}
+<h1>Claim Approvals</h1>
+<p>N.B. Only claims waiting for approval will be displayed on this page.</p>
+<hr /> 
+    @if(Model.ClaimsDT != null)
+    {
+        <div class="row mb-3">
+        @if (Model.SearchTerm != null)
+        {
+            <h5>@Model.ResultsCount result/s found for search "@Model.SearchTerm"!</h5>
+        }
+        else
+        {
+            <h5>@Model.ResultsCount claim/s waiting for review!</h5>
+        }
+    </div>
+    }
+<hr /> 
+<div class="row mb-3">
+    <form method="post">
+        <table class="table table-hover">
+            <tr>
+                <th>Entry </th>
+                <th>Policy No</th>
+                <th>PolicyName</th>
+                <th>Policy Owner</th>
+                <th>Status</th>
+                <th>Status Date</th>
+                <th></th>
+            </tr>
+            @if (Model.ClaimsDT != null)
+            {
+                @foreach (DataRow DR in Model.ClaimsDT.Rows)
+                {
+                    <tr>
+                        <td>@DR["EntryNo"]</td>
+                        <td>@DR["PolicyNo"]</td>
+                        <td>@DR["PolicyName"]</td>
+                        <td>@DR["PolicyOwner"]</td>
+                        <td>@DR["Status"]</td>
+                        <td>@DR["StatusDate"]</td>
+                        <td class="text-end">
+                             @if (Convert.ToInt32(DR["ClaimTypeID"]) == 1) @* death claim for risk *@
+                             {
+                                @if (Convert.ToInt32(DR["StatusID"]) == 3300)
+                                {
+                                    <a asp-route-id="@DR["UID"]" asp-route-policyTypeid="@DR["PolicyTypeID"]" asp-route-policyid="@DR["PolicyID"]" asp-route-reqid="@DR["RequestID"]" asp-page="FinalApproval" class="btn btn-info btn-sm">Review</a>
+                                }
+                                else  
+                                {
+                                    <a asp-route-id="@DR["UID"]" asp-route-policyTypeid="@DR["PolicyTypeID"]" asp-route-policyid="@DR["PolicyID"]" asp-route-reqid="@DR["RequestID"]" asp-page="ClaimApprovals" class="btn btn-info btn-sm">Review</a>
+                                }
+                             }
+                            else  @* investments *@
+                             {
+                                @if (Convert.ToInt32(DR["StatusID"]) == 3300)
+                                {
+                                    <a asp-route-id="@DR["UID"]" asp-route-reqid="@DR["RequestID"]" asp-page="PUFinalApproval" class="btn btn-info btn-sm">Review</a>
+                                }
+                                else
+                                {
+                                    <a asp-route-id="@DR["UID"]" asp-route-reqid="@DR["RequestID"]" asp-page="PUClaimApproval" class="btn btn-info btn-sm">Review</a>
+                                }
+                             }                           
+                         </td>
+                    </tr>
+                }
+            }
+        </table>
+    </form>
+</div>

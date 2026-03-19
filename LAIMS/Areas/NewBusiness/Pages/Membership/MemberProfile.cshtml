@@ -1,0 +1,527 @@
+﻿@page
+@using System.Data;
+@model LAIMS.Areas.NewBusiness.Pages.Membership.MemberProfileModel 
+@{
+    Layout = "/Pages/Shared/_LayoutSearch.cshtml";
+}
+<h1>Client Profile</h1> 
+@if (!string.IsNullOrEmpty(ViewData["ErrorMessage"]?.ToString()))
+{
+    <p class="text-danger">@ViewData["ErrorMessage"]</p>
+}
+<div id="tabs-container mb-3 border border-primary">
+    <div class="row">
+        <div class="tab col-sm-2" onclick="openTab('tab1')"><b>Details</b></div>
+        <div class="tab col-sm-2" onclick="openTab('tab2')"><b>Contacts</b></div>
+        <div class="tab col-sm-2" onclick="openTab('tab3')"><b>Documents</b></div>
+        <div class="tab col-sm-2" onclick="openTab('tab4')"><b>Policies</b></div>
+        <div class="tab col-sm-2" onclick="openTab('tab5')"><b>Statii</b></div>
+        <div class="tab col-sm-2" onclick="openTab('tab6')"><b>Claims</b></div>
+    </div> 
+    <div class="row">       
+        <div id="tab1" class="tab-content show active border-0 bg-white">
+            <div>
+                <h3 class="text-end">Personal Details</h3>
+                <div class="row">
+                    <div class="col-md-6">
+                        <table class="table table-hover">
+                            <tr>
+                                <td>
+                                    First Name
+                                </td>
+                                <td>
+                                    @Model.Member.Name1
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    Middle Name
+                                </td>
+                                <td>
+                                    @Model.Member.Name2
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    Surname
+                                </td>
+                                <td>
+                                    @Model.Member.Name3
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    Gender
+                                </td>
+                                <td>
+                                    @Model.Member.Gender
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    Title
+                                </td>
+                                <td>
+                                    @Model.Member.Title
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    Marital Status
+                                </td>
+                                <td>
+                                    @Model.Member.MaritalStatus
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    D.O.B
+                                </td>
+                                <td>
+                                    @if (@Model.Member.DOB != null)
+                                    {
+                                        @Model.MemberDOB
+                                    }                                   
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    Birth Country
+                                </td>
+                                <td>
+                                    @Model.Member.BirthCountry
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="col-md-6">
+                        <table class="table table-hover">
+                            <tr>
+                                <td>
+                                    Place Of Birth
+                                </td>
+                                <td>
+                                    @Model.Member.PlaceOfBirth
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    Citizenship
+                                </td>
+                                <td>
+                                    @Model.Member.Country
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    Member No:
+                                </td>
+                                <td>
+                                    @Model.Member.MemberNo
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    National ID
+                                </td>
+                                <td>
+                                    @Model.Member.NationalID
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    Passport
+                                </td>
+                                <td>
+                                    @Model.Member.Passport
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    Birth Certificate
+                                </td>
+                                <td>
+                                    @Model.Member.BirthCertificate
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    Added On
+                                </td>
+                                <td>
+                                    @Model.Member.AddedOn
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    
+                                </td>
+                                <td> 
+                                    <a href='@Url.Page("/Membership/Edit", new { area = "NewBusiness",id=Model.Member.UID})' class="btn btn-primary btn-sm fixed-width-btn float-end">Edit</a>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="tab2" class="tab-content border-0 bg-white">
+            <h3>Contact Details</h3>
+            <div>
+                <div>
+                    <h4> </h4>
+                </div>
+                <div class="row">
+                    <form method="post">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="MemberContact.ContactTypeID" class="control-label"><b>Contact Type</b></label>
+                                    <select asp-for="MemberContact.ContactTypeID" required asp-items="@(new SelectList(Model.ContactTypes, "ID", "Type"))" class="form-control">
+                                        <option value="">Select Option</option>
+                                    </select>
+                                    <span asp-validation-for="MemberContact.ContactTypeID" class="text-danger"></span>
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="MemberContact.Preferred" class="control-label"><b>Preferred</b></label>
+                                    <select asp-for="MemberContact.Preferred" required class="form-control" aria-required="true">
+                                        <option value="">Select Option</option>
+                                        <option value=0>No</option>
+                                        <option value=1>Yes</option>
+                                    </select>
+                                    <span asp-validation-for="MemberContact.Preferred" class="text-danger"></span>
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="MemberContact.Line1" class="control-label"><b>Line 1</b></label>
+                                    <input asp-for="MemberContact.Line1" required class="form-control" />
+                                    <span asp-validation-for="MemberContact.Line1" class="text-danger"></span>
+                                </div>
+
+                                <div class="form-group">
+                                    <label asp-for="MemberContact.Line2" class="control-label"><b>Line 2</b></label>
+                                    <input asp-for="MemberContact.Line2" class="form-control" />
+                                    <span asp-validation-for="MemberContact.Line2" class="text-danger"></span>
+                                </div>
+
+                                <div class="form-group">
+                                    <label asp-for="MemberContact.Line3" class="control-label"><b>Line 3</b></label>
+                                    <input asp-for="MemberContact.Line3" class="form-control" />
+                                    <span asp-validation-for="MemberContact.Line3" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="MemberContact.ContactName" class="control-label"><b>Contact Name</b></label>
+                                    <input asp-for="MemberContact.ContactName" class="form-control" />
+                                    <span asp-validation-for="MemberContact.ContactName" class="text-danger"></span>
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="CountryID" class="control-label"><b>Country</b></label>
+                                    <select asp-for="CountryID" asp-items="@(new SelectList(Model.Countries, "CountryID", "CountryName"))" class="form-control" id="countryDropdown">
+                                        <option value="">Select Country</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label asp-for="CityID" class="control-label"><b>City</b></label>
+                                    <select asp-for="CityID" id="cityDropdown" class="form-control"></select>
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="CustomCity" class="control-label"><b>Or Enter City</b></label>
+                                    <input asp-for="CustomCity" class="form-control" />
+                                </div>
+                                <div class="form-group">
+                                    <br/>
+                                    <button type="submit" asp-route-id="@Model.Member.UID" asp-page-handler="AddContact" class="btn btn-primary float-end">Add Contact</button> 
+                                </div>
+                            </div>                           
+                        </div>                        
+                    </form>
+                </div>
+                <div class="row bg-white">
+                    <form method="post">
+                        <table class="table table-striped">
+                            <tr>
+                                <th>Type</th>
+                                <th>Line 1</th>
+                                <th>Line 2</th>
+                                <th>Line 3</th>
+                                <th>City</th>
+                                <th>Country</th>
+                                <th></th>
+                            </tr>
+                            @if (Model.ContactsDT != null)
+                            {
+                                @foreach (DataRow DR in Model.ContactsDT.Rows)
+                                {
+                                    <tr>
+                                        <td>@DR["ContactType"]<br /><b>@DR["Preferred"]</b></td>
+                                        <td>@DR["Line1"]</td>
+                                        <td>@DR["Line2"]</td>
+                                        <td>@DR["Line3"]</td>
+                                        <td>@DR["City"]</td>
+                                        <td>@DR["Country"]</td>
+                                        <td class="text-end">
+                                            <a asp-page="EditContacts" asp-route-MemberUID="@DR["MemberUID"]" asp-route-ContactID="@DR["ID"]" class="btn btn-outline-primary">Edit</a>
+                                            <button type="submit" asp-route-MemberUID="@DR["MemberUID"]" asp-route-ContactID="@DR["ID"]" asp-page-handler="Archive" class="btn btn-danger" onclick="return confirm('Are you sure you want to Archive this item?');">Archive</button>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                        </table>
+                    </form>
+                </div>
+            </div>
+        </div>   
+        <div id="tab3" class="tab-content border-0">
+            <h3 class="text-end">Documents</h3>
+            <div class="row">
+                <div class="col-md-4">
+                    <form method="post" enctype="multipart/form-data">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <div class="row mb-3"> 
+                            <select asp-for="DocumentsID" class="form-control" required asp-items="Model.DocumentsList">
+                                <option value="">Select Document Type</option>
+                            </select>
+                            <span asp-validation-for="DocumentsID" class="text-danger"></span>
+                        </div>  
+                        <div class="row mb-3"> 
+                            <input class="form-control" multiple="multiple" type="file" asp-for="Upload" />
+                        </div>
+                        <div class="form-group mb-3">
+                            <button type="submit" asp-route-id="@Model.Member.UID" asp-page-handler="UploadFile" class="btn btn-primary">Add Document</button> 
+                        </div>
+                    </form>
+                </div>
+                <div class="col-md-8"> 
+                    <form method="post">
+                        <table class="table table-striped">
+                            <tr>
+                                <th>Document</th>
+                                <th>Filing No</th>
+                                <th>Added</th>
+                                <th></th>
+                            </tr>
+                            @if (Model.DocumentsDT != null)
+                            {
+                                @foreach (DataRow DR in Model.DocumentsDT.Rows)
+                                {
+                                    <tr>
+                                        <td>@DR["Document"]</td>
+                                        <td>@DR["FilingNo"]</td>
+                                        <td>@DR["AddedOn"]</td>
+                                        <td class="text-end">
+                                            <button type="submit" asp-route-id="@Model.Member.UID"  asp-route-docId="@DR["ID"]" asp-page-handler="DownloadFile" class="btn btn-success">Download</button>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                        </table>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div id="tab4" class="tab-content bg-white ">
+            <div class="row mb-3">
+                <div class="col-md-9 text-end">
+                    <b>Click here to create new application:</b>
+                </div>
+                <div class="col-md-3">
+                    <a href='@Url.Page("/policies/SelectPolicy", new { area = "NewBusiness",id=@Model.Member.UID })' class="btn btn-primary btn-sm float-end fixed-width-btn">New Application</a>
+
+                </div>
+                </div>
+            <hr/>
+            <h3>History</h3>
+            <div class="row mb-3">
+                <form method="post">
+                    <table class="table table-hover">
+                        <tr>
+                            <th>Applied</th>
+                            <th>Application No</th>
+                            <th>PolicyNo</th>
+                            <th>Policy</th>
+                            <th>Stage</th>
+                            <th>S. Date</th>
+                            <th></th>
+                        </tr>
+                        @if (Model.PoliciesDT != null)
+                        {
+                            @foreach (DataRow DR in Model.PoliciesDT.Rows)
+                            {
+                                <tr>
+                                    <td>@DR["ApplicationDate"]</td>
+                                    <td>@DR["ApplicationNo"]</td>
+                                    <td>@DR["PolicyNo"]</td>
+                                    <td>@DR["PolicyTypeName"]</td>
+                                    <td>@DR["Stage"]</td>
+                                    <td>@DR["PolicyStatusDate"]</td>
+                                    <td class="text-end">
+                                        @if (Convert.ToInt32(@DR["PolicyStage"]) > 1)
+                                        {
+                                            <button type="submit" asp-route-memberId="@Model.Member.UID" asp-route-policyTypeId="@DR["PolicyType"]" asp-route-policyId="@DR["ID"]" asp-page-handler="PolicyDetails" class="btn btn-info btn-sm">View</button>
+                                        }
+                                     </td>
+                                </tr>
+                            }
+                        }
+                    </table>
+            </form>
+</div>
+           
+        </div>
+        <div id="tab5" class="tab-content bg-white ">
+            <h3>Member Statii</h3>
+            <div class="row mb-3">
+                <form method="post">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="MemberStatusID" class="control-label"><b>Status</b></label>
+                                <select asp-for="MemberStatusID" required asp-items="@(new SelectList(Model.StatiiList, "ID", "Status"))" class="form-control" id="statiiDropdown">
+                                    <option value="">Select Option</option>
+                                </select>
+                                <span asp-validation-for="MemberStatusID" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="MemberStatusReasonID" class="control-label"><b>Status Reason</b></label>
+                                <select asp-for="MemberStatusReasonID" id="statusReasonDropdown" class="form-control"></select>
+                                <span asp-validation-for="MemberStatusReasonID" class="text-danger"></span>
+                            </div>   
+                        </div>
+                        <div class="col-md-6">
+                           <div class="form-group">
+                                <label asp-for="MemberStatus.StatusComment" class="control-label"><b>Comment</b></label>
+                                <textarea asp-for="MemberStatus.StatusComment" class="form-control" id="commentTextarea" rows="5" cols="50" required></textarea>
+                                <span asp-validation-for="MemberStatus.StatusComment" class="text-danger"></span>
+                            </div> 
+                            <div class="form-group">
+                                <br />
+                                <button type="submit" asp-route-id="@Model.Member.UID" asp-page-handler="AddStatus" class="btn btn-primary float-end">Add Status</button>
+                            </div> 
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <h3>History</h3>
+            <div class="row mb-3">
+                <form method="post">
+                    <table class="table table-striped">
+                        <tr>
+                            <th>Status</th>
+                            <th>Reason</th>
+                            <th>Comment</th>
+                            <th>Date</th>  
+                        </tr>
+                        @if (Model.MemberStatiiDT != null)
+                        {
+                            @foreach (DataRow DR in Model.MemberStatiiDT.Rows)
+                            {
+                                <tr>
+                                    <td>@DR["Status"]</td>
+                                    <td>@DR["Reason"]</td>
+                                    <td>@DR["StatusComment"]</td>
+                                    <td>@DR["StatusDate"]</td>
+                                </tr>
+                            }
+                        }
+                    </table>
+                </form>
+            </div>
+        </div>
+        <div id="tab6" class="tab-content bg-white ">
+            <h3>Claims</h3>
+            <h3>History</h3>
+            @*  <div class="row mb-3">
+            <form method="post">
+            <table class="table table-hover">
+            <tr>
+            <th>Applied</th>
+            <th>Application No</th>
+            <th>PolicyNo</th>
+            <th>Policy</th>
+            <th>Stage</th>
+            <th>S. Date</th>
+            <th></th>
+            </tr>
+            @if (Model.PoliciesDT != null)
+            {
+            @foreach (DataRow DR in Model.PoliciesDT.Rows)
+            {
+            <tr>
+            <td>@DR["ApplicationDate"]</td>
+            <td>@DR["ApplicationNo"]</td>
+            <td>@DR["PolicyNo"]</td>
+            <td>@DR["PolicyTypeName"]</td>
+            <td>@DR["Status"]</td>
+            <td>@DR["PolicyStatusDate"]</td>
+            <td class="text-end">
+            <button type="submit" asp-route-memberId="@Model.Member.UID" asp-route-policyTypeId="@DR["PolicyType"]" asp-route-policyId="@DR["ID"]" asp-page-handler="PolicyDetails" class="btn btn-info btn-sm">View</button>
+            </td>
+            </tr>
+            }
+            }
+            </table>
+            </form>
+            </div> *@
+
+        </div> 
+    </div>
+</div>
+@section scripts {
+    <script>
+        $(function () {
+            $("#countryDropdown").on("change", function () {
+                var countryId = $(this).val();
+                $("#cityDropdown").empty();
+                $("#cityDropdown").append("<option value='0'>Select City</option>");
+                $.getJSON(`?handler=CitiesByCountry&countryid=${countryId}`, (data) => {
+                    $.each(data, function (i, city) {
+                        $("#cityDropdown").append(`<option value="${city.id}">${city.cityName}</option>`);
+                    });
+                });
+            });
+        });
+    </script>
+    <script>
+        $(function () {
+            $("#statiiDropdown").on("change", function () {
+                var statusId = $(this).val();
+                $("#statusReasonDropdown").empty();
+                $("#statusReasonDropdown").append("<option value='0'>Select Reason</option>");
+                $.getJSON(`?handler=ReasonsByStatus&statusid=${statusId}`, (data) => {
+                    $.each(data, function (i, reason) {
+                        $("#statusReasonDropdown").append(`<option value="${reason.reasonID}">${reason.reason}</option>`);
+                    });
+                });
+            });
+        });
+    </script>
+    <script>
+        function openTab(tabId) {
+            // Hide all tab content
+            var tabContents = document.getElementsByClassName('tab-content');
+            for (var i = 0; i < tabContents.length; i++) {
+                tabContents[i].classList.remove('show');
+            }
+
+            // Show the selected tab content
+            var selectedTab = document.getElementById(tabId);
+            if (selectedTab) {
+                selectedTab.classList.add('show');
+            }
+        }
+    </script>
+    <script> 
+        function getQueryParam(name) {
+            var urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(name);
+        } 
+        document.addEventListener('DOMContentLoaded', function () {
+            var initialTab = getQueryParam('tab');
+            if (initialTab) {
+                openTab(initialTab);
+            }
+        });
+    </script>
+}

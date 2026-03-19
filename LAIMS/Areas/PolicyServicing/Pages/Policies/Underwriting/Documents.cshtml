@@ -1,0 +1,183 @@
+﻿@page
+@model LAIMS.Areas.PolicyServicing.Pages.Policies.Underwriting.DocumentsModel
+@{
+} 
+@{
+    Layout = "/Pages/Shared/_LayoutProducts.cshtml";
+}
+<h1>Add Documents</h1>
+@if (!string.IsNullOrEmpty(ViewData["ErrorMessage"]?.ToString()))
+{
+    <p class="text-danger">@ViewData["ErrorMessage"]</p>
+}
+<div class="bg-light">
+    <hr /> 
+    <div class="nav-wizards-container">
+        <nav class="nav nav-wizards-1 mb-2">
+            <div class="nav-item col">
+                <a class="nav-link completed" href="#">
+                    <div class="nav-no">1</div>
+                    <div class="nav-text">Select Record</div>
+                </a>
+            </div>
+            <div class="nav-item col">
+                <a class="nav-link completed" asp-page="Details" asp-route-id="@Model.MemberID" asp-route-policyid="@Model.PolicyID" asp-route-policyTypeId="@Model.PolicyTypeID">
+                    <div class="nav-no">2</div>
+                    <div class="nav-text">Details</div>
+                </a>
+            </div>
+            <div class="nav-item col">
+                <a class="nav-link active" href="#">
+                    <div class="nav-no">3</div>
+                    <div class="nav-text">Submission</div>
+                </a>
+            </div>
+            <div class="nav-item col">
+                <a class="nav-link disabled" href="#">
+                    <div class="nav-no">4</div>
+                    <div class="nav-text">Supervisor Approval</div>
+                </a>
+            </div>
+        </nav>
+    </div>
+    <hr />
+</div>
+<hr />
+<div class="row mb-3 rounded">
+    <form method="post" enctype="multipart/form-data">
+        <input type="hidden" asp-for="SourceUrl" />
+        <div class="p-3 bg-white mb-3">
+            @for (var i = 0; i < Model.FileUploadModelList.Count; i++)
+            {
+                @if (i > 0 && (@Model.FileUploadModelList[i].FullName != @Model.FileUploadModelList[i - 1].FullName))
+                {
+                    <div class="row mb-3 text-end bg-light">
+                        <h5>Documents for @Model.FileUploadModelList[i].FullName</h5>
+                    </div>
+                }
+                else if (i == 0)
+                {
+                    <div class="row mb-3 text-end bg-light">
+                        <h5>Documents for @Model.FileUploadModelList[i].FullName</h5>
+                    </div>
+                }
+                <div class="row">
+                    <div class="col-md-1 file-node">
+                        <span class="file-icon"><i class="far fa-file-image fa-lg text-success"></i></span>
+                    </div>
+                    <div class="col-md-4 file-node">
+                        <h6>@Model.FileUploadModelList[i].DocumentName</h6>
+                        <b>VG:</b> @Model.FileUploadModelList[i].ValidationGroup
+                    </div>
+                    @if (Model.FileUploadModelList[i].UploadStatus == "Uploaded")
+                    {
+                        <div class="col-md-2">
+                            <span class="text-success">@Model.FileUploadModelList[i].UploadStatus</span><br/>
+                            @Model.FileUploadModelList[i].UploadedOn 
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="col-md-2 text-danger">@Model.FileUploadModelList[i].UploadStatus</div>
+                    }
+
+                    <div class="col-md-3">
+                        <input class="form-control" type="file" asp-for="FileUploadModelList[i].UploadedFile" />
+                        <input type="hidden" asp-for="FileUploadModelList[i].MemberUID" />
+                        <input type="hidden" asp-for="FileUploadModelList[i].DocumentID" />
+                        <input type="hidden" asp-for="FileUploadModelList[i].ID" />
+                    </div>
+                    @if (Model.FileUploadModelList[i].Uploaded)
+                    {
+                        <div class="col-md-2">
+                            <button type="button" data-bs-toggle="modal" data-bs-target="#pdfModal" data-url="Documents?handler=DownloadPdfFromDatabase&docId=@Model.FileUploadModelList[i].MediaUploadID" class="btn btn-success">View</button>
+                        </div>
+                    }
+                </div>
+                <hr />
+            }
+        </div>
+        <div class="form-group">
+            <button type="submit" asp-route-policyid="@Model.PolicyID" asp-route-id="@Model.MemberID" asp-route-policytypeid="@Model.PolicyTypeID" asp-page-handler="UploadFile" class="btn btn-primary fixed-width-btn float-end">Upload</button>
+        </div>
+    </form>
+</div>
+<!-- Modal -->
+<div class="modal fade" id="pdfModal" tabindex="-1" role="dialog" aria-labelledby="pdfModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="pdfModalLabel">PDF Viewer</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Add an iframe for displaying the PDF -->
+                <iframe id="pdfIframe" width="100%" height="400px" frameborder="0"></iframe>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row mb-3">
+    <form method="post">
+        <button type="Next" asp-route-policyid="@Model.PolicyID" asp-route-id="@Model.MemberID" asp-route-policytypeid="@Model.PolicyTypeID" asp-page-handler="Next" class="btn btn-info fixed-width-btn float-end">Next>></button>
+    </form>
+</div>
+@section scripts { 
+    <script>
+        function closeModal(modalName) {
+            var modal = document.getElementById(modalName);
+            modal.style.display = 'none';
+        }
+    </script>
+    <script>
+        $(document).ready(function () {
+            $('#pdfModal').on('show.bs.modal', function (event) {
+                var button = $(event.relatedTarget);
+                var url = button.data('url');
+                openPdfModal(url);
+            });
+        });
+        function openPdfModal(pdfSource) {
+            // Make a Fetch API request to fetch PDF data from the server
+            fetch(pdfSource, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/pdf', // Adjust the content type as needed
+                },
+                responseType: 'blob', // Specify that you want the response as a Blob
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.blob(); // Get the response as a Blob
+                })
+                .then(blobData => {
+                    try {
+                        console.log('Blob created:', blobData);
+
+                        // Create a data URL from the Blob
+                        var pdfUrl = URL.createObjectURL(blobData);
+                        console.log('PDF URL created:', pdfUrl);
+
+                        // Update the iframe source with the PDF data URL
+                        $('#pdfIframe').attr('src', pdfUrl);
+                        console.log('IFrame src:', pdfUrl);
+
+                        // Show the modal
+                        $('#pdfModal').modal('show');
+                    } catch (error) {
+                        console.error('Error processing PDF data:', error);
+                    }
+                })
+                .catch(error => {
+                    console.error('Fetch error:', error);
+                });
+        }
+    </script>
+}

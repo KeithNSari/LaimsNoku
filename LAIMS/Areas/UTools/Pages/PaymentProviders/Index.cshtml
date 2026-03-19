@@ -1,0 +1,106 @@
+﻿@page
+@using System.Data
+@model LAIMS.Areas.UTools.Pages.PaymentProviders.IndexModel
+@{
+}
+@{
+    Layout = "/Pages/Shared/_LayoutSearch.cshtml";
+}
+<h2>Debit Order Providers</h2>
+<p>To add a debit order provider, first perform a search for the intended organisation. If the orgranisation is not found, you will be provided with an option to add it.</p>
+@if (!string.IsNullOrEmpty(ViewData["ErrorMessage"]?.ToString()))
+{
+    <p class="text-danger">@ViewData["ErrorMessage"]</p>
+}
+<hr />
+@if (Model.SearchTerm != null)
+{
+    <div class="row mb-3">
+        <form method="post">
+            @if (Model.OrganisationFound)
+            {
+                <h3>@Model.ResultsCount Organisation/s Found:</h3>
+                <div class="row mb-3">
+                    <select asp-for="@Model.OrgID" class="form-control" required asp-items="Model.OrganisationsList">
+                        <option value="">Select Organisation</option>
+                    </select>
+                    <span asp-validation-for="@Model.OrgID" class="text-danger"></span>
+                </div>
+            }
+            else if (Model.ShowAddSection)
+            {
+                <h3>Organisation Not Found</h3>
+                <div class="form-group">
+                    <label asp-for="@Model.OrgName"><b>Organisation</b></label>
+                    <input type="text" asp-for="@Model.OrgName" required class="form-control" />
+                </div>
+            }
+            <div class="row mb-3">
+               @*  <div class="col-md-3">
+                    <div class="form-group">
+                        <label asp-for="@Model.Aggregated"><b>Aggregated</b></label>
+                        <select asp-for="@Model.Aggregated" class="form-control" aria-required="true">
+                            <option value="">Select Option</option>
+                            <option value=0>No</option>
+                            <option value=1>Yes</option> 
+                        </select>
+                        <span asp-validation-for="@Model.Aggregated" class="text-danger"></span>
+                    </div>
+                </div> *@
+                <div class="col-md-2">
+                    <label asp-for="@Model.AccountFormat"><b>Account Format</b></label>
+                    <input asp-for="@Model.AccountFormat" required class="form-control" autocomplete="off" />
+                    <span asp-validation-for="@Model.AccountFormat" class="text-danger"></span>
+                </div>
+                <div class="col-md-4">
+                    <label asp-for="@Model.AccountFormatDescription"><b>Format Description </b></label>
+                    <input asp-for="@Model.AccountFormatDescription" required class="form-control" autocomplete="off" />
+                    <span asp-validation-for="@Model.AccountFormatDescription" class="text-danger"></span>
+                </div>
+                <div class="col-sm-4">
+                    <label asp-for="@Model.StoredProcedureName"><b>Procedure</b></label>
+                    <input type="text" asp-for="@Model.StoredProcedureName" required class="form-control" />
+                </div>
+                <div class="col-sm-2">
+                    <label asp-for="@Model.CurrencyID" class="control-label"><b>Currency</b></label>
+                    <select asp-for="@Model.CurrencyID" required class="form-control" asp-items="Model.Currencies"></select>
+                    <span asp-validation-for="@Model.CurrencyID" class="text-danger"></span>
+                </div> 
+            </div>
+            <div class="row mb-3">
+                <div class="form-group">
+                    <br />
+                    <button type="submit" class="btn btn-primary float-end">Submit</button>
+                </div>
+            </div>
+        </form>
+    </div>  
+}
+<form method="post">
+    <div class="row mb-3">
+        @if (Model.EntriesDT != null)
+        {
+            <table class="table table-striped">
+                <tr>
+                    <th>Provider</th>
+                    <th>Format</th>
+                    <th>Description</th>
+                    <th>SP</th>
+                    <th>AddedOn</th>
+                    <th></th>
+                </tr>
+                @foreach (DataRow DR in Model.EntriesDT.Rows)
+                {
+                    <tr>
+                        <td>@DR["ProviderName"]</td>
+                        <td>@DR["BankAccountNoFormat"]</td>
+                        <td>@DR["BankAccountNoFormatDesc"]</td>
+                        <td>@DR["StoredProcedureName"]</td>
+                        <td>@DR["AddedOn"]</td>
+                        <td><button type="submit" asp-route-entryid="@DR["PCCID"]" asp-page-handler="Remove" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to archive this item?');">Archive</button></td>
+                    </tr>
+                }
+            </table>
+        }
+    </div>
+</form>

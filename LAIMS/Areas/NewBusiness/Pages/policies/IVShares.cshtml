@@ -1,0 +1,109 @@
+﻿@page
+@using System.Data
+@model LAIMS.Areas.NewBusiness.Pages.policies.IVSharesModel
+@{
+}
+@{
+    Layout = "/Pages/Shared/_LayoutProducts.cshtml";
+}
+@if (!string.IsNullOrEmpty(ViewData["ErrorMessage"]?.ToString()))
+{
+    <h3 class="text-danger">@ViewData["ErrorMessage"]</h3>
+}
+<h1>Application: Add Split</h1>
+<div class="bg-light">
+    <hr />
+    <h3>Policy: @Model.PolicyName</h3> 
+    <div class="nav-wizards-container">
+        <nav class="nav nav-wizards-1 mb-2">
+            <div class="nav-item col">
+                <a class="nav-link completed" asp-page="SelectPolicy" asp-route-id="@Model.ProposerID">
+                    <div class="nav-no">1</div>
+                    <div class="nav-text">Select Policy</div>
+                </a>
+            </div>
+            <div class="nav-item col">
+                <a class="nav-link completed" asp-page="AddDetails" asp-route-id="@Model.ProposerID" asp-route-policyid="@Model.PolicyID" asp-route-policyTypeId="@Model.PolicyTypeID">
+                    <div class="nav-no">2</div>
+                    <div class="nav-text">Add Details</div>
+                </a>
+            </div>
+            <div class="nav-item col">
+                <a class="nav-link active" href="#">
+                    <div class="nav-no">3</div>
+                    <div class="nav-text">Split</div>
+                </a>
+            </div>
+            <div class="nav-item col">
+                <a class="nav-link disabled" href="#">
+                    <div class="nav-no">4</div>
+                    <div class="nav-text">Documents</div>
+                </a>
+            </div>
+            <div class="nav-item col">
+                <a class="nav-link disabled" href="#">
+                    <div class="nav-no">5</div>
+                    <div class="nav-text">Questionnaires</div>
+                </a>
+            </div>
+            <div class="nav-item col">
+                <a class="nav-link disabled" href="#">
+                    <div class="nav-no">6</div>
+                    <div class="nav-text">Submission</div>
+                </a>
+            </div>
+        </nav>
+    </div>
+    <hr />
+</div>
+<div class="row mb-3">
+    <form method="post">
+        <input type="hidden" asp-for="@Model.PolicyID" />
+        <input type="hidden" asp-for="@Model.PolicyTypeID" />
+        <input type="hidden" asp-for="@Model.ProposerID" />
+        <h2>Add Split Values</h2>
+        <div class="row mb-3">
+            <table class="table table-striped">
+                <tr>
+                    <th>Role</th>
+                    <th>Full Name</th>
+                    <th>R\ship</th>
+                    <th>D.O.B</th>
+                    <th>ID Type</th>
+                    <th>ID</th>
+                    <th>%</th>
+                    <th>Adjust</th>
+                </tr>
+                @if (Model.BeneficiarySharesDT != null)
+                {
+                    @foreach (DataRow DR in Model.BeneficiarySharesDT.Rows)
+                    {
+                        <tr>
+                            <td>@DR["Role"]</td>
+                            <td>@DR["FullName"]</td>
+                            <td>@DR["Relationship"]</td>
+                            <td>@DR["DOB"]</td>
+                            <td>@DR["IDType"]</td>
+                            <td>@DR["IDDocument"]</td>
+                            <td>@DR["SplitPercentage"]</td>
+                            <td>
+                                <input type="hidden" name="PBIDS" value="@DR["ID"]" />
+                                <input type="number" name="Shares" value="@DR["SplitPercentage"]" />
+                            </td>
+                        </tr>
+                    }
+                }
+            </table>
+        </div> 
+        <div class="row mb-3">
+            <div class="col-md-8">
+            </div>
+            <div class="col-md-2">
+                <button type="submit" asp-page-handler="AddShares" class="btn btn-primary text-end float-end">Update</button>
+            </div>
+            <div class="col-md-2">
+                <button type="submit" asp-route-policyid="@Model.PolicyID" asp-route-id="@Model.ProposerID" asp-route-policytypeid="@Model.PolicyTypeID" asp-page-handler="Next" class="btn btn-info">Next>></button>
+            </div>
+        </div>
+    </form>
+</div>  

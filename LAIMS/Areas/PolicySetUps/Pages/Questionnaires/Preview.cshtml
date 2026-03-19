@@ -1,0 +1,100 @@
+﻿@page
+@using System.Data;
+@model LAIMS.Areas.PolicySetUps.Pages.Questionnaires.PreviewModel
+@{
+}
+@{
+    Layout = "/Pages/Shared/_LayoutProducts.cshtml";
+}
+<h2>@Model.QuestionnaireTitle</h2>
+@if (!string.IsNullOrEmpty(ViewData["ErrorMessage"]?.ToString()))
+{
+    <p class="text-danger">@ViewData["ErrorMessage"]</p>
+}
+<hr/>
+<form method="post">
+    <input type="hidden" asp-for="ReturnUrl" />
+    <div class="row">
+        <div class="col-md-6">
+            <div class="mb-3">
+                @for (int i=0; i<Model.Questions.Count;i++)
+                { 
+                    var question = Model.Questions[i];
+                    <div> 
+                        <p>@question.Position @question.QuestionLabel) @question.QuestionText</p>
+                        @if (question.QuestionTypeID == 1)
+                        {
+                            foreach (var option in question.AnswerOptions)
+                            {
+                                if (option != null)
+                                {
+                                    <label>
+                                        <input type="radio" name="answers[@question.ID]" value="@option.ID" />
+                                        @option.ExpectedResponse
+                                    </label>
+
+                                    <br />
+                                }
+                            }
+                        }
+                        else if (question.QuestionTypeID == 2)
+                        {
+                            foreach (var option in question.AnswerOptions)
+                            {
+                                <label>
+                                    <input type="checkbox" name="answers[@question.ID]"
+                                           value="@option.ID" />
+                                    @option.ExpectedResponse
+                                </label>
+
+                                <br />
+                            }
+                        }
+                        else if (question.QuestionTypeID == 3)
+                        {
+                            <textarea name="answers[@question.ID]" rows="4" cols="50"></textarea>
+                        }
+                    </div>
+                }
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </div>
+        <div class="col-md-6">
+            <h3>Previous Responses</h3>
+            @if (Model.PreviousResponsesDT.Rows.Count>0)
+            {
+                <b>Added:</b> @Model.PreviousResponseDate
+                <table class="table table-striped">
+                    <tr>
+                        <th class="col-md-1"></th>
+                        <th class="col-md-4">Question</th>
+                        <th class="col-md-7">Response</th>
+                    </tr>  
+                    @{
+                        int position = 1;
+                        @for (int i=0;i< Model.PreviousResponsesDT.Rows.Count;i++)
+                        {                        
+                        DataRow DR = Model.PreviousResponsesDT.Rows[i];
+                        <tr>
+                            <td>
+                                    @if ((i > 0) && (Convert.ToInt32(Model.PreviousResponsesDT.Rows[i - 1]["QuestionNo"]) !=Convert.ToInt32(DR["QuestionNo"])))
+                                    {
+                                            position += 1;  
+                                    }
+                                    @position@DR["QuestionLabel"]
+                                </td>
+                                <td>@DR["Question"]</td>
+                                <td>@DR["Responses"]</td>
+                            </tr>
+                        } 
+                    }
+                </table>
+            }
+            else
+            {
+                <p>No responses submitted as yet.</p>
+            }           
+        </div>
+    </div>
+   
+</form>

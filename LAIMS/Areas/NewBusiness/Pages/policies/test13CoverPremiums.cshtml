@@ -1,0 +1,116 @@
+﻿@page
+@model LAIMS.Areas.NewBusiness.Pages.policies.test13CoverPremiumsModel
+@{
+}
+@{
+    Layout = "/Pages/Shared/_LayoutProducts.cshtml";
+}
+<h2>Products</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Customer</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var customer in Model.Customers)
+        {
+            <tr>
+                <td>@customer.CustomerName</td>
+                <td>
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#productModal" data-customer-id="@customer.CustomerID">
+                        Edit Products
+                    </button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<!-- Modal -->
+<div class="modal fade" id="productModal" tabindex="-1" role="dialog" aria-labelledby="productModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <form method="post">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="productModalLabel">Edit Products</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" asp-for="CustomerID" id="customerID" />
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Product</th>
+                                <th>Product Type</th>
+                                <th>Cover</th>
+                                <th>Premium</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for (int i = 0; i < Model.Products.Count; i++)
+                            {
+                                <tr>
+                                    <td>@Model.Products[i].ProductName</td>
+                                    <td>@Model.Products[i].ProductType</td>
+                                    <td>
+                                        <input type="number" class="form-control cover-input" asp-for="Products[i].Cover" data-product-id="@Model.Products[i].ProductID" />
+                                    </td>
+                                    <td>
+                                        <span class="premium">@Model.Products[i].Premium</span>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts { 
+    <script>
+        $(document).ready(function () {
+            $('.cover-input').on('input', function () {
+                var coverInput = $(this);
+                var productId = coverInput.data('product-id');
+                var cover = coverInput.val();
+
+                $.ajax({
+                    type: 'GET',
+                    url: '?handler=FetchPremium', 
+                    data: { productId: productId, cover: cover },
+                    success: function (premium) {
+                        console.log(premium);
+                        coverInput.closest('tr').find('.premium').text(premium);
+                    },
+                    error: function (error) {
+                        console.log('Error fetching value');
+                    }
+                });
+            });           
+        });
+    </script>
+    <script>
+        $(document).ready(function () {
+            $('#productModal').on('show.bs.modal', function (event) {
+                var button = $(event.relatedTarget); // Button that triggered the modal
+                var customerId = button.data('customer-id'); // Extract info from data-* attributes
+                console.log(customerId);
+                var modal = $(this);
+                modal.find('#customerID').val(customerId); // Set the CustomerID in the hidden input
+            });
+        });
+    </script>
+}
+}

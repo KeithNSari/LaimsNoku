@@ -1,0 +1,67 @@
+﻿@page
+@using System.Data
+@model LAIMS.Areas.Claims.Pages.MyReviewsModel
+@{
+}
+@{
+    Layout = "/Pages/Shared/_LayoutSearch.cshtml";
+}
+<h1>My Reviews</h1>
+<hr />
+@if (Model.ClaimsDT != null)
+{
+    <div class="row mb-3">
+        @if (Model.SearchTerm != null)
+        {
+            <h5>@Model.ResultsCount result/s found for search "@Model.SearchTerm"!</h5>
+        }
+        else
+        {
+            <h5> Showing @Model.ResultsCount entrie/s!</h5>
+        }
+    </div>
+}
+<hr />
+
+<div class="mb-3 text-end">
+    <a class="btn btn-primary" asp-page="Approve">Back To Approve...</a>
+</div>
+<div class="row mb-3">
+    <form method="post">
+        <table class="table table-hover">
+            <tr>
+                <th>Entry </th>
+                <th>Policy No</th>
+                <th>PolicyName</th>
+                <th>Policy Owner</th>
+                <th>Status</th>
+                <th>Status Date</th>
+                <th></th>
+            </tr>
+            @if (Model.ClaimsDT != null)
+            {
+                @foreach (DataRow DR in Model.ClaimsDT.Rows)
+                {
+                    <tr>
+                        <td>@DR["EntryNo"]</td>
+                        <td>@DR["PolicyNo"]</td>
+                        <td>@DR["PolicyName"]</td>
+                        <td>@DR["PolicyOwner"]</td>
+                        <td>@DR["Status"]</td>
+                        <td>@DR["StatusDate"]</td>
+                        <td class="text-end">
+                            @if (Convert.ToInt32(DR["ClaimTypeID"]) == 1) @* death claim for risk *@
+                            {
+                                <a asp-route-id="@DR["UID"]" asp-route-policyTypeid="@DR["PolicyTypeID"]" asp-route-policyid="@DR["PolicyID"]" asp-route-reqid="@DR["RequestID"]" asp-page="ClaimApprovals" class="btn btn-info btn-sm">Review</a>
+                            }
+                            else
+                            {
+                                <a asp-route-id="@DR["UID"]" asp-route-reqid="@DR["RequestID"]" asp-page="PUClaimApproval" class="btn btn-info btn-sm">Review</a>
+                            }
+                        </td>
+                    </tr>
+                }
+            }
+        </table>
+    </form>
+</div>

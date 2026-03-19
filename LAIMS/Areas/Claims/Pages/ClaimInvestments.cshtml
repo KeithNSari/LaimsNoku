@@ -1,0 +1,149 @@
+﻿@page
+@model LAIMS.Areas.Claims.Pages.ClaimInvestmentsModel
+@{
+}
+@{
+    Layout = "/Pages/Shared/_LayoutProducts.cshtml";
+}
+<h2>Select Risk Product Claimants</h2>
+<div class="nav-wizards-container">
+    <nav class="nav nav-wizards-1 mb-2">
+        <div class="nav-item col">
+            <a class="nav-link completed" asp-page="PolicyDetails" asp-route-id="@Model.ProposerID" asp-route-policyid="@Model.PolicyID" asp-route-policyTypeId="@Model.PolicyTypeID">
+                <div class="nav-no">1</div>
+                <div class="nav-text">View Details</div>
+            </a>
+        </div>
+        <div class="nav-item col">
+            <a class="nav-link completed" asp-page="PolicyDetails" asp-route-id="@Model.ProposerID" asp-route-policyid="@Model.PolicyID" asp-route-policyTypeId="@Model.PolicyTypeID">
+                <div class="nav-no">2</div>
+                <div class="nav-text">Add Risk Claims</div>
+            </a>
+        </div>       
+        <div class="nav-item col">
+            <a class="nav-link active" href="#">
+                <div class="nav-no">3</div>
+                <div class="nav-text">Add Investment Claims</div>
+            </a>
+        </div>
+        <div class="nav-item col">
+            <a class="nav-link disabled" href="#">
+                <div class="nav-no">3</div>
+                <div class="nav-text">Add Investment Claims</div>
+            </a>
+        </div>
+        <div class="nav-item col">
+            <a class="nav-link disabled" href="#">
+                <div class="nav-no">4</div>
+                <div class="nav-text">Questionnaires</div>
+            </a>
+        </div>
+        <div class="nav-item col">
+            <a class="nav-link disabled" href="#">
+                <div class="nav-no">5</div>
+                <div class="nav-text">Payment Details</div>
+            </a>
+        </div>
+        <div class="nav-item col">
+            <a class="nav-link disabled" href="#">
+                <div class="nav-no">6</div>
+                <div class="nav-text">Submission</div>
+            </a>
+        </div>
+    </nav>
+</div>
+<hr />
+@* <h3>
+    Previous Total Debits: @Model.Policy.CurrencyName @Model.Policy.InvestmentContentTotalDebit
+</h3> *@
+<hr/>
+<h2>Units Sales</h2>
+<form asp-action="UpdateCart" method="post">
+    <input type="hidden" asp-for="@Model.PolicyID" />
+    <input type="hidden" asp-for="@Model.PolicyTypeID" />
+    <input type="hidden" asp-for="@Model.ProposerID" />
+    <input type="hidden" asp-for="@Model.RequestID" />
+    @if (@Model.Cart.Count > 0)
+    {
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Unit Trust</th>
+                    <th>Offer Price</th>
+                    <th>Available Quantity</th>
+                    <th>Quantity To Dispose</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (var i = 0; i < @Model.Cart.Count; i++)
+                {
+                    <tr class="txtMult">
+                        <td>
+                            @Model.Cart[i].UnitTrust
+                            <input type="hidden" name="cartRows[@i].UnitTrustID" value=" @Model.Cart[i].UnitTrustID" />
+                        </td>
+                        <td>
+                            @Model.Cart[i].OfferPrice
+                            <input type="hidden" class="val1" value=" @Model.Cart[i].OfferPrice" />
+                        </td>
+                        <td>
+                            @Model.Cart[i].AvailableQuantity
+                        </td>
+                        <td>
+                            @if (@Model.Cart[i].AvailableQuantity > 0)
+                            {
+                                <input class="unitqty-txt" type="number" name="cartRows[@i].Quantity" asp-for="@Model.Cart[i].Quantity" min="0" max="@Model.Cart[i].AvailableQuantity" />
+                            }
+                            else
+                            {
+                                 <input class="unitqty-txt" disabled type="number" name="cartRows[@i].Quantity" asp-for="@Model.Cart[i].Quantity" min="0" max="@Model.Cart[i].AvailableQuantity" />
+                            }
+                        </td>
+                        <td>
+                            <span class="multTotal">0.00</span>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <div class="row mb-3">
+            <h4>Total: <span id="cartTotalAmount">0.00</span></h4>
+        </div>
+    }
+    else
+    {
+        <p>This policy does not have investments ready for claiming.</p>
+    }
+    <div class="row">
+        <div class="col-md-8">
+        </div>
+        <div class="col-md-2">
+        </div>
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-primary text-end" asp-page-handler="UpdateCart">Submit</button>
+        </div>
+    </div>
+</form>
+
+@section scripts {
+    <script>
+        $(document).ready(function () {
+            $(".txtMult input").keyup(multInputs);
+            function multInputs() {
+                var mult = 0;
+                // for each row:
+                $("tr.txtMult").each(function () {
+                    // get the values from this row:
+                    var $val1 = $('.val1', this).val();
+                    var $qty = $('.unitqty-txt', this).val();
+                    var $total = ($val1 * 1) * ($qty * 1);
+                    // set total for the row
+                    $('.multTotal', this).text($total.toFixed(2));
+                    mult += $total;
+                });
+                $("#cartTotalAmount").text(mult.toFixed(2));
+            }
+        });
+   </script>
+}

@@ -1,0 +1,85 @@
+﻿@page
+@using System.Data
+@model LAIMS.Areas.PolicyServicing.Pages.Policies.BeneficiarySharesModel
+@{
+}
+@{
+    Layout = "/Pages/Shared/_LayoutProducts.cshtml";
+}
+<h1>Update Shares</h1>
+<hr />
+<div class="row">
+    <div class="col-md-6">
+        <h3>Policy Owner: @Model.Member.Name3 @Model.Member.Name1</h3>
+    </div>
+    <div class="col-md-6">
+        <<h3>National ID: @Model.Member.NationalID</h3>
+    </div>
+</div>
+<hr />
+<div class="row">
+    <div class="col-md-6">
+        <h4>Policy: @Model.Policy.PolicyName</h4>
+    </div>
+    <div class="col-md-6">
+        <h4>Policy No: @Model.Policy.PolicyNo</h4>
+    </div>
+</div>
+<hr />
+<div class="row">
+    <div class="col-md-5">
+        <h4>Currency: @Model.Policy.CurrencyName</h4>
+    </div>
+</div>
+<hr />
+<div class="row mb-3">
+    <form method="post">
+        <input type="hidden" asp-for="@Model.PolicyID" />
+        <input type="hidden" asp-for="@Model.PolicyTypeID" />
+        <input type="hidden" asp-for="@Model.MemberID" />
+        <input type="hidden" asp-for="ReturnUrl" />
+        <input type="hidden" asp-for="RequestID" />
+        <h2>Add Split Values</h2>
+        <div class="row mb-3">
+            <table class="table table-striped">
+                <tr> 
+                    <th>Full Name</th>
+                    <th>R\ship</th>
+                    <th>D.O.B</th>
+                    <th>ID Type</th>
+                    <th>ID</th>
+                    <th>%</th>
+                    <th>Adjust</th>
+                </tr>
+                @if (Model.BeneficiarySharesDT != null)
+                {
+                    @foreach (DataRow DR in Model.BeneficiarySharesDT.Rows)
+                    {
+                        <tr>                            
+                            <td>@DR["FullName"]</td>
+                            <td>@DR["Relationship"]</td>
+                            <td>@DR["DOB"]</td>
+                            <td>@DR["IDType"]</td>
+                            <td>@DR["IDDocument"]</td>
+                            <td>@DR["SplitPercentage"]</td>
+                            <td>
+                                <input type="hidden" name="PBIDS" value="@DR["ID"]" />
+                                <input type="number" name="Shares" value="@DR["SplitPercentage"]" />
+                            </td>
+                        </tr>
+                    }
+                }
+            </table>
+        </div>
+        <div class="row mb-3">
+            <div class="col-md-8">
+            </div>
+            <div class="col-md-2">
+                <button type="submit" asp-page-handler="AddShares" class="btn btn-primary text-end float-end">Update</button>
+            </div>
+            <div class="col-md-2">
+                <button type="submit" asp-route-policyid="@Model.PolicyID" asp-route-id="@Model.MemberID" asp-route-policytypeid="@Model.PolicyTypeID" asp-page-handler="Next" class="btn btn-info">Next>></button>
+            </div>
+        </div>
+    </form>
+</div>  

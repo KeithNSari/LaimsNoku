@@ -1,0 +1,123 @@
+﻿@page
+@using System.Data
+@model LAIMS.Areas.Claims.Pages.ExpensesIndexModel
+@{
+}
+@{
+    Layout = "/Pages/Shared/_LayoutProducts.cshtml";
+}  
+<h1>Claim Expenses</h1> 
+<form id="claimExpensesForm" method="post">
+    <input type="hidden" asp-for="RequestID" />
+    <input type="hidden" asp-for="ProposerID" />
+    <input type="hidden" asp-for="PolicyTypeID" />
+    <input type="hidden" asp-for="PolicyID" />
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Item</th>
+                <th>Price</th>
+                <th>Select</th>
+                <th>Total Price</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (var i = 0; i < Model.ClaimExpenses.Count; i++)
+            {
+                <tr>
+                    <td>@Model.ClaimExpenses[i].ID</td>
+                    <td>@Model.ClaimExpenses[i].Item</td>
+                    <td>@Model.ClaimExpenses[i].Price.ToString("C")</td>
+                    <td>
+                        <input type="checkbox" name="selectedOptions[@i]" value="@Model.ClaimExpenses[i].ID" class="expense-checkbox large-checkbox" data-id="@Model.ClaimExpenses[i].ID" data-price="@Model.ClaimExpenses[i].Price" @(Model.ClaimExpenses[i].IsSelected ? "checked" : "") />
+                        <input type="hidden" name="ClaimExpenses[@i].ID" value="@Model.ClaimExpenses[i].ID" />
+                        <input type="hidden" name="ClaimExpenses[@i].Item" value="@Model.ClaimExpenses[i].Item" />
+                        <input type="hidden" name="ClaimExpenses[@i].Price" value="@Model.ClaimExpenses[i].Price" />
+                    </td>
+                    <td class="total-price bold">@((Model.ClaimExpenses[i].IsSelected ? Model.ClaimExpenses[i].Price : 0).ToString("F2"))</td>
+                </tr>
+            }
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="4" class="text-right"><strong>Overall Total:</strong></td>
+                <td id="overall-total" class="bold">@Model.OverallTotal.ToString("F2")</td>
+            </tr>
+        </tfoot>
+    </table>
+
+    <button type="submit" class="btn btn-primary">Submit Selected Items</button>
+</form>
+<style>
+    .large-checkbox {
+        width: 20px;
+        height: 20px;
+    }
+    .bold {
+        font-weight: bold;
+    }
+</style>
+
+<h2>Unpaid</h2>
+<p>Unpaid entries for the selected batch.</p>
+<hr />
+<table class="table table-hover">
+    <tr>
+        <th>Due Date</th> 
+        <th>Invoice No</th>
+        <th>Currency</th>
+        <th>Amount</th>
+    </tr>
+    @if (Model.UnpaidDT != null)
+    {
+        @foreach (DataRow DR in Model.UnpaidDT.Rows)
+        {
+            <tr>
+                <td>@DR["DueDate"]</td> 
+                <td>@DR["InvoiceNo"]</td>
+                <td>@DR["Currency"]</td>
+                <td>@DR["Amount"]</td>
+            </tr>
+        }
+    }
+</table> 
+@section scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const checkboxes = document.querySelectorAll('.expense-checkbox');
+            const overallTotalCell = document.getElementById('overall-total');
+
+            checkboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', function () {
+                    const price = parseFloat(this.getAttribute('data-price'));
+                    const totalPriceCell = this.closest('tr').querySelector('.total-price');
+
+                    if (this.checked) {
+                        totalPriceCell.textContent = price.toFixed(2);
+                    } else {
+                        totalPriceCell.textContent = '0.00';
+                    }
+
+                    updateOverallTotal();
+                });
+            });
+
+            function updateOverallTotal() {
+                let overallTotal = 0;
+
+                checkboxes.forEach(checkbox => {
+                    if (checkbox.checked) {
+                        overallTotal += parseFloat(checkbox.getAttribute('data-price'));
+                    }
+                });
+
+                overallTotalCell.textContent = overallTotal.toFixed(2);
+            }
+
+            updateOverallTotal(); // Initial calculation on page load
+        });
+    </script>
+}
+
+

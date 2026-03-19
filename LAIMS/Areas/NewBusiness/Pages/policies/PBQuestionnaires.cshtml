@@ -1,0 +1,150 @@
+﻿@page
+@model LAIMS.Areas.NewBusiness.Pages.policies.PBQuestionnairesModel
+@{
+}
+@{
+    Layout = "/Pages/Shared/_LayoutProducts.cshtml";
+}
+<h1>Questionnaires</h1>
+@if (!string.IsNullOrEmpty(ViewData["ErrorMessage"]?.ToString()))
+{
+    <p class="text-danger">@ViewData["ErrorMessage"]</p>
+}
+<div class="nav-wizards-container">
+    <nav class="nav nav-wizards-1 mb-2">
+        <div class="nav-item col">
+            <a class="nav-link completed" asp-page="SelectPolicy" asp-route-id="@Model.MemberID">
+                <div class="nav-no">1</div>
+                <div class="nav-text">Select Policy</div>
+            </a>
+        </div>
+        <div class="nav-item col">
+            <a class="nav-link completed" asp-page="AddDetails" asp-route-id="@Model.MemberID" asp-route-policyid="@Model.PolicyID" asp-route-policyTypeId="@Model.PolicyTypeID">
+                <div class="nav-no">2</div>
+                <div class="nav-text">Add Details</div>
+            </a>
+        </div>
+        <div class="nav-item col">
+            <a class="nav-link completed" asp-page="ivshares" asp-route-id="@Model.MemberID" asp-route-policyid="@Model.PolicyID" asp-route-policyTypeId="@Model.PolicyTypeID">
+                <div class="nav-no">3</div>
+                <div class="nav-text">Split</div>
+            </a>
+        </div>
+        <div class="nav-item col">
+            <a class="nav-link completed" asp-page="documents" asp-route-id="@Model.MemberID" asp-route-policyid="@Model.PolicyID" asp-route-policyTypeId="@Model.PolicyTypeID">
+                <div class="nav-no">4</div>
+                <div class="nav-text">Documents</div>
+            </a>
+        </div>
+        <div class="nav-item col">
+            <a class="nav-link active" href="#">
+                <div class="nav-no">5</div>
+                <div class="nav-text">Questionnaires</div>
+            </a>
+        </div>  
+        <div class="nav-item col">
+            <a class="nav-link disabled" href="#">
+                <div class="nav-no">6</div>
+                <div class="nav-text">Submission</div>
+            </a>
+        </div>
+    </nav>
+</div>
+<hr />
+<div class="row mb-3 rounded">
+    <form method="post" enctype="multipart/form-data">
+        <input type="hidden" asp-for="SourceUrl" />
+        <div class="p-3 bg-white mb-3">
+            @for (var i = 0; i < Model.QuestionnaireResponses.Count; i++)
+            {
+                @if (i > 0 && (@Model.QuestionnaireResponses[i].MemberName != @Model.QuestionnaireResponses[i - 1].MemberName))
+                {
+                    <div class="row mb-3 text-end bg-light">
+                        <h5>Questionnaires for @Model.QuestionnaireResponses[i].MemberName</h5>
+                    </div>
+                }
+                else if (i == 0)
+                {
+                    <div class="row mb-3 text-end bg-light">
+                        <h5>Questionnaires for @Model.QuestionnaireResponses[i].MemberName</h5>
+                    </div>
+                }
+                <div class="row">
+                    <div class="col-md-1">
+                        <span class="file-icon"><i class="far fa-file-image fa-lg text-success"></i></span>
+                    </div>
+                    <div class="col-md-8">
+                        <h6>@Model.QuestionnaireResponses[i].QuestionnaireTitle</h6> 
+                    </div>
+                    @if (Model.QuestionnaireResponses[i].Submitted == 1)
+                    {
+                        <div class="col-md-2">
+                            <span class="text-success">Responded</span><br />
+                            @Model.QuestionnaireResponses[i].SubmittedOn
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="col-md-2 text-danger">
+                            No Response
+                        </div>
+                    }
+                    <div class="col-md-1">
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#qsnModal" data-url="PolicyQuestionnaire?questionnaireId=@Model.QuestionnaireResponses[i].Questionnaire&memberUID=@Model.QuestionnaireResponses[i].MemberUID&ID=@Model.QuestionnaireResponses[i].ID">
+                            Open
+                        </button>
+                    </div> 
+                </div>
+                <hr />
+            }
+        </div>
+        <div class="form-group">
+            <button type="Next" asp-route-policyid="@Model.PolicyID" asp-route-id="@Model.MemberID" asp-route-policytypeid="@Model.PolicyTypeID" asp-page-handler="Next" class="btn btn-info fixed-width-btn float-end">Next>></button>
+        </div>
+    </form>
+</div>
+<!-- Modal -->
+<form method="post">
+<div class="modal" id="qsnModal">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title">Questionnaire</h4>
+                <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
+            </div>
+
+            <!-- Modal Body with iframe -->
+            <div class="modal-body">
+              <iframe id="modalIframe" style="width: 100%; height: 400px; overflow: hidden;"></iframe>
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="modal-footer">
+                 <input type="submit" value="Close" class="btn btn-danger" /> 
+            </div>
+
+        </div>
+    </div>
+</div>
+</form>
+
+@section scripts {
+    <script>
+        $(document).ready(function () {
+            $('#qsnModal').on('show.bs.modal', function (event) {
+                var button = $(event.relatedTarget);
+                var url = button.data('url');
+                $('#modalIframe').attr('src', url);
+            });
+
+        });
+    </script>
+    <script>
+        function closeModal(modalName) {
+            var modal = document.getElementById(modalName);
+            modal.style.display = 'none';
+        }
+    </script>
+}

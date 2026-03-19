@@ -1,0 +1,180 @@
+﻿@page
+@using System.Data
+@model LAIMS.Areas.PaymentCollection.Pages.AllocationSuspenseModel
+@{
+}
+@{
+    Layout = "/Pages/Shared/_LayoutSearch.cshtml";
+}
+<h1>Allocation Suspense</h1>
+<p>To search, enter one of the following: receipt no, invoice no, date paid in the format yyyy-MM-dd, surname space first name, id number, or policy number.</p>
+<hr />
+@if (Model.SearchTerm != null)
+{
+    @if (Model.PaymentsDT != null)
+    {
+        <div class="row mb-3">
+            <h5>@Model.ResultsCount results found for search "@Model.SearchTerm"!</h5>
+           @*  @if ((Model.SearchCriteria == 1) && (Model.PolicyDetailedBalance != null))
+            {
+                <h6>Policy Name: @Model.PolicyDetailedBalance.PolicyName</h6>
+                <h6>Policy Allocation Balance: @Model.PolicyDetailedBalance.PolicyBalance</h6>
+                <h6>Policy Suspense Balance: @Model.PolicyDetailedBalance.SuspenseBalance</h6>
+                <h6>Proposer: @Model.PolicyDetailedBalance.Proposer</h6>
+                <h6>Premium Payer: @Model.PolicyDetailedBalance.PremiumPayer</h6>
+            } *@
+        </div>
+    }
+}
+else
+{
+    <div class="row mb-3">
+        <h5>@Model.ResultsCount item/s!</h5>
+    </div>
+}
+<hr />
+<div class="row mb-3">
+    <table class="table table-hover">
+        <tr>
+            <th>Due Date</th>
+           @*  @if (Model.SearchTerm == null)
+            { *@
+                <th>Proposer</th>
+            @* } *@
+            <th>Invoice No</th>
+            <th>Receipt No</th>
+            <th>Rec. Date</th>
+            <th>Policy</th>
+            <th>Reference</th>
+            <th>Currency</th>
+            <th>Amount</th>
+            <th></th>
+        </tr>
+        @if (Model.PaymentsDT != null)
+        {
+            @foreach (DataRow DR in Model.PaymentsDT.Rows)
+            {
+                <tr>
+                    <td>@DR["DateDue"]</td>
+                    @* @if (Model.SearchTerm == null)
+                    { *@
+                        <td>@DR["MemberName"]</td>
+                    @* } *@
+                    <td>@DR["InvoiceNo"]</td>
+                    <td>@DR["ReceiptNo"]</td>
+                    <td>@DR["DatePaymentReceived"]</td>
+                    <td>@DR["Policies"]</td>
+                    <td>@DR["ReferenceSummary"]</td>
+                    <td>@DR["Currency"]</td>
+                    <td>@DR["TotalAmount"]</td>
+                    <td class="text-end">
+                        <button class="btn btn-primary" onclick="openReversalsModal(@DR["BillingID"],@DR["BatchID"],@DR["PaymentMethodID"],@DR["PaymentID"],@DR["PremiumHeaderID"],@DR["MemberID"],&quot;@DR["Reference"]&quot;,@DR["CurrencyID"],@DR["TotalAmount"],&quot;@DR["PolicyID"]&quot;,&quot;@DR["DatePaymentReceived"]&quot;)">Reverse</button>
+                    </td>
+                </tr>
+            }
+        }
+    </table>
+</div>
+<form method="post">
+    <div class="modal fade" id="ReversalsModal" tabindex="-1" aria-labelledby="ReversalsModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-light">
+                    <h5 class="modal-title" id="ReversalsModalLabel">Reverse Payment</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <h2></h2>
+                    <input type="hidden" id="billid" asp-for="@Model.BillID" />
+                    <input type="hidden" id="batchid" asp-for="SuspenseHeader.BatchID" />
+                    <input type="hidden" id="premiumid" asp-for="@Model.PremiumID" />
+                    <input type="hidden" id="memberid" asp-for="SuspenseHeader.MemberID" />
+                    <input type="hidden" id="policyid" asp-for="SuspenseHeader.PolicyID" />
+                    <input type="hidden" id="paymentMethodid" asp-for="SuspenseHeader.PaymentMethodID" />
+                    <input type="hidden" id="paymentid" asp-for="SuspenseHeader.PaymentID" />
+                    <input type="hidden" id="datepaid" asp-for="SuspenseHeader.PaymentDate" />
+                    <input type="hidden" id="referenceid" asp-for="SuspenseHeader.Reference" />
+                    <input type="hidden" id="currencyid" asp-for="SuspenseHeader.CurrencyID" />
+                    <input type="hidden" id="balance" asp-for="SuspenseHeader.Balance" />
+                    @if (TempData["PostbackSuccess"] != null && (bool)TempData["PostbackSuccess"])
+                    {
+                        <script>
+                            closeModal();
+                        </script>
+                    }
+                    <div class="row mb-3">
+                        <div class="form-group">
+                            <label asp-for="@Model.ReversalReason" class="control-label"><b>Reversal reason</b></label>
+                            <select asp-for="@Model.ReversalReason" class="form-control" aria-required="true" onchange="toggleDiv()">
+                                <option value="">Select Option</option>
+                                <option value=1000>Allocated to Wrong Policy</option>
+                                <option value=1001>Refund</option>
+                            </select>
+                            <span asp-validation-for="@Model.ReversalReason" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="row mb-3" id="correctPolicyDiv" style="display:none">
+                        <div class="form-group">
+                            <label asp-for="@Model.CorrectPolicyNo"><b>Correct Policy No</b></label>
+                            <input asp-for="@Model.CorrectPolicyNo" class="form-control" autocomplete="off" />
+                            <span asp-validation-for="@Model.CorrectPolicyNo" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="form-group">
+                            <label asp-for="@Model.ReversalComment"><b>Comment</b></label>
+                            <textarea asp-for="@Model.ReversalComment" class="form-control" id="commentTextarea" rows="5" cols="50" required></textarea>
+                            <span asp-validation-for="@Model.ReversalComment" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <input type="submit" value="Submit" class="btn btn-primary" />
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+@section scripts
+{
+    <script>
+        function openReversalsModal(billid,batchid,paymentMethodid,paymentid, premiumid, memberid, reference, currencyid, totalamount, policyid, datePaymentReceived) {
+            // console.log("called");
+            // console.log(datePaymentReceived);
+            // console.log("billid:", billid);
+            // console.log("premiumid:", premiumid);
+            // console.log("memberid:", memberid);
+            // console.log("reference:", reference);
+            // console.log("currencyid:", currencyid);
+            // console.log("totalamount:", totalamount);
+            // console.log("policyid:", policyid);
+            // console.log("datePaymentReceived:", datePaymentReceived);
+
+            document.getElementById('billid').value = billid;
+            document.getElementById('batchid').value = batchid;
+            document.getElementById('paymentid').value = paymentid;
+            document.getElementById('paymentMethodid').value = paymentMethodid;
+            document.getElementById('premiumid').value = premiumid;
+            document.getElementById('policyid').value = policyid;
+            document.getElementById('memberid').value = memberid;
+            document.getElementById('referenceid').value = reference;
+            document.getElementById('datepaid').value = datePaymentReceived;
+            document.getElementById('currencyid').value = currencyid;
+            document.getElementById('balance').value = totalamount;
+            // Open the modal
+            $('#ReversalsModal').modal('show');
+        }
+    </script>
+    <script>
+        function toggleDiv() {
+            var ReversalReasonDl = document.getElementById("ReversalReason");
+            var correctPolicyDiv = document.getElementById("correctPolicyDiv");
+            if (ReversalReasonDl.selectedIndex === 1) {
+                correctPolicyDiv.style.display = "block";
+            } else {
+                correctPolicyDiv.style.display = "none";
+            }
+        }
+    </script>
+}

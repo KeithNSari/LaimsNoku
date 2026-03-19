@@ -1,0 +1,118 @@
+﻿@page
+@using System.Data;
+@using Microsoft.AspNetCore.Http.Extensions;
+@model LAIMS.Areas.PolicySetUps.Pages.Products.DocumentsModel
+@{
+}
+@{
+    Layout = "/Pages/Shared/_LayoutProducts.cshtml";
+}
+<h2>Product Application Documents</h2>
+<hr />
+@if (!string.IsNullOrEmpty(ViewData["ErrorMessage"]?.ToString()))
+{
+    <p class="text-danger">@ViewData["ErrorMessage"]</p>
+}
+<div class="bg-light">
+    <h4>Product Name: @Html.DisplayFor(model => model.MyProduct.ProductName)</h4>
+</div>
+<hr />
+<div class="row mb-3">
+    <form method="post">
+        <input type="hidden" asp-for="SourceUrl" />
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label asp-for="MyProductDocument.DocumentID" class="control-label"><b>Document</b></label>
+                <select asp-for="MyProductDocument.DocumentID" class="form-control" asp-items="Model.DocumentsList"></select>
+                <span asp-validation-for="MyProductDocument.DocumentID" class="text-danger"></span>
+            </div>
+            <div class="col-md-6">
+                <label asp-for="MyProductDocument.Optional" class="control-label"><b>Optional/ Required?</b></label>
+                <select asp-for="MyProductDocument.Optional" class="form-control" aria-required="true">
+                    <option value="">Select Option</option>
+                    <option value=0>Required</option>
+                    <option value=1>Optional</option>
+                </select>
+                <span asp-validation-for="MyProductDocument.Optional" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label asp-for="MyProductDocument.ValidationGroup" class="control-label"><b>Validation Group</b></label>
+                <input asp-for="MyProductDocument.ValidationGroup" class="form-control" />
+                <span asp-validation-for="MyProductDocument.ValidationGroup" class="text-danger"></span>
+            </div>
+            <div class="col-md-6">
+                <label asp-for="@Model.LIRoleID" class="control-label"><b>Role</b></label>
+                <select asp-for="@Model.LIRoleID" required class="form-control">
+                    <option value="">Select Option</option>
+                    <option value=0>All</option>
+                    <option value=1>Principal Member</option>
+                    <option value=2>Life Assured</option>
+                    <option value=3>Premium Payer</option>
+                    <option value=4>Proposer</option>
+                    <option value=5>Adult Beneficiary</option>
+                    <option value=6>Minor Beneficiary</option>
+                </select>
+                <span asp-validation-for="@Model.LIRoleID" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label asp-for="@Model.Tested" class="control-label"><b>Tested Business</b></label>
+                <select asp-for="@Model.Tested" required class="form-control">
+                    <option value="">Select Option</option>
+                    <option value=2>All</option>
+                    <option value=0>Untested</option>
+                    <option value=1>Tested</option>
+                </select>
+                <span asp-validation-for="@Model.Tested" class="text-danger"></span>
+            </div>
+            <div class="col-md-6">
+            </div>
+        </div>
+        <div class="form-group">
+            <input type="submit" value="Add Document" class="btn btn-primary" />
+            <a asp-page="./Index" class="btn btn-outline-primary">Back to List</a>
+            <a asp-page="Products" asp-route-id="@Model.MyProduct?.ID" class="btn btn-success">Products</a>
+        </div>
+    </form>
+</div>
+<div class="row mb-3">
+        <h4>Current Entries</h4>
+        <form method="post">
+            <input type="hidden" asp-for="SourceUrl" />
+            <table class="table table-striped">
+                <tr>
+                    <th>Role</th>
+                    <th>Document</th>
+                    <th>Constraint</th>
+                    <th>Group</th>
+                    <th>Tested</th>
+                    <th></th>
+                </tr>
+                @if (Model.DocumentsDT != null)
+                {
+                    @foreach (DataRow DR in Model.DocumentsDT.Rows)
+                    {
+                        <tr>
+                            <td>@DR["Role"]</td>
+                            <td>@DR["Document"]</td>
+                            <td>@DR["OptionalDesc"]</td>
+                            <td>@DR["ValidationGroup"]</td>
+                            <td>@DR["Tested"]</td>
+                            <td class="text-end">
+                                <button type="submit" asp-route-id="@Model.MyProduct?.ID" asp-route-entryno="@DR["ID"]" asp-route-returnUrl="@Request.GetEncodedPathAndQuery()" asp-page-handler="Remove" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to remove this item?');">Remove</button>
+                            </td>
+                        </tr>
+                    }
+                }
+            </table>
+        </form>
+    </div> 
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+} 

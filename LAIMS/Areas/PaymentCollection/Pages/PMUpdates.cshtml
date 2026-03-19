@@ -1,0 +1,489 @@
+﻿@page
+@model LAIMS.Areas.PaymentCollection.Pages.PMUpdatesModel
+@{
+}
+@{
+    Layout = "/Pages/Shared/_LayoutSearch.cshtml";
+}
+@using System.Data;
+<h1>Update Payment Details</h1>
+<p>To search: type in a policy number and press enter!</p>
+<hr />
+@if (Model.SearchTerm != null)
+{
+     @if ((Model.PolicyDT != null) && (Model.ResultsCount > 0))
+     {
+        <div class="row mb-3">
+            <div class="bg-light"> 
+                <h3>Policy: @Model.PolicyName No: @Model.SearchTerm</h3>
+                <hr />
+            </div>
+            <h3>Premium Payer</h3>
+            @if (Model.PremiumPayerID > 0)
+            {
+                <table class="table table-hover">
+                    <tr>
+                        <th class="col-md-2"></th>
+                        <th class="col-md-2"></th>
+                        <th class="col-md-2"></th>
+                        <th class="col-md-2"></th>
+                        <th class="col-md-2"></th>
+                        <th class="col-md-2"></th>
+                        <th class="col-md-2"></th>
+                    </tr>
+                    <tr>
+                        <td><b>First Name:</b></td>
+                        <td>@Model.PremiumPayer.Name1</td>
+                        <td><b>Middle Name:</b></td>
+                        <td>@Model.PremiumPayer.Name2</td>
+                        <td><b>Surname:</b></td>
+                        <td>@Model.PremiumPayer.Name3</td>
+                    </tr>
+                    <tr>
+                        <td><b>Gender:</b></td>
+                        <td>@Model.PremiumPayer.Gender</td>
+                        <td><b>Title:</b></td>
+                        <td>@Model.PremiumPayer.Title</td>
+                        <td><b>Marital Status:</b></td>
+                        <td>@Model.PremiumPayer.MaritalStatus</td>
+                    </tr>
+                    <tr>
+                        <td><b>D.O.B:</b></td>
+                        <td>@Model.PremiumPayer.DOB</td>
+                        <td><b>Birth Country:</b></td>
+                        <td>@Model.PremiumPayer.BirthCountry</td>
+                        <td><b>Place Of Birth:</b></td>
+                        <td>@Model.PremiumPayer.PlaceOfBirth</td>
+                    </tr>
+                    <tr>
+                        <td><b>Citizenship:</b></td>
+                        <td>@Model.PremiumPayer.Country</td>
+                        <td><b>Member No:</b></td>
+                        <td>@Model.PremiumPayer.MemberNo</td>
+                        <td><b>National ID:</b></td>
+                        <td>@Model.PremiumPayer.NationalID</td>
+                    </tr>
+                    <tr>
+                        <td><b>Passport:</b></td>
+                        <td>@Model.PremiumPayer.Passport</td>
+                        <td><b>Birth Certificate:</b></td>
+                        <td>@Model.PremiumPayer.BirthCertificate</td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                </table>
+            }
+            else
+            {
+                <p>No premimum payer has been added to this policy as yet!</p>
+            }
+        </div>
+        <!-- Modal -->
+        <form method="post">
+            <input type="hidden" asp-for="ReturnUrl" />
+            <input type="hidden" asp-for="@Model.SearchTerm" />
+            <div class="modal fade" id="memberModal" tabindex="-1" aria-labelledby="memberModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header bg-light">
+                            <h5 class="modal-title" id="memberModalLabel">Add Premium Payer</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <h2></h2>
+                            @if (TempData["PostbackSuccess"] != null && (bool)TempData["PostbackSuccess"])
+                            {
+                                <script>
+                                    closeModal('memberModal');
+                                </script>
+                            }
+                            <div class="row mb-3">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label asp-for="@Model.IDType" class="control-label"><b>ID Type</b></label>
+                                        <select asp-for="@Model.IDType" class="form-control" aria-required="true">
+                                            <option value="">Select Option</option>
+                                            <option value=1>National ID</option>
+                                            <option value=2>Birth Certificate</option>
+                                            <option value=3>Passport</option>
+                                        </select>
+                                        <span asp-validation-for="@Model.IDType" class="text-danger"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label asp-for="@Model.IDContent"><b>ID</b></label>
+                                        <input asp-for="@Model.IDContent" onpaste="return preventPaste(event)" class="form-control" autocomplete="off" />
+                                        <span asp-validation-for="@Model.IDContent" class="text-danger"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label asp-for="@Model.ConfirmIDContent"><b>Confirm ID</b></label>
+                                        <input asp-for="@Model.ConfirmIDContent" onpaste="return preventPaste(event)" class="form-control" autocomplete="off" />
+                                        <span asp-validation-for="@Model.ConfirmIDContent" class="text-danger"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label asp-for="NewMember.Name1"><b>First Name</b></label>
+                                        <input asp-for="NewMember.Name1" class="form-control" autocomplete="off" />
+                                        <span asp-validation-for="NewMember.Name1" class="text-danger"></span>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label asp-for="NewMember.Name2"><b>Middle Name</b></label>
+                                        <input asp-for="NewMember.Name2" class="form-control" autocomplete="off" />
+                                        <span asp-validation-for="NewMember.Name2" class="text-danger"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label asp-for="NewMember.Name3"><b>Surname</b></label>
+                                        <input asp-for="NewMember.Name3" class="form-control" autocomplete="off" />
+                                        <span asp-validation-for="NewMember.Name3" class="text-danger"></span>
+                                    </div>
+                                </div>
+                                <!-- Add other fields of the NewMember model... -->
+
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label asp-for="NewMember.GenderID"><b>Gender</b></label>
+                                        <select asp-for="NewMember.GenderID" asp-items="Model.GenderList" class="form-control">
+                                            <option value="">Select Gender</option>
+                                        </select>
+                                        <span asp-validation-for="NewMember.GenderID" class="text-danger"></span>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label asp-for="NewMember.TitleID"><b>Title</b></label>
+                                        <select asp-for="NewMember.TitleID" asp-items="Model.TitleList" class="form-control" autocomplete="off">
+                                            <option value="">Select Title</option>
+                                        </select>
+                                        <span asp-validation-for="NewMember.TitleID" class="text-danger"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label asp-for="NewMember.MaritalStatusID"><b>Marital Status</b></label>
+                                        <select asp-for="NewMember.MaritalStatusID" asp-items="Model.MaritalStatiiSelectList" class="form-control" autocomplete="off">
+                                            <option value="">Select Status</option>
+                                        </select>
+                                        <span asp-validation-for="NewMember.MaritalStatusID" class="text-danger"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label asp-for="NewMember.DOB"><b>D.O.B</b></label>
+                                        <input asp-for="NewMember.DOB" type="date" class="form-control" autocomplete="off" />
+                                        <span asp-validation-for="NewMember.DOB" class="text-danger"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label asp-for="NewMember.BirthCountryID"><b>Birth Country</b></label>
+                                        <select asp-for="NewMember.BirthCountryID" asp-items="Model.CountrySelectList" class="form-control">
+                                            <option value="">Select Birth Country</option>
+                                        </select>
+                                        <span asp-validation-for="NewMember.BirthCountryID" class="text-danger"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label asp-for="NewMember.CountryID"><b>Citizenship</b></label>
+                                        <select asp-for="NewMember.CountryID" asp-items="Model.CountrySelectList" class="form-control">
+                                            <option value="">Select Country</option>
+                                        </select>
+                                        <span asp-validation-for="NewMember.CountryID" class="text-danger"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <input type="submit" value="Save Changes" asp-route-policyid="@Model.PolicyID" asp-route-id="@Model.ProposerID" asp-route-policytypeid="@Model.PolicyTypeID" asp-page-handler="AddPremiumPayer" class="btn btn-primary" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+        <div class="row mb-3">
+            <button type="button" class="btn btn-primary float-end mx-2 fixed-width-btn" data-bs-toggle="modal" data-bs-target="#memberModal">
+                Add Premium Payer
+            </button>
+            <button type="button" class="btn btn-success float-end mx-2 fixed-width-btn" data-bs-toggle="modal" data-bs-target="#stopOrderModal">
+                Add Stop Order
+            </button>
+            <button type="button" class="btn btn-info float-end mx-2 fixed-width-btn" data-bs-toggle="modal" data-bs-target="#debitOrderModal">
+                Add Debit Order
+            </button>
+            <button type="button" class="btn btn-secondary float-end mx-2 fixed-width-btn" data-bs-toggle="modal" data-bs-target="#directPaymentModal">
+                Add Direct Payment
+            </button>
+        </div>
+        <hr />
+        <!-- Modal -->
+        <form method="post">
+            <input type="hidden" asp-for="ReturnUrl" />
+            <input type="hidden" asp-for="@Model.PolicyPremiumID" />
+            <input type="hidden" asp-for="@Model.SearchTerm" />
+            <div class="modal fade" id="stopOrderModal" tabindex="-1" aria-labelledby="stopOrderModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header bg-light">
+                            <h5 class="modal-title" id="stopOrderModalLabel">Add Stop Order</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <h2></h2>
+                            @if (TempData["PostbackSuccess"] != null && (bool)TempData["PostbackSuccess"])
+                            {
+                                <script>
+                                    closeModal('stopOrder');
+                                </script>
+                            }
+                            <div class="row mb-3">
+                                <div class="form-group">
+                                    <label asp-for="PolicyPremium.PaymentProviderID" class="control-label"><b>Stop Order Provider</b></label>
+                                    <select asp-for="PolicyPremium.PaymentProviderID" asp-items="Model.StopOrderProviderList" class="form-control" aria-required="true">
+                                        <option value="">Select Option</option>
+                                    </select>
+                                    <span asp-validation-for="PolicyPremium.PaymentProviderID" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label asp-for="PolicyPremium.PaymentFrequencyID" class="control-label"><b>Frequency</b></label>
+                                        <select asp-for="PolicyPremium.PaymentFrequencyID" required class="form-control" aria-required="true">
+                                            <option value="">Select Option</option>
+                                            <option value=1>Monthly</option>
+                                            <option value=2>Quarterly</option>
+                                            <option value=3>Half Yearly</option>
+                                            <option value=4>Annually</option>
+                                            <option value=5>Single Injections</option>
+                                        </select>
+                                        <span asp-validation-for="PolicyPremium.PaymentFrequencyID" class="text-danger"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label asp-for="@Model.Employment.EmploymentNo"><b>Employment No</b></label>
+                                        <input asp-for="@Model.Employment.EmploymentNo" required class="form-control" autocomplete="off" />
+                                        <span asp-validation-for="@Model.Employment.EmploymentNo" class="text-danger"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label asp-for="@Model.Employment.CategoryID"><b>Category</b></label>
+                                        <select asp-for="@Model.Employment.CategoryID" class="form-control" required asp-items="Model.CategoriesList">
+                                            <option value="">Select Category</option>
+                                        </select>
+                                        <span asp-validation-for="@Model.Employment.CategoryID" class="text-danger"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label asp-for="@Model.Employment.JobTitle"><b>Job Title</b></label>
+                                        <input asp-for="@Model.Employment.JobTitle" required class="form-control" autocomplete="off" />
+                                        <span asp-validation-for="@Model.Employment.JobTitle" class="text-danger"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <input type="submit" value="Save Changes" asp-route-policyid="@Model.PolicyID" asp-route-id="@Model.ProposerID" asp-route-policytypeid="@Model.PolicyTypeID" asp-page-handler="AddStopOrder" class="btn btn-primary" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+        <form method="post">
+            <input type="hidden" asp-for="ReturnUrl" />
+            <input type="hidden" asp-for="@Model.PolicyPremiumID" />
+            <input type="hidden" asp-for="@Model.SearchTerm" />
+            <div class="modal fade" id="debitOrderModal" tabindex="-1" aria-labelledby="debitOrderModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header bg-light">
+                            <h5 class="modal-title" id="debitOrderModalLabel">Add Debit Order</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <h2></h2>
+                            @if (TempData["PostbackSuccess"] != null && (bool)TempData["PostbackSuccess"])
+                            {
+                                <script>
+                                    closeModal('debitOrder');
+                                </script>
+                            }
+                            <div class="row mb-3">
+                                <div class="form-group">
+                                    <label asp-for="PolicyPremium.PaymentProviderID" class="control-label"><b>Bank/ Service Provider</b></label>
+                                    <select asp-for="PolicyPremium.PaymentProviderID" required asp-items="Model.DebitOrderProviderList" class="form-control" aria-required="true">
+                                        <option value="">Select Option</option>
+                                    </select>
+                                    <span asp-validation-for="PolicyPremium.PaymentProviderID" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-2">
+                                    <div class="form-group">
+                                        <label asp-for="@Model.BranchCode"><b>Branch Code</b></label>
+                                        <input asp-for="@Model.BranchCode" required class="form-control" autocomplete="off" />
+                                        <span asp-validation-for="@Model.BranchCode" class="text-danger"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-5">
+                                    <div class="form-group">
+                                        <label asp-for="@Model.PremiumPayerAccount"><b>Account</b></label>
+                                        <input asp-for="@Model.PremiumPayerAccount" required class="form-control" autocomplete="off" />
+                                        <span asp-validation-for="@Model.PremiumPayerAccount" class="text-danger"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-5">
+                                    <div class="form-group">
+                                        <label asp-for="@Model.PremiumPayerAccountConfirm"><b>Confirm Account</b></label>
+                                        <input asp-for="@Model.PremiumPayerAccountConfirm" required class="form-control" autocomplete="off" />
+                                        <span asp-validation-for="@Model.PremiumPayerAccountConfirm" class="text-danger"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="form-group col-md-6">
+                                    <label asp-for="PolicyPremium.PaymentFrequencyID" class="control-label"><b>Frequency</b></label>
+                                    <select asp-for="PolicyPremium.PaymentFrequencyID" required class="form-control" aria-required="true">
+                                        <option value="">Select Option</option>
+                                        <option value=1>Monthly</option>
+                                        <option value=2>Quarterly</option>
+                                        <option value=3>Half Yearly</option>
+                                        <option value=4>Annually</option>
+                                        <option value=5>Single Injections</option>
+                                    </select>
+                                    <span asp-validation-for="PolicyPremium.PaymentFrequencyID" class="text-danger"></span>
+                                </div>
+                                <div class="form-group col-sm-2">
+                                    <label asp-for="@Model.BillingDay" class="control-label"><b>Billing Day</b></label>
+                                    <input type="number" asp-for="@Model.BillingDay" min="1" max="31" required class="form-control col-sm-2 float-end" />
+                                    <span asp-validation-for="@Model.BillingDay" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <input type="submit" value="Save Changes" asp-route-policyid="@Model.PolicyID" asp-route-id="@Model.ProposerID" asp-route-policytypeid="@Model.PolicyTypeID" asp-page-handler="AddDebitOrder" class="btn btn-primary" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+        <form method="post">
+            <input type="hidden" asp-for="ReturnUrl" />
+            <input type="hidden" asp-for="@Model.PolicyPremiumID" />
+            <input type="hidden" asp-for="@Model.SearchTerm" />
+            <div class="modal fade" id="directPaymentModal" tabindex="-1" aria-labelledby="directPaymentModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-sm">
+                    <div class="modal-content">
+                        <div class="modal-header bg-light">
+                            <h5 class="modal-title" id="directPaymentModalLabel">Add Stop Order</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <h2></h2>
+                            @if (TempData["PostbackSuccess"] != null && (bool)TempData["PostbackSuccess"])
+                            {
+                                <script>
+                                    closeModal('directPaymentOrder');
+                                </script>
+                            }
+                            <div class="row mb-3">
+                                <label asp-for="PolicyPremium.PaymentFrequencyID" class="control-label"><b>Frequency</b></label>
+                                <select asp-for="PolicyPremium.PaymentFrequencyID" class="form-control" aria-required="true">
+                                    <option value="">Select Option</option>
+                                    <option value=1>Monthly</option>
+                                    <option value=2>Quarterly</option>
+                                    <option value=3>Half Yearly</option>
+                                    <option value=4>Annually</option>
+                                    <option value=5>Single Injections</option>
+                                </select>
+                                <span asp-validation-for="PolicyPremium.PaymentFrequencyID" class="text-danger"></span>
+                            </div>
+                            <div class="row mb-3">  
+                                <label asp-for="@Model.BillingDay" class="control-label"><b>Billing Day</b></label>
+                                <input type="number" asp-for="@Model.BillingDay" min="1" max="31" required class="form-control col-sm-2 float-end" />
+                                <span asp-validation-for="@Model.BillingDay" class="text-danger"></span>  
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <input type="submit" value="Save Changes" asp-route-policyid="@Model.PolicyID" asp-route-id="@Model.ProposerID" asp-route-policytypeid="@Model.PolicyTypeID" asp-page-handler="AddDirectPayment" class="btn btn-primary" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+        @if ((Model.PremiumDetails != null) && (Model.PremiumDetails.Rows.Count > 0))
+        {
+            <h3>Payment Collection Details</h3>
+            DataRow DR = @Model.PremiumDetails.Rows[0];
+            <div class="row">
+                <div class="row mb-3">
+                    <div class="form-group">
+                        <label class="control-label"><b>Bank/ Service Provider</b></label><br />
+                        @DR["PaymentProvider"]
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label><b>Branch Code</b></label><br />
+                            @DR["BranchCode"]
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label><b>Account No</b></label><br />
+                            @DR["BankAccountNo"]
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label><b>Method</b></label><br />
+                            @DR["PaymentMethod"]
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label><b>Frequency</b></label><br />
+                            @DR["PaymentFrequency"]
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label><b>Billing Day</b></label><br />
+                            @Model.BillingDay
+                        </div>
+                    </div> 
+                </div>
+            </div>
+        }
+     }
+    else
+    {
+        <div class="row mb-3">
+            <h5>No policy found with policy number "@Model.SearchTerm"!</h5>
+        </div>
+    }
+  
+}

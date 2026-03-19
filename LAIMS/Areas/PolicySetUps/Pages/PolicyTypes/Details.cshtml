@@ -1,0 +1,260 @@
+﻿@page 
+@using System.Data;
+@{
+    Layout = "/Pages/Shared/_LayoutProducts.cshtml";
+}
+@model LAIMS.Areas.PolicySetUps.Pages.PolicyTypes.DetailsModel
+@{
+}
+<h1>Policy Details</h1>
+@if (!string.IsNullOrEmpty(ViewData["ErrorMessage"]?.ToString()))
+{
+    <p class="text-danger">@ViewData["ErrorMessage"]</p>
+}
+<hr />
+<div>
+    <div class="bg-light">
+        <h4>Policy Name: @Html.DisplayFor(model => model.MyPolicyType.Name)</h4>
+    </div>  
+    <hr />
+    <div class="row">
+        <div class="col-md-6">
+            <table class="table table-hover">
+                <tr>
+                    <th class="col-sm-6">Field</th>
+                    <th class="col-sm-6">Value</th>
+                </tr> 
+                <tr>
+                    <td>
+                        Open For New Business
+                    </td>
+                    <td>
+                        @Html.DisplayFor(model => model.MyPolicyType.OpenForNewBusinessDesc)
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Currency
+                    </td>
+                    <td>
+                        @Html.DisplayFor(model => model.MyPolicyType.CurrencyName)
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Minimum Term
+                    </td>
+                    <td>
+                        @Html.DisplayFor(model => model.MyPolicyType.MinimumTerm)
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Maximum Term
+                    </td>
+                    <td>
+                        @Html.DisplayFor(model => model.MyPolicyType.MaximumTerm)
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Allow Defering Of Maturity Date
+                    </td>
+                    <td>
+                        @Html.DisplayFor(model => model.MyPolicyType.AllowDeferingOfMaturityDateDesc)
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Deferment Notice (Days)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(model => model.MyPolicyType.DefermentNoticePeriod)
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Life Assured Min Age
+                    </td>
+                    <td>
+                        @Html.DisplayFor(model => model.MyPolicyType.LifeAssuredMinAge)
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Life Assured Max Age
+                    </td>
+                    <td>
+                        @Html.DisplayFor(model => model.MyPolicyType.LifeAssuredMaxAge)
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Proposer Min Age
+                    </td>
+                    <td>
+                        @Html.DisplayFor(model => model.MyPolicyType.ProposerMinAge)
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Proposer Max Age
+                    </td>
+                    <td>
+                        @Html.DisplayFor(model => model.MyPolicyType.ProposerMaxAge)
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Premium Payer Min Age
+                    </td>
+                    <td>
+                        @Html.DisplayFor(model => model.MyPolicyType.PremiumPayerMinAge)
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Premium Payer Max Age
+                    </td>
+                    <td>
+                        @Html.DisplayFor(model => model.MyPolicyType.PremiumPayerMaxAge)
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Added By
+                    </td>
+                    <td>
+                        @Html.DisplayFor(model => model.MyPolicyType.AddedBy)
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Added On
+                    </td>
+                    <td>
+                        @Html.DisplayFor(model => model.MyPolicyType.AddedOn)
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div class="col-md-6">
+            <form method="post">
+                <input type="hidden" asp-for="ReturnUrl" />
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="row mb-3">
+                    <h4>Policy Products</h4>                    
+                        <table class="table table-striped">
+                            <tr>
+                            <th>Product</th>
+                            <th>Category</th>
+                            <th>Constraint</th> 
+                            </tr>
+                            @if (Model.ProductsDT != null)
+                            {
+                                @foreach (DataRow DR in Model.ProductsDT.Rows)
+                                {
+                                <tr>
+                                    <td>@DR["Product"]</td>
+                                    <td>@DR["MainDesc"]</td>
+                                    <td>@DR["OptionalDesc"]</td> 
+                                </tr>
+                                }
+                            }
+                        </table> 
+                </div>
+                <div class="row mb-3">
+                    <h4>Policy Application Documents</h4>
+                    <form method="post">
+                        <table class="table table-striped">
+                            <tr>
+                                <th>Document</th>
+                                <th>Constraint</th>
+                                <th>Group</th>
+                            </tr>
+                            @if (Model.DocumentsDT != null)
+                            {
+                                @foreach (DataRow DR in Model.DocumentsDT.Rows)
+                                {
+                                    <tr>
+                                        <td>@DR["Document"]</td>
+                                        <td>@DR["OptionalDesc"]</td>
+                                        <td>@DR["ValidationGroup"]</td>
+                                    </tr>
+                                }
+                            }
+                        </table>
+                    </form>
+                </div>              
+            </form>
+        </div>
+    </div> 
+</div>
+
+<div class="row mb-3">    
+    <h4>Policy Benefits</h4>
+    <hr />
+    <table class="table table-striped">
+        <tr>
+            <th>ID</th>
+            <th>Product</th>
+            <th>Type</th>
+            <th>Min Contribution</th>
+            <th>Min Benefit</th>
+            <th>Max Benefit</th>
+            <th>WP</th>
+            <th>Added On</th> 
+        </tr>
+        @if (Model.BenefitsDT != null)
+        {
+            @foreach (DataRow DR in Model.BenefitsDT.Rows)
+            {
+                <tr>
+                    <td>@DR["ID"]</td>
+                    <td>@DR["Product"]</td>
+                    <td>@DR["TestedBusiness"]</td>
+                    <td>@DR["Contribution"]</td>
+                    <td>@DR["Benefit"]</td>
+                    <td>@DR["MaximumBenefit"]</td>
+                    <td>@DR["DurationUnit"]</td>
+                    <td>@DR["AddedOn"]</td> 
+                </tr>
+            }
+        }
+    </table>
+</div>
+<div class="row mb-3">
+    <h4>Policy Claim Documents</h4>
+    <hr/>
+    <table class="table table-striped">
+        <tr>
+            <th>Product</th>
+            <th>Type</th>
+            <th>Document</th>
+            <th>Constraint</th>
+            <th>Validation Group</th>
+            <th>Added On</th> 
+        </tr>
+        @if (Model.ClaimDocumentsDT != null)
+        {
+            @foreach (DataRow DR in Model.ClaimDocumentsDT.Rows)
+            {
+                <tr>
+                    <td>@DR["Product"]</td>
+                    <td>@DR["TestedBusiness"]</td>
+                    <td>@DR["Document"]</td>
+                    <td>@DR["OptionalDesc"]</td>
+                    <td>@DR["ValidationGroup"]</td>
+                    <td>@DR["AddedOn"]</td> 
+                </tr>
+            }
+        }
+    </table>
+</div>
+<div>
+      <form method="post">
+        <input type="hidden" asp-for="ReturnUrl" />
+        <button type="submit" asp-route-id="@Model.MyPolicyType?.ID" asp-page-handler="Archive" class="btn btn-danger" onclick="return confirm('Are you sure you want to Archive this item?');">Archive</button>
+        <a asp-page="./Index" class="btn btn-outline-primary">Back to List</a>
+      </form>
+</div>

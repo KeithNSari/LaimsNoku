@@ -1,0 +1,107 @@
+﻿@page
+@model LAIMS.Areas.NewBusiness.Pages.policies.test4Model
+@{
+}
+@{
+    Layout = "/Pages/Shared/_LayoutNewBusiness.cshtml";
+}
+<!-- Your main page content -->
+<table class="table" id="dataTable">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Full Name</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        <!-- Example row with hidden values and button -->
+        <tr>
+            <td><input type="hidden" class="rowId" value="1">1</td>
+            <td><input type="hidden" class="rowFullName" value="John Doe">John Doe</td>
+            <td><button type="button" class="btn btn-primary btn-show-modal">Show Modal</button></td>
+        </tr>
+        <tr>
+            <td><input type="hidden" class="rowId" value="3">3</td>
+            <td><input type="hidden" class="rowFullName" value="Jackie">Jackie</td>
+            <td><button type="button" class="btn btn-primary btn-show-modal">Show Modal</button></td>
+        </tr>
+        <!-- Add more rows as needed -->
+    </tbody>
+</table>
+<!-- Your modal -->
+<div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Modal Title</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Display the table in the modal form -->
+                <table class="table">
+                    <thead>
+                        <!-- Assuming column names are known -->
+                        <tr>
+                            <th>Column 1</th>
+                            <th>Column 2</th>
+                            <!-- Add more header columns as needed -->
+                        </tr>
+                    </thead>
+                    <tbody id="modalTableBody">
+                        <!-- Table rows will be dynamically added here -->
+                    </tbody>
+                </table>
+
+                <!-- ... (unchanged form and button) -->
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            // Function to open the modal and fetch data
+            function openModalAndFetchData(rowId, rowFullName) {
+                // Make AJAX request to fetch data based on the row ID
+                $.ajax({
+                    url: 'test4?handler=LoadData',
+                    type: 'GET',
+                    data: { id: rowId },
+                    success: function (data) {
+                        // Clear existing content in the table body
+                        $('#modalTableBody').empty();
+
+                        // Display the fetched data in the modal
+                        if (data && data.length > 0) {
+                            data.forEach(function (row) {
+                                var newRow = '<tr><td>' + (row.column1 || '') + '</td><td>' + (row.column2 || '') + '</td></tr>';
+                                $('#modalTableBody').append(newRow);
+                            });
+
+                            // Show the modal
+                            $('#myModal').modal('show');
+                        } else {
+                            console.log('No data received or data is empty.');
+                        }
+                    },
+                    error: function () {
+                        // Handle error
+                        alert('Failed to fetch data from the server.');
+                    }
+                });
+            }
+
+            // Attach the function to the button click event for each row
+            $(document).on('click', '.btn-show-modal', function () {
+                var row = $(this).closest('tr');
+                var rowId = row.find('.rowId').val();
+                var rowFullName = row.find('.rowFullName').val();
+
+                // Call the function to open the modal and fetch data
+                openModalAndFetchData(rowId, rowFullName);
+            });
+        });
+    </script>
+} 

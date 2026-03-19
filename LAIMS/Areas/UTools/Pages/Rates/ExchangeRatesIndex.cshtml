@@ -1,0 +1,71 @@
+﻿@page
+@using System.Data
+@model LAIMS.Areas.UTools.Pages.Rates.ExchangeRatesIndexModel
+@{
+}
+@{
+    Layout = "/Pages/Shared/_LayoutProducts.cshtml";
+}
+<h2>Exchange Rates</h2>
+
+<form method="post">
+    <div class="row mb-3"> 
+        <div class="col-md-4">
+            <label for="BaseCurrency" class="control-label"><b>Base Currency</b></label>
+            <select asp-for="ExchangeRate.BaseCurrency" asp-items="Model.Currencies" required class="form-control"></select>
+        </div>
+
+        <div class="col-md-4">
+            <label for="OtherCurrency" class="control-label"><b>Other Currency</b></label>
+            <select asp-for="ExchangeRate.OtherCurrency" asp-items="Model.Currencies" required class="form-control"></select>
+        </div>
+
+        <div class="col-md-4">
+            <label for="Value" class="control-label"><b>Exchange Rate Value</b></label>
+            <input asp-for="ExchangeRate.Value" type="number" step="0.0000000001" required class="form-control" />
+        </div>
+    </div>
+    <div class="row mb-3">
+        <div class="col-md-8"></div>
+        <div class="col-md-3">
+            <label for="EffectiveDate" class="control-label"><b>Effective Date</b></label>
+            <input asp-for="ExchangeRate.EffectiveDate" type="date" required class="form-control" />
+        </div>
+        <div class="col-md-1">
+            <br />
+            <input type="submit" value="Add" class="btn btn-primary" />
+        </div>
+    </div>
+</form>
+
+<h3>Latest Exchange Rates</h3>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Entry</th>
+            <th>Base Currency</th>
+            <th>Other Currency</th>
+            <th>Value</th>
+            <th>Effective Date</th>
+            <th>Added By</th>
+            <th>Added On</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.LatestExchangeRates != null)
+        {
+            @foreach (DataRow rate in Model.LatestExchangeRates.Rows)
+            {
+                <tr>
+                    <td>@rate["EntryNo"]</td>
+                    <td>@rate["BaseCurrency"]</td>
+                    <td>@rate["OtherCurrency"]</td>
+                    <td>@rate["Value"]</td>
+                    <td>@rate["EffectiveDate"]</td>
+                    <td>@rate["AddedBy"]</td>
+                    <td>@rate["AddedOn"]</td>
+                </tr>
+            }
+        }       
+    </tbody>
+</table>

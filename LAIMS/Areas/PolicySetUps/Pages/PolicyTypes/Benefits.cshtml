@@ -1,0 +1,119 @@
+﻿@page
+@using System.Data;
+@using Microsoft.AspNetCore.Http.Extensions;
+@model LAIMS.Areas.PolicySetUps.Pages.PolicyTypes.BenefitsModel
+@{
+}
+@{
+    Layout = "/Pages/Shared/_LayoutProducts.cshtml";
+}
+<h2>Policy Name: @Html.DisplayFor(model => model.MyPolicyType.Name)</h2> 
+@if (!string.IsNullOrEmpty(ViewData["ErrorMessage"]?.ToString()))
+{
+    <p class="text-danger">@ViewData["ErrorMessage"]</p>
+}
+<hr /> 
+<div class="row mb-3 border bg-light">
+<form method="post">
+    <input type="hidden" asp-for="ReturnUrl" />
+    <div class="row mb-3">
+        <label asp-for="MyPolicyTypeLinesBenefit.PTLID" class="control-label"><h4>Select Product</h4></label> 
+            <select asp-for="MyPolicyTypeLinesBenefit.PTLID" class="form-control" asp-items="Model.MyProducts"></select> @* onchange="this.form.submit(); *@
+         <span asp-validation-for="MyPolicyTypeLinesBenefit.PTLID" class="text-danger"></span>
+    </div>    
+        <h4>Benefit Ranges</h4>
+        <div class="row mb-3">
+            <hr />
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="row mb-3">
+                <div class="col-sm-4">
+                    <label asp-for="MyPolicyTypeLinesBenefit.Contribution" class="control-label"><b>Minimum Contribution</b>(@Html.DisplayFor(model => model.MyPolicyType.CurrencyName))</label>
+                    <input asp-for="MyPolicyTypeLinesBenefit.Contribution" min="0" required class="form-control" />
+                    <span asp-validation-for="MyPolicyTypeLinesBenefit.Contribution" class="text-danger"></span>
+                </div>
+                <div class="col-sm-4">
+                    <label asp-for="MyPolicyTypeLinesBenefit.Benefit" class="control-label"><b>Minimum Benefit</b>(@Html.DisplayFor(model => model.MyPolicyType.CurrencyName))</label>
+                    <input asp-for="MyPolicyTypeLinesBenefit.Benefit" min="0" required class="form-control" />
+                    <span asp-validation-for="MyPolicyTypeLinesBenefit.Benefit" class="text-danger"></span>
+                </div>
+                <div class="col-sm-4">
+                    <label asp-for="MyPolicyTypeLinesBenefit.MaximumBenefit" class="control-label"><b>Maximum Benefit</b>(@Html.DisplayFor(model => model.MyPolicyType.CurrencyName))</label>
+                    <input asp-for="MyPolicyTypeLinesBenefit.MaximumBenefit" min="0" required class="form-control" />
+                    <span asp-validation-for="MyPolicyTypeLinesBenefit.MaximumBenefit" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-sm-4">
+                    <label asp-for="MyPolicyTypeLinesBenefit.WaitingPeriod" class="control-label"><b>Waiting Period (WP)</b></label>
+                    <input asp-for="MyPolicyTypeLinesBenefit.WaitingPeriod" min="0" class="form-control" />
+                    <span asp-validation-for="MyPolicyTypeLinesBenefit.WaitingPeriod" class="text-danger"></span>
+                </div>
+                <div class="col-sm-4">
+                    <label asp-for="MyPolicyTypeLinesBenefit.WPDurationUnit" class="control-label"><b>Unit</b></label>
+                    <select asp-for="MyPolicyTypeLinesBenefit.WPDurationUnit" class="form-control" aria-required="true">
+                        <option value="">Select Option</option>
+                        <option value=1>Days</option>
+                        <option value=2>Weeks</option>
+                        <option value=3>Months</option>
+                        <option value=4>Years</option>
+                    </select>
+                    <span asp-validation-for="MyPolicyTypeLinesBenefit.WPDurationUnit" class="text-danger"></span>
+                </div>
+                <div class="col-sm-4">
+                    <label asp-for="MyPolicyTypeLinesBenefit.TestedBusiness" class="control-label"><b>Un/Tested Business?</b></label>
+                    <select asp-for="MyPolicyTypeLinesBenefit.TestedBusiness" required class="form-control" aria-required="true">
+                        <option value="">Select Option</option>
+                        <option value=0>Untested</option>
+                        <option value=1>Tested</option> 
+                        <option value=2>All</option>
+                    </select>
+                    <span asp-validation-for="MyPolicyTypeLinesBenefit.TestedBusiness" class="text-danger"></span>
+                </div>
+                
+            </div> 
+            <div class="row">
+                <div class="col-sm-4 float-end">
+                <input type="submit" asp-route-id="@Model.MyPolicyType?.ID" asp-page-handler="SaveBenefit" value="Add Benefit" class="btn btn-primary" />
+                </div>
+            </div>
+           </div>
+</form>
+<form method="post">
+    <input type="hidden" asp-for="ReturnUrl" />
+        <div class="row mb-3">
+            <table class="table table-striped">
+                <tr>
+                    <th>ID</th>
+                    <th>Product</th>
+                    <th>Type</th>
+                    <th>Min Contribution</th>                    
+                    <th>Min Benefit</th>
+                    <th>Max Benefit</th>
+                    <th>WP</th>
+                    <th>Added On</th>
+                    <th></th>
+                </tr>
+                @if (Model.BenefitsDT != null)
+                {
+                    @foreach (DataRow DR in Model.BenefitsDT.Rows)
+                    {
+                        <tr>
+                            <td>@DR["ID"]</td>
+                            <td>@DR["Product"]</td>
+                            <td>@DR["TestedBusiness"]</td>
+                            <td>@DR["Contribution"]</td>
+                            <td>@DR["Benefit"]</td>
+                            <td>@DR["MaximumBenefit"]</td>
+                            <td>@DR["DurationUnit"]</td>
+                            <td>@DR["AddedOn"]</td>
+                            <td class="text-end">
+                                <button type="submit" asp-route-id="@Model.MyPolicyType?.ID" asp-route-entryID="@DR["ID"]" asp-page-handler="RemoveBenefit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to remove this item?');">Archive</button>
+                            </td>
+                        </tr>
+                    }
+                }
+            </table>
+        </div>
+</form> 
+
+    </div> 

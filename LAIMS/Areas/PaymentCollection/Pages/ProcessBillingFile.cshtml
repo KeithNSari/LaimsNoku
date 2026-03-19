@@ -1,0 +1,126 @@
+﻿@page
+@using System.Data
+@model LAIMS.Areas.PaymentCollection.Pages.ProcessBillingFileModel
+@{
+}
+@{
+    Layout = "/Pages/Shared/_LayoutProducts.cshtml";
+}
+<h3>Pay Stop/ Debit Orders</h3>
+<hr />
+ <h4>Provider: @Model.BillingBatch.Provider</h4>
+<hr/>
+<form method="post" enctype="multipart/form-data">  
+    <input type="hidden" id="providerid" asp-for="@Model.BillingBatch.PaymentProviderID" />
+    <input type="hidden" id="paymentMethodid" asp-for="@Model.BillingBatch.PaymentMethodID" />
+    <input type="hidden" id="pccid" asp-for="@Model.PaymentUploadModel.PCCID" />
+    <input type="hidden" id="currency" asp-for="@Model.BillingBatch.Currency" />
+    <input type="hidden" id="currencyid" asp-for="@Model.BillingBatch.CurrencyID" />
+    <input type="hidden" id="batchid" asp-for="@Model.BillingBatch.BatchID" />
+    <div class="row mb-3">
+        <div class="col-md-4 bg-white">
+            <div class="row mb-3">
+                <div class="form-group">
+                    <div class="col-md-10">
+                        <h3>Upload Payment File</h3>
+                        <input class="form-control" multiple="multiple" type="file" asp-for="Upload" />
+                    </div>
+                </div> 
+                <div class="form-group">
+                    <div class="col-md-2">
+                        <input class="btn btn-primary" type="submit" value="Upload File" />
+                    </div>
+                </div>
+            </div>
+            @if (@Model.DT != null)
+            {
+                <div class="row">
+                    <h3>Map fields</h3>                    
+                    <input type="hidden" id="uploadid" asp-for="@Model.PaymentUploadModel.UploadID" />
+                      <hr />
+                    <table class="table table-hover">
+                        <tr>
+                            <th>LCS Field</th>
+                            <th>Upload Field</th>
+                        </tr>
+                        <tr>
+                            <td>Identifier</td>
+                            <td>
+                                <select asp-for="@Model.PaymentUploadModel.IdentityType" class="form-control" aria-required="true">
+                                    <option value="">Select Option</option>
+                                    <option value=0>Policy Number</option>
+                                    <option value=1>Employee Number</option>
+                                    <option value=2>Identity Number</option>
+                                    <option value=3>Bank Account</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Currency</td>
+                            <td>
+                              @Model.BillingBatch.Currency
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Amount</td>
+                            <td>
+                                <select asp-for="@Model.PaymentUploadModel.AmountColumn" asp-items="Model.FieldList" class="form-control">
+                                    <option value="">Select Field</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Reference</td>
+                            <td>
+                                <select asp-for="@Model.PaymentUploadModel.ReferenceColumn" asp-items="Model.FieldList" class="form-control">
+                                    <option value="">Select Field</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Payment Date</td>
+                            <td>
+                                <select asp-for="@Model.PaymentUploadModel.DatePaidColumn" asp-items="Model.FieldList" class="form-control">
+                                    <option value="">Select Field</option>
+                                </select>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="row mb-3">
+                    <input id="SubmitBtn" class="btn btn-primary" type="submit" asp-page-handler="ProcessPayment" value="Process Payments" />
+                </div>
+            }
+        </div>
+        <div class="col-md-8">
+            @if (Model.DT != null)
+            {
+                <table class="table table-hover">
+                    <tr>
+                        @foreach (DataColumn DC in Model.DT.Columns)
+                        {
+                            <th>@DC.ColumnName</th>
+                        }
+                    </tr>
+                    @foreach (DataRow DR in Model.DT.Rows)
+                    {
+                        <tr>
+                            @foreach (DataColumn DC in Model.DT.Columns)
+                            {
+                                <td>@DR[DC.ColumnName]</td>
+                            }
+                        </tr>
+                    }
+                </table>
+            }
+        </div>
+    </div>
+</form>
+@* @section scripts {
+    <script>
+              document.getElementById("SubmitBtn").addEventListener("click", function() {
+          this.disabled = true; // 'this' refers to the clicked button
+          // alert("Processing has started, please do not refresh or close this page!");
+        });
+    </script>
+} *@

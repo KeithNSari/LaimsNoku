@@ -1,0 +1,52 @@
+﻿@page
+@using System.Data
+@model LAIMS.Areas.PaymentCollection.Pages.AdhocDebitOrdersModel
+@{
+}
+@{
+    Layout = "/Pages/Shared/_LayoutProducts.cshtml";
+}
+<h1>Adhoc Debit Order</h1>
+<p>To generate a debit order, select a provider and code then click "Generate".</p>
+<hr />
+ <form method="post">
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <label asp-for="@Model.PaymentProviderID" class="control-label"><b>Stop Order Provider</b></label>
+            <select asp-for="@Model.PaymentProviderID" required asp-items="Model.DebitOrderProviderList" id="paymentProviderDropdown" class="form-control" aria-required="true">
+                <option value="">Select Option</option>
+            </select>
+            <span asp-validation-for="@Model.PaymentProviderID" class="text-danger"></span>
+        </div> 
+        <div class="col-md-2">
+            <label asp-for="@Model.CollectionDate" class="control-label"><b>Collection Due</b></label>
+            <input type="date" asp-for="@Model.CollectionDate" required/>
+        </div>
+        <div class="col-md-2">
+            <br/>
+            <button type="submit" class="btn btn-primary float-end">Generate</button>
+        </div>
+    </div>
+ </form>
+<div class="row mb-3">
+    <table class="table table-hover" >
+        <tr>
+            <th>Date</th>
+            <th>Batch</th>
+            <th>Debit Order</th>            
+            <th class="text-end"></th> 
+        </tr>
+        @if (Model.BatchesDT != null)
+        {
+            @foreach (DataRow DR in Model.BatchesDT.Rows)
+            {
+                <tr>
+                    <td>@DR["DateAdded"]</td>
+                    <td>@DR["BatchID"]</td>
+                    <td>@DR["Debit Order"]</td>                    
+                    <td><a href="/PaymentCollection/AdhocDebitOrders?handler=DownloadCsv&PCCID=@DR["PCCID"]" class="btn btn-primary">Download</a></td>
+                </tr>
+            }
+        }
+    </table>
+</div> 

@@ -1,0 +1,115 @@
+﻿@page
+@using System.Data
+@model LAIMS.Areas.PolicyServicing.Pages.Policies.UpdateStatusModel
+@{
+}
+@{
+    Layout = "/Pages/Shared/_LayoutProducts.cshtml";
+}
+<h1>Update Policy Status</h1>
+<hr />
+<div class="row">
+    <div class="col-md-6">
+        <h3>Policy Owner: @Model.Member.Name3 @Model.Member.Name1</h3>
+    </div>
+    <div class="col-md-6">
+        <h3>National ID: @Model.Member.NationalID</h3>
+    </div>
+</div>
+<hr />
+<div class="row">
+    <div class="col-md-6">
+        <h4>Policy: @Model.Policy.PolicyName</h4>
+    </div>
+    <div class="col-md-6">
+        <h4>Policy No: @Model.Policy.PolicyNo</h4>
+    </div>
+</div>
+<hr />
+<div class="row">
+    <div class="col-md-5">
+        <h4>Currency: @Model.Policy.CurrencyName</h4>
+    </div>
+</div>
+<hr />
+<div class="row mb-3">
+    <form method="post">
+        <input type="hidden" asp-for="@Model.PolicyID" />
+        <input type="hidden" asp-for="@Model.PolicyTypeID" /> 
+        <input type="hidden" asp-for="@Model.MemberID" />
+        <input type="hidden" asp-for="ReturnUrl" />
+        <input type="hidden" asp-for="RequestID" />
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label asp-for="StatusID" class="control-label"><b>Status</b></label>
+                    <select asp-for="StatusID" required asp-items="@(new SelectList(Model.StatiiList, "ID", "Status"))" class="form-control" id="statiiDropdown">
+                        <option value="">Select Option</option>
+                    </select>
+                    <span asp-validation-for="StatusID" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="StatusReasonID" class="control-label"><b>Status Reason</b></label>
+                    <select asp-for="StatusReasonID" id="statusReasonDropdown" class="form-control"></select>
+                    <span asp-validation-for="StatusReasonID" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="EffectiveDate" class="control-label"><b>Effective Date</b></label>
+                    <input type="date" asp-for="EffectiveDate" class="form-control" />
+                    <span asp-validation-for="EffectiveDate" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label asp-for="StatusComment" class="control-label"><b>Comment</b></label>
+                    <textarea asp-for="StatusComment" required class="form-control" id="commentTextarea" rows="5" cols="50" required></textarea>
+                    <span asp-validation-for="StatusComment" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <br />
+                    <button type="submit" class="btn btn-primary float-end">Add Status</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+<div class="row mb-3">
+    <h3>Status History</h3>
+    <table class="table table-hover">
+        <tr>
+            <th class="col-md-3">Status</th>
+            <th class="col-md-4">Comment</th>
+            <th class="col-md-2">Date</th>
+            <th class="col-md-3">Added By</th>
+        </tr>
+        @if (Model.StatiiHistoryDT != null)
+        {
+            @foreach (DataRow DR in Model.StatiiHistoryDT.Rows)
+            {
+                <tr>
+                    <td>@DR["Status"]</td>
+                    <td>@DR["PolicyStatusComment"]</td>
+                    <td>@DR["PolicyStatusDate"]</td>
+                    <td>@DR["UserName"]</td>
+                </tr>
+            }
+        }
+    </table>
+</div>
+@section scripts 
+{
+    <script>
+        $(function () {
+            $("#statiiDropdown").on("change", function () {
+                var statusId = $(this).val();
+                $("#statusReasonDropdown").empty();
+                $("#statusReasonDropdown").append("<option value='0'>Select Reason</option>");
+                $.getJSON(`?handler=ReasonsByStatus&statusid=${statusId}`, (data) => {
+                    $.each(data, function (i, reason) {
+                        $("#statusReasonDropdown").append(`<option value="${reason.reasonID}">${reason.reason}</option>`);
+                    });
+                });
+            });
+        });
+    </script>
+}

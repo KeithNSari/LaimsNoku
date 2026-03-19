@@ -1,0 +1,107 @@
+﻿@page
+@using System.Data
+@model LAIMS.Areas.Investments.Pages.UnitsPLModel
+@{
+} 
+@{
+    Layout = "/Pages/Shared/_LayoutProducts.cshtml";
+}
+<h2>Units Price List</h2>
+@if (!string.IsNullOrEmpty(ViewData["ErrorMessage"]?.ToString()))
+{
+    <p class="text-danger">@ViewData["ErrorMessage"]</p>
+}
+<hr />
+<div class="row mb-3">
+    <form method="post">
+        <input type="hidden" asp-for="ReturnUrl" />
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="row mb-3">
+             <div class="col-md-6">
+                <label asp-for="UnitTrustID" class="control-label"><b>Fund</b></label>
+                <select asp-for="UnitTrustID" class="form-control" asp-items="Model.UnitTrusts" onchange="PassSelectedValue(this)">
+                    <option value="">Select Option</option>
+                </select>
+                <span asp-validation-for="UnitTrustID" class="text-danger"></span>
+             </div>
+            <div class="col-md-4">
+                <label asp-for="UnitsPricesList.EffectiveDate" class="control-label"><b>Effective Date</b></label>
+                <input asp-for="UnitsPricesList.EffectiveDate" type="date" required class="form-control" />
+                <span asp-validation-for="UnitsPricesList.EffectiveDate" class="text-danger"></span>
+            </div>
+   
+        </div>
+        <div class="row mb-3"> 
+            <div class="col-md-2">
+                <label asp-for="UnitsPricesList.CurrencyID" class="control-label"><b>Currency</b></label>
+                <select asp-for="UnitsPricesList.CurrencyID" required class="form-control" asp-items="Model.Currencies">
+                    <option value="">Select Currency</option>
+                </select>
+                <span asp-validation-for="UnitsPricesList.CurrencyID" class="text-danger"></span>
+            </div>
+            <div class="col-md-4">
+                <label asp-for="UnitsPricesList.BidPrice" class="control-label"><b>Bid Price</b></label>
+                <input asp-for="UnitsPricesList.BidPrice" min="0" required class="form-control" />
+                <span asp-validation-for="UnitsPricesList.BidPrice" class="text-danger"></span>
+            </div>
+            <div class="col-md-4">
+                <label asp-for="UnitsPricesList.OfferPrice" class="control-label"><b>Offer Price</b></label>
+                <input asp-for="UnitsPricesList.OfferPrice" min="0" required class="form-control" />
+                <span asp-validation-for="UnitsPricesList.OfferPrice" class="text-danger"></span>
+            </div> 
+        </div>
+        <div class="row mb-3">
+            <div class="col-md-9"></div>
+            <div class="col-md-1">
+                <input type="submit" value="Add" class="btn btn-primary" />
+            </div>
+        </div>
+           
+    </form>
+</div>
+<hr/>
+<div class="row">
+    <form method="post">
+        <input type="hidden" asp-for="ReturnUrl" />
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="row mb-3">
+            <h4>Entries</h4>
+            <table class="table table-striped">
+                <tr>
+                    <th>ID</th>
+                    <th>Currency</th>
+                    <th>Bid Price</th>
+                    <th>Offer Price</th>
+                    <th>Effective Date</th>
+                    <th>Added On</th>
+                    <th>Added By</th>
+                </tr>
+                @if (Model.ComponentsDT.Rows.Count > 0)
+                {
+                    @foreach (DataRow DR in Model.ComponentsDT.Rows)
+                    {
+                        <tr>
+                            <td>@DR["ID"]</td>
+                            <td>@DR["Currency"]</td>
+                            <td>@DR["BidPrice"]</td>
+                            <td>@DR["OfferPrice"]</td>
+                            <td>@DR["EffectiveDate"]</td>
+                            <td>@DR["AddedOn"]</td>
+                            <td>@DR["AddedBy"]</td>
+                        </tr>
+                    }
+                }
+            </table>
+        </div>
+    </form>
+</div>
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        function PassSelectedValue(selectObject) {
+            window.location.href = "unitspl?trustid=" + selectObject.value;
+        }
+    </script>
+} 

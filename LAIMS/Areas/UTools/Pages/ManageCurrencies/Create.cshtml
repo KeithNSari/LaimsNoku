@@ -1,0 +1,88 @@
+﻿@page
+@using System.Data;
+@using Microsoft.AspNetCore.Http.Extensions;
+@model LAIMS.Areas.UTools.Pages.ManageCurrencies.CreateModel
+@{
+}
+@{
+    Layout = "/Pages/Shared/_LayoutProducts.cshtml";
+}
+<h2>Add Currencies</h2>
+@if (!string.IsNullOrEmpty(ViewData["ErrorMessage"]?.ToString()))
+{
+    <p class="text-danger">@ViewData["ErrorMessage"]</p>
+}
+<hr />
+<div class="row">
+    <div class="col-md-5">
+        <form method="post">
+            <input type="hidden" asp-for="ReturnUrl" />
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="mb-3">
+                <label asp-for="Currency.CurrencyName" class="control-label"><b>Currency</b></label>
+                <input asp-for="Currency.CurrencyName" class="form-control" maxlength="50" />
+                <span asp-validation-for="Currency.CurrencyName" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Currency.ShortCode" class="control-label"><b>Short Code</b></label>
+                <input asp-for="Currency.ShortCode" class="form-control" maxlength="10" />
+                <span asp-validation-for="Currency.ShortCode" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Currency.Default" class="control-label"><b>Default?</b></label>
+                <select asp-for="Currency.Default" class="form-control" aria-required="true">
+                    <option value="">Select Option</option>
+                    <option value=0>No</option>
+                    <option value=1>Yes</option> 
+                </select>
+                <span asp-validation-for="Currency.Default" class="text-danger"></span>
+            </div>           
+            <input type="submit" value="Create" class="btn btn-primary" /> 
+        </form>
+    </div>
+    <div class="col-md-7">
+       <div class="card">
+            <div class="card-body">
+                <form method="post">
+                    <input type="hidden" asp-for="ReturnUrl" />
+                    <div class="small text-inverse text-opacity-50 mb-3">
+                        <table class="table">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th scope="col">Currency</th>
+                                    <th scope="col">Short Code</th>
+                                    <th scope="col">Default</th>
+                                    <th scope="col">Added</th>
+                                    <th scope="col"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.CurrenciesDT != null)
+                                {
+                                    @foreach (DataRow DR in Model.CurrenciesDT.Rows)
+                                    {
+                                        <tr>
+                                            <td>@DR["Name"]</td>
+                                            <td>@DR["ShortCode"]</td>
+                                            <td>@DR["Default"]</td>
+                                            <td>@DR["AddedOn"]</td>
+                                            <td class="text-end">
+                                                <a asp-page="Edit" asp-route-id="@DR["ID"]" class="btn btn-outline-primary btn-sm">Edit</a>
+                                                <button type="submit" asp-route-id="@DR["ID"]" asp-page-handler="Remove" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to archive this item?');">Archive</button>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </form>
+            </div>
+        </div> 
+    </div>
+</div>
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    } 
+} 

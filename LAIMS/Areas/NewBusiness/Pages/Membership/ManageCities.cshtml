@@ -1,0 +1,64 @@
+﻿@page
+@model LAIMS.Areas.NewBusiness.Pages.Membership.ManageCitiesModel
+@{
+}
+@{
+    Layout = "/Pages/Shared/_Layout.cshtml";
+}
+<h2>Cascading Dropdown</h2>
+
+<form method="post">
+    <div class="form-group">
+        <label asp-for="SelectedCountry" class="control-label">Country</label>
+        <select asp-for="SelectedCountry" asp-items="@(new SelectList(Model.Countries, "Id", "Name"))" class="form-control" id="countryDropdown"></select>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="SelectedCity" class="control-label">City</label>
+        <select asp-for="SelectedCity" asp-items="@(new SelectList(Model.Cities, "Id", "Name"))" class="form-control" id="cityDropdown"></select>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="CustomCity" class="control-label">Enter City</label>
+        <input asp-for="CustomCity" class="form-control" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            // Event handler for the change event on the country dropdown
+            $("#countryDropdown").change(function () {
+                var countryId = $(this).val();
+
+                // Make an AJAX call to fetch cities based on the selected country
+                $.ajax({
+                    url: "/CascadingDropdown?handler=CitiesByCountry",
+                    type: "GET",
+                    data: { countryId: countryId },
+                    success: function (data) {
+                        // Update the city dropdown with the fetched data
+                        var cityDropdown = $("#cityDropdown");
+                        cityDropdown.empty();
+
+                        // Add default option
+                        cityDropdown.append($("<option>").val("").text("Select City"));
+
+                        // Add cities to the dropdown
+                        $.each(data, function (index, city) {
+                            cityDropdown.append($("<option>").val(city.id).text(city.name));
+                        });
+
+                        // Enable or disable the custom city textbox based on whether a city is selected
+                        $("#CustomCity").prop("disabled", data.length > 0);
+                    },
+                    error: function () {
+                        console.error("Failed to fetch cities.");
+                    }
+                });
+            });
+        });
+    </script>
+}

@@ -1,0 +1,48 @@
+﻿@page
+@using System.Data
+@model LAIMS.Areas.UTools.Pages.Intermediaries.IndexModel
+@{
+} 
+@{
+    Layout = "/Pages/Shared/_LayoutProducts.cshtml";
+}
+<div class="row">
+    <div class="col-7">
+        @if (Model.DT != null)
+        {
+            <table class="table table-striped">
+                <tr>
+                    @foreach(DataColumn DC in Model.DT.Columns)
+                    { 
+                        <th>@DC.ColumnName </th>  
+                    }
+                </tr>
+                @foreach (DataRow DR in Model.DT.Rows)
+                {
+                    <tr>
+                        @for(int i=0; i < Model.DT.Columns.Count; i++)
+                        {
+                            <td>@DR[i]</td>
+                        }                        
+                    </tr>
+                }
+            </table>
+        }
+    </div>
+    <div class="col-5">
+        <form method="post" enctype="multipart/form-data">
+            <div class="form-group">
+                <div class="col-md-10">
+                    <h3>Upload Intemediaries File</h3>
+                    <input class="form-control" multiple="multiple" type="file" asp-for="Upload" />
+                </div>
+            </div>
+            <br />
+            <div class="form-group">
+                <div class="col-md-10">
+                    <input class="btn btn-primary" type="submit" value="Upload File" />
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

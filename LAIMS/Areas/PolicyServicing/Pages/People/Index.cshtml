@@ -1,0 +1,62 @@
+﻿@page
+@using System.Data
+@model LAIMS.Areas.PolicyServicing.Pages.People.IndexModel
+@{
+}
+@{
+    Layout = "/Pages/Shared/_LayoutSearch.cshtml";
+}
+<form method="post">
+    <div class="row">
+        <div class="col-md-10">
+            <h2>Members Search Page</h2>
+            <span class="text-black">To search type in i) surname or ii) first name space surname or iii) other configured ID</span>
+        </div>
+        <div class="col-md-1">
+            <a asp-page="Create" class="btn btn-primary fixed-width-btn">Create New</a>
+        </div>
+    </div>
+</form>
+<hr />
+@if (Model.MembersDT != null)
+{
+    <div class="row mb-3">
+        <h5>@Model.ResultsCount result/s found for search "@Model.SearchTerm"!</h5>
+    </div>
+}
+<div class="row mb-3">
+    <table class="table table-hover">
+        <tr>
+            <th>Title</th>
+            <th>Name 1</th>
+            <th>Name 2</th>
+            <th>Name 3</th> 
+            <th>ID</th> 
+            <th></th>
+            <th></th>
+            <th></th>
+        </tr>
+        @if (Model.MembersDT != null)
+        {
+            @foreach (DataRow DR in Model.MembersDT.Rows)
+            {
+                <tr>
+                    <td>@DR["Title"]</td>
+                    <td>@DR["Name1"]</td>
+                    <td>@DR["Name2"]</td>
+                    <td>@DR["Name3"]</td> 
+                    <td>@DR["NationalID"]</td> 
+                    <td class="text-end">
+                        <a asp-page="Edit" asp-route-id="@DR["UID"]" class="btn btn-info btn-sm">Edit Details</a>
+                    </td>
+                    <td class="text-end">
+                        <a asp-area="NewBusiness" asp-page="/Membership/MemberProfile" asp-route-id="@DR["UID"]" class="btn btn-info btn-sm">Edit Contacts</a>
+                    </td>
+                    <td class="text-end">
+                        <a asp-page="/Deaths/NewRecord" asp-route-id="@DR["UID"]" class="btn btn-danger btn-sm">Death Record</a>
+                    </td>
+                </tr>
+            }
+        }
+    </table>
+</div>

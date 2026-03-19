@@ -1,0 +1,105 @@
+﻿@page
+@model LAIMS.Pages.Lifeproducts.PolicyTypes.PolicyTypeModel
+@{
+}
+<h1>Policy Definition</h1>
+
+<h5>Please enter the policy details below.</h5>
+<hr />
+<div class="row">
+        <form method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="form-group mb-3">
+                <label asp-for="NewPolicyType.Name" class="control-label"></label>
+                <input asp-for="NewPolicyType.Name" class="form-control  col-md-12" />
+                <span asp-validation-for="NewPolicyType.Name" class="text-danger"></span>
+            <div id="nameHelp" class="form-text">Enter the name of the policy.</div>
+            </div>
+           @*  <div class="form-group">
+                <label asp-for="PolicyTypes.Description" class="control-label"></label>
+                <input asp-for="PolicyTypes.Description" class="form-control" />
+                <span asp-validation-for="PolicyTypes.Description" class="text-danger"></span>
+            </div> *@
+        <div class="row mb-3">
+            <div class="col-sm-3">
+                <label asp-for="NewPolicyType.LifeAssuredMinAge" class="control-label">Life Assured Min Age</label>
+                <input asp-for="NewPolicyType.LifeAssuredMinAge" class="form-control" />
+                <span asp-validation-for="NewPolicyType.LifeAssuredMinAge" class="text-danger"></span>
+            </div>
+            <div class="col-sm-3">
+                <label asp-for="NewPolicyType.LifeAssuredMaxAge" class="control-label">Life Assured Max Age</label>
+                <input asp-for="NewPolicyType.LifeAssuredMaxAge" class="form-control" />
+                <span asp-validation-for="NewPolicyType.LifeAssuredMaxAge" class="text-danger"></span>
+            </div>
+            <div class="col-sm-3">
+                <label asp-for="NewPolicyType.ProposerMinAge" class="control-label">Proposer Min Age</label>
+                <input asp-for="NewPolicyType.ProposerMinAge" class="form-control" />
+                <span asp-validation-for="NewPolicyType.ProposerMinAge" class="text-danger"></span>
+            </div>
+            <div class="col-sm-3">
+                <label asp-for="NewPolicyType.ProposerMaxAge" class="control-label">Proposer Max Age</label>
+                <input asp-for="NewPolicyType.ProposerMaxAge" class="form-control" />
+                <span asp-validation-for="NewPolicyType.ProposerMaxAge" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-sm-3">
+                <label asp-for="NewPolicyType.PremiumPayerMinAge" class="control-label">Premium Payer Min Age</label>
+                <input asp-for="NewPolicyType.PremiumPayerMinAge" class="form-control" />
+                <span asp-validation-for="NewPolicyType.PremiumPayerMinAge" class="text-danger"></span>
+            </div>
+            <div class="col-sm-3">
+                <label asp-for="NewPolicyType.PremiumPayerMaxAge" class="control-label">Premium Payer Max Age</label>
+                <input asp-for="NewPolicyType.PremiumPayerMaxAge" class="form-control" />
+                <span asp-validation-for="NewPolicyType.PremiumPayerMaxAge" class="text-danger"></span>
+            </div>
+            <div class="col-sm-3">
+                <label asp-for="NewPolicyType.MinimumTerm" class="control-label">Minimum Term</label>
+                <input asp-for="NewPolicyType.MinimumTerm" class="form-control" />
+                <span asp-validation-for="NewPolicyType.MinimumTerm" class="text-danger"></span>
+            </div>
+            <div class="col-sm-3">
+                <label asp-for="NewPolicyType.MaximumTerm" class="control-label">Maximum Term</label>
+                <input asp-for="NewPolicyType.MaximumTerm" class="form-control" />
+                <span asp-validation-for="NewPolicyType.MaximumTerm" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-sm-4">
+                <label asp-for="NewPolicyType.OpenForNewBusiness" class="control-label">Open For New Business</label>
+                <select asp-for="NewPolicyType.OpenForNewBusiness" class="form-control" aria-required="true">
+                    <option value="">Select Option</option>
+                    <option value=0>Closed</option>
+                    <option value=1>Open</option>
+                </select>
+                <span asp-validation-for="NewPolicyType.OpenForNewBusiness" class="text-danger"></span>
+            </div>
+            <div class="col-sm-4">
+                <label asp-for="NewPolicyType.CurrencyID" class="control-label">Currency</label>
+                <select asp-for="NewPolicyType.CurrencyID" class="form-control" asp-items="Model.Currencies"></select>
+                <span asp-validation-for="NewPolicyType.CurrencyID" class="text-danger"></span>
+            </div>
+        </div>     
+
+        <div class="row mb-3">
+            <div class="col-sm-4">
+                <label asp-for="NewPolicyType.AllowDeferingOfMaturityDate" class="control-label">Defering Of Maturity Date</label>
+                <select asp-for="NewPolicyType.AllowDeferingOfMaturityDate" class="form-control" aria-required="true">
+                    <option value="">Select Option</option>
+                    <option value=0>Do not allow</option>
+                    <option value=1>Allow</option>
+                </select>
+                <span asp-validation-for="NewPolicyType.AllowDeferingOfMaturityDate" class="text-danger"></span>
+            </div>
+            <div class="col-sm-2">
+                <label asp-for="NewPolicyType.DefermentNoticePeriod" class="control-label">Notice Period</label>
+                <input asp-for="NewPolicyType.DefermentNoticePeriod" class="form-control" />
+                <span asp-validation-for="NewPolicyType.DefermentNoticePeriod" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="form-group">
+           <input type="submit" value="Create" class="btn btn-primary" />
+           <a class="btn btn-success" asp-page="Index"> View Full List</a>
+        </div>
+        </form> 
+</div>

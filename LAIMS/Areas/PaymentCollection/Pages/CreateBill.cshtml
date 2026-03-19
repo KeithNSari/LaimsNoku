@@ -1,0 +1,200 @@
+﻿@page
+@using System.Data
+@model LAIMS.Areas.PaymentCollection.Pages.CreateBillModel
+@{
+}
+@{
+    Layout = "/Pages/Shared/_LayoutSearch.cshtml";
+}
+<h1>Adhoc Billing</h1>
+<p>Search for the required policy in the text box above. Type the policy number or surname and click enter.</p>
+<hr />
+@if (Model.SearchTerm != null)
+{
+    @if (Model.PoliciesDT != null)
+    {
+        <div class="row mb-3">
+            <h5>@Model.ResultsCount result/s found for search "@Model.SearchTerm"!</h5>
+        </div>
+    }
+    <hr />
+}
+@if (!string.IsNullOrEmpty(ViewData["ErrorMessage"]?.ToString()))
+{
+    <h3 class="text-danger">@ViewData["ErrorMessage"]</h3>
+}
+<div class="row mb-3"> 
+        <table class="table table-hover">
+            <tr>
+                <th>Entry </th>
+                <th>Commencement</th>
+                <th>Policy No</th>
+                <th>Policy</th>
+                <th>Status</th>
+                <th>Status Date</th>
+                <th></th>
+            </tr>
+            @if (Model.PoliciesDT != null)
+            {
+                @foreach (DataRow DR in Model.PoliciesDT.Rows)
+                {
+                    <tr>
+                        <td>@DR["EntryNo"]</td>
+                        <td>@DR["CommencementDate"]</td>
+                        <td>@DR["PolicyNo"]</td>
+                        <td>@DR["PolicyTypeName"]</td>
+                        <td>@DR["Status"]</td>
+                        <td>@DR["PolicyStatusDate"]</td>
+                        <td class="text-end">
+                        <button class="btn btn-primary" onclick="openBillingModal(&quot;@DR["ID"]&quot;,&quot;@DR["PolicyNo"]&quot;,@DR["MemberID"])">Bill</button>
+                        </td>
+                    </tr>
+                }
+            }
+        </table> 
+</div>
+<form method="post">
+    <div class="modal fade" id="BillingModal" tabindex="-1" aria-labelledby="BillingModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-light">
+                    <h5 class="modal-title" id="BillingModalLabel">Bill Client</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <h2></h2>
+                    <input type="hidden" id="policyid" asp-for="@Model.PolicyID" />
+                    <input type="hidden" id="policyno" asp-for="@Model.PolicyNo" />
+                    <input type="hidden" id="memberId" asp-for="@Model.MemberID" />
+                    @if (TempData["PostbackSuccess"] != null && (bool)TempData["PostbackSuccess"])
+                    {
+                        <script>
+                            closeModal();
+                        </script>
+                    }
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="@Model.PaymentMethod" class="control-label"><b>Payment Method</b></label>
+                                <select asp-for="@Model.PaymentMethod" class="form-control" aria-required="true" onchange="toggleDiv()">
+                                    <option value="">Select Option</option>
+                                    <option value=1>Debit Order</option>
+                                    <option value=3>Direct Payment</option>
+                                </select>
+                                <span asp-validation-for="@Model.PaymentMethod" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="@Model.BillDate" class="control-label"><b>Due Date</b></label>
+                                <input type="date" asp-for="@Model.BillDate" class="form-control" />
+                                <span asp-validation-for="@Model.BillDate" class="text-danger"></span>
+                            </div>
+                        </div>
+                       
+                    </div>
+                    <div id="debitOrderDiv" style="display: none;" class="row mb-3">
+                        <div class="row mb-3">
+                            <div class="form-group">
+                                <label asp-for="@Model.PaymentProviderID" class="control-label"><b>Bank/ Service Provider</b></label>
+                                <select asp-for="@Model.PaymentProviderID" asp-items="Model.DebitOrderProviderList" class="form-control" aria-required="true">
+                                    <option value="">Select Option</option>
+                                </select>
+                                <span asp-validation-for="@Model.PaymentProviderID" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <label asp-for="@Model.BranchCode"><b>Branch Code</b></label>
+                                    <input asp-for="@Model.BranchCode" class="form-control" autocomplete="off" />
+                                    <span asp-validation-for="@Model.BranchCode" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-5">
+                                <div class="form-group">
+                                    <label asp-for="@Model.PremiumPayerAccount"><b>Account</b></label>
+                                    <input asp-for="@Model.PremiumPayerAccount" class="form-control" autocomplete="off" />
+                                    <span asp-validation-for="@Model.PremiumPayerAccount" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-5">
+                                <div class="form-group">
+                                    <label asp-for="@Model.PremiumPayerAccountConfirm"><b>Confirm Account</b></label>
+                                    <input asp-for="@Model.PremiumPayerAccountConfirm" class="form-control" autocomplete="off" />
+                                    <span asp-validation-for="@Model.PremiumPayerAccountConfirm" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <h5 id="billingHistory">Billing History</h5>
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Invoice No</th>
+                                <th>Currency</th>
+                                <th>Amount</th>
+                                <th>Paid</th> 
+                                <th>Date Due</th>
+                            </tr>
+                        </thead>
+                        <tbody id="modalTableBody">
+                            <!-- Table rows will be dynamically added here -->
+                        </tbody>
+                    </table>
+                </div>            
+                <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <input type="submit" value="Bill Client" class="btn btn-primary" />
+            </div>
+            </div>
+        </div>
+    </div>
+</form>
+@* <a href="/PaymentCollection/CreateBill?handler=DownloadCsv">Download CSV</a> *@
+@section scripts
+{
+    <script>
+        function openBillingModal(policyid,policyno,memberId) {            
+            document.getElementById('policyid').value = policyid;
+            document.getElementById('policyno').value = policyno;
+            document.getElementById('memberId').value = memberId;
+            $.ajax({  
+                url: '/PaymentCollection/CreateBill?handler=LoadHistory',
+                type: 'GET',
+                data: { policyno: policyno },
+                success: function (data) {
+                    // Clear existing content in the table body
+                    $('#modalTableBody').empty();
+                    // Display the fetched data in the modal
+                    if (data && data.length > 0) { 
+                        data.forEach(function (row) {
+                            var newRow = '<tr><td>' + (row.invoiceNo || '') + '</td><td>' + (row.currency || '') + '</td><td>' + (row.billedAmount || '') + '</td><td>' + (row.paid || '') + '</td><td>' + (row.dateDue || '') + '</td></tr>';
+                            $('#modalTableBody').append(newRow);
+                        });                        
+                    } else {
+                        document.getElementById('billingHistory').value = "No prior bills ";
+                    }
+                    // Open the modal
+                    $('#BillingModal').modal('show');
+                },
+                error: function () {
+                    // Handle error
+                    //alert('Failed to fetch data from the server.');
+                    $('#BillingModal').modal('show');
+                }
+            }); 
+        }
+    </script> 
+    <script>
+        function toggleDiv() { 
+            var paymentMethodDl = document.getElementById("PaymentMethod");
+            var debitOrderDiv = document.getElementById("debitOrderDiv");
+            if (paymentMethodDl.selectedIndex === 1) {  
+                debitOrderDiv.style.display = "block";
+            } else {
+                debitOrderDiv.style.display = "none";
+            }
+        }
+    </script>
+}

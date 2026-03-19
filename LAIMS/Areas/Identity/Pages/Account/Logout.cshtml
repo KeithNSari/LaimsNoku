@@ -1,0 +1,26 @@
+﻿@page
+@{
+    Layout = "/Pages/Shared/_LayoutLogin.cshtml";
+}
+@model LogoutModel 
+<div class="login-content">
+    <header>
+        <h1 class="text-center">Confirm Log Out</h1>
+        @{
+            if (User.Identity?.IsAuthenticated ?? false)
+            {
+                <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" method="post">
+                    <button type="submit" class="btn btn-theme btn-lg d-block w-100 fw-500 mb-3">
+                        Click here to Logout
+                    </button>
+                </form>
+            }
+            else
+            {
+                <p>You have successfully logged out of the application.</p>
+            }
+        }
+    </header>
+    <a class="btn btn-success btn-lg d-block w-100 fw-500 mb-3" asp-area="" asp-page="/Index">Back</a>
+</div>
+

@@ -1,0 +1,153 @@
+﻿@page
+@using System.Data
+@model LAIMS.Areas.PaymentCollection.Pages.PolicySuspenseModel
+@{
+}
+@{
+    Layout = "/Pages/Shared/_LayoutSearch.cshtml";
+}
+<h1>Policy Suspense</h1>
+<p>To search, enter one of the following: receipt no, invoice no, date paid in the format yyyy-MM-dd, surname space first name, id number, or policy number.</p>
+<hr />
+@if (Model.SearchTerm != null)
+{
+    <div class="row mb-3">
+        <h5>@Model.ResultsCount result/s found for search "@Model.SearchTerm"!</h5>
+       @*  @if ((Model.SearchCriteria == 1) &&(Model.PolicyDetailedBalance!=null))
+        {
+            <h6>Policy Name: @Model.PolicyDetailedBalance.PolicyName</h6>
+            <h6>Policy Allocation Balance: @Model.PolicyDetailedBalance.PolicyBalance</h6>
+            <h6>Policy Suspense Balance: @Model.PolicyDetailedBalance.SuspenseBalance</h6>
+            <h6>Proposer: @Model.PolicyDetailedBalance.Proposer</h6>
+            <h6>Premium Payer: @Model.PolicyDetailedBalance.PremiumPayer</h6>
+        } *@
+    </div>
+}
+else
+{
+    <div class="row mb-3">
+        <h5>@Model.ResultsCount item/s!</h5>
+    </div>
+}
+<hr />
+<div class="row mb-3">
+    <table class="table table-hover">
+        <tr>
+            <th>Paid</th>
+            <th>Application</th>
+            <th>Policy</th>@* 
+            @if (Model.SearchTerm == null)
+            { *@
+                <th>Proposer</th>@* 
+            }  *@                       
+            <th>Method</th>
+            <th>Reference</th>
+            <th>Currency</th>
+            <th>Balance</th>          
+            <th></th>
+        </tr>
+        @if (Model.PaymentsDT != null)
+        {
+            @foreach (DataRow DR in Model.PaymentsDT.Rows)
+            {
+                <tr>
+                    <td>@DR["PaymentDate"]</td>
+                    <td>@DR["ApplicationNo"]</td>
+                    <td>@DR["PolicyNo"]</td>@* 
+                    @if (Model.SearchTerm == null)
+                    { *@
+                        <td>@DR["MemberName"]</td>
+                    @* } *@                                  
+                    <td>@DR["Method"]</td>
+                    <td>@DR["Reference"]</td>
+                    <td>@DR["Currency"]</td>
+                    <td>@DR["Balance"]</td>                 
+                    <td class="text-end">
+                        <button class="btn btn-primary" onclick="openReversalsModal(@DR["SuspenseHeaderID"],@DR["BatchID"],@DR["CurrencyID"],@DR["Balance"])">Reversal</button>
+                    </td>
+                </tr>
+            }
+        }
+    </table>
+</div> 
+
+<form method="post">
+    <div class="modal fade" id="ReversalsModal" tabindex="-1" aria-labelledby="ReversalsModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-light">
+                    <h5 class="modal-title" id="ReversalsModalLabel">Reverse Payment</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <h2></h2>
+                    <input type="hidden" id="suspenseHeaderid" asp-for="SuspenseHeader.ID" /> 
+                    <input type="hidden" id="currencyid" asp-for="SuspenseHeader.CurrencyID" />
+                    <input type="hidden" id="balance" asp-for="SuspenseHeader.Balance" />
+                    <input type="hidden" id="batchid" asp-for="SuspenseHeader.BatchID" />
+                    @if (TempData["PostbackSuccess"] != null && (bool)TempData["PostbackSuccess"])
+                    {
+                        <script>
+                            closeModal();
+                        </script>
+                    }
+                    <div class="row mb-3">
+                        <div class="form-group">
+                            <label asp-for="ReversalHeader.ReversalReason" class="control-label"><b>Reversal reason</b></label>
+                            <select asp-for="ReversalHeader.ReversalReason" class="form-control" aria-required="true" onchange="toggleDiv()">
+                                <option value="">Select Option</option>
+                                <option value=1000>Allocated to Wrong Policy</option>
+                                <option value=1001>Refund</option>
+                            </select>
+                            <span asp-validation-for="ReversalHeader.ReversalReason" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="row mb-3" id="correctPolicyDiv" style="display:none">
+                        <div class="form-group">
+                            <label asp-for="@Model.CorrectPolicyNo"><b>Correct Policy No</b></label>
+                            <input asp-for="@Model.CorrectPolicyNo" class="form-control" autocomplete="off" />
+                            <span asp-validation-for="@Model.CorrectPolicyNo" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="form-group">
+                            <label asp-for="ReversalHeader.ReversalComment"><b>Comment</b></label>
+                            <textarea asp-for="ReversalHeader.ReversalComment" class="form-control" id="commentTextarea" rows="5" cols="50" required></textarea>
+                            <span asp-validation-for="ReversalHeader.ReversalComment" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <input type="submit" value="Submit" class="btn btn-primary" />
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+@section scripts
+{
+    <script>
+        function openReversalsModal(suspenseHeaderid, batchid, currencyid, balance) {
+            document.getElementById('suspenseHeaderid').value = suspenseHeaderid;
+            document.getElementById('balance').value = balance;
+            document.getElementById('batchid').value = batchid;
+            document.getElementById('currencyid').value = currencyid;
+            // Open the modal
+            $('#ReversalsModal').modal('show');
+        }
+    </script>
+    <script>
+        function toggleDiv() {
+            var ReversalReasonDl = document.getElementById("ReversalHeader_ReversalReason");
+            var correctPolicyDiv = document.getElementById("correctPolicyDiv");
+            if (ReversalReasonDl.selectedIndex === 1) {
+                correctPolicyDiv.style.display = "block";
+            } 
+            else 
+            {
+                correctPolicyDiv.style.display = "none";
+            }
+        }
+    </script>
+}

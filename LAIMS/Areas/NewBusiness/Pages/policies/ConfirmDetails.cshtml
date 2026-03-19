@@ -1,0 +1,252 @@
+﻿@page
+@using System.Data
+@model LAIMS.Areas.NewBusiness.Pages.policies.ConfirmDetailsModel
+@{
+}
+@{
+    Layout = "/Pages/Shared/_LayoutNewBusiness.cshtml";
+}
+<h1>Confirm Details</h1>
+<div> 
+    <h3>Policy: @Model.PolicyName</h3> 
+    <hr/>
+</div>
+<div class="row mb-3">
+    <h3 class="bg-info">Proposer</h3>
+    <table class="table table-hover">
+        <tr>
+            <th class="col-md-2"></th>
+            <th class="col-md-2"></th>
+            <th class="col-md-2"></th>
+            <th class="col-md-2"></th>
+            <th class="col-md-2"></th>
+            <th class="col-md-2"></th>
+            <th class="col-md-2"></th>
+        </tr>
+        <tr>
+            <td><b>First Name:</b></td>
+            <td>@Model.Proposer.Name1</td>
+            <td><b>Middle Name:</b></td>
+            <td>@Model.Proposer.Name2</td>
+            <td><b>Surname:</b></td>
+            <td>@Model.Proposer.Name3</td>
+        </tr>
+        <tr>
+            <td><b>Gender:</b></td>
+            <td>@Model.Proposer.Gender</td>
+            <td><b>Title:</b></td>
+            <td>@Model.Proposer.Title</td>
+            <td><b>Marital Status:</b></td>
+            <td>@Model.Proposer.MaritalStatus</td>
+        </tr>
+        <tr>
+            <td><b>D.O.B:</b></td>
+            <td>@Model.Proposer.DOB</td>
+            <td><b>Birth Country:</b></td>
+            <td>@Model.Proposer.BirthCountry</td>
+            <td><b>Place Of Birth:</b></td>
+            <td><@Model.Proposer.PlaceOfBirth</td>
+        </tr>
+        <tr>
+            <td><b>Citizenship:</b></td>
+            <td>@Model.Proposer.Country</td>
+            <td><b>Proposer No:</b></td>
+            <td>@Model.Proposer.MemberNo</td>
+            <td><b>National ID:</b></td>
+            <td>@Model.Proposer.NationalID</td>
+        </tr>
+        <tr>
+            <td><b>Passport:</b></td>
+            <td>@Model.Proposer.Passport</td>
+            <td><b>Birth Certificate:</b></td>
+            <td>@Model.Proposer.BirthCertificate</td>
+            <td></td>
+            <td></td>
+        </tr>
+    </table>
+</div>
+<div class="row mb-3">
+    <h2 class="bg-info">Beneficiary List</h2>
+    <div class="row mb-3">
+        <table class="table table-striped">
+            <tr>
+                <th>Role</th>
+                <th>Full Name</th>
+                <th>Relationship</th>
+                <th>D.O.B</th>
+                <th>ID Type</th>
+                <th>ID</th> 
+            </tr>
+            @if (Model.BeneficiariesDT != null)
+            {
+                @foreach (DataRow DR in Model.BeneficiariesDT.Rows)
+                {
+                    <tr>
+                        <td>@DR["Role"]</td>
+                        <td>@DR["FullName"]</td>
+                        <td>@DR["Relationship"]</td>
+                        <td>@DR["DOB"]</td>
+                        <td>@DR["IDType"]</td>
+                        <td>@DR["IDDocument"]</td> 
+                    </tr>
+                }
+            }
+        </table>
+    </div>
+</div>
+<div class="row mb-3">
+    <h2 class="bg-info">Beneficiary Detailed List</h2>
+    @if(Model.BeneficiaryDetailedDT !=null)
+    {
+        @foreach (DataRow DR in Model.BeneficiaryDetailedDT.Rows)
+        {
+            <h4>@DR["Name3"] @DR["Name2"] @DR["Name1"]</h4>
+            <table class="table table-hover">
+                <tr>
+                    <th class="col-md-2"></th>
+                    <th class="col-md-2"></th>
+                    <th class="col-md-2"></th>
+                    <th class="col-md-2"></th>
+                    <th class="col-md-2"></th>
+                    <th class="col-md-2"></th>
+                    <th class="col-md-2"></th>
+                </tr>
+                <tr>
+                    <td><b>Gender:</b></td>
+                    <td>@DR["Gender"]</td>
+                    <td><b>Title:</b></td>
+                    <td>@DR["Title"]</td>
+                    <td><b>Marital Status:</b></td>
+                    <td>@DR["MaritalStatus"]</td>
+                </tr>
+                <tr>
+                    <td><b>D.O.B:</b></td>
+                    <td>@DR["DOB"]</td>
+                    <td><b>Birth Country:</b></td>
+                    <td>@DR["BirthCountry"]</td>
+                    <td><b>Place Of Birth:</b></td>
+                    <td>@DR["PlaceOfBirth"]</td>
+                </tr>
+                <tr>
+                    <td><b>Citizenship:</b></td>
+                    <td>@DR["Country"]</td>
+                    <td><b>Member No:</b></td>
+                    <td>@DR["MemberNo"]</td>
+                    <td><b>National ID:</b></td>
+                    <td>@DR["NationalID"]</td>
+                </tr>
+                <tr>
+                    <td><b>Passport:</b></td>
+                    <td>@DR["Passport"]</td>
+                    <td><b>Birth Certificate:</b></td>
+                    <td>@DR["BirthCertificate"]</td>
+                    <td></td>
+                    <td></td>
+                </tr>
+            </table>
+        }
+    }
+</div>
+<div class="row md-3">
+    <h2 class="bg-info">Beneficiary Cover</h2> 
+    <div class="row mb-3"> 
+            @for (var i = 0; i < Model.PolicyBeneficiaryLineDetails.Count; i++)
+            {
+                var beneficiary = Model.PolicyBeneficiaryLineDetails[i];
+                @if (i > 0 && (@Model.PolicyBeneficiaryLineDetails[i].Product != @Model.PolicyBeneficiaryLineDetails[i - 1].Product))
+                {
+                    <h5>@beneficiary.Product</h5>
+                }
+                else if (i == 0)
+                {
+                    <h5>@beneficiary.Product</h5>
+                }
+                <div>
+                    @if (i > 0 && (@Model.PolicyBeneficiaryLineDetails[i].Product != @Model.PolicyBeneficiaryLineDetails[i - 1].Product))
+                    {
+                        <div class="row">
+                            <div class="col-md-1"><b>LineID</b></div>
+                            <div class="col-md-2"><b>Full Name</b></div>
+                            <div class="col-md-1"><b>R/ship</b></div>
+                            <div class="col-md-1"><b>DOB</b></div>
+                            <div class="col-md-1"><b>IDType</b></div>
+                            <div class="col-md-2"><b>ID</b></div>
+                            <div class="col-md-2"><b>Premium</b></div>
+                            <div class="col-md-2"><b>Cover</b></div>
+                        </div>
+                        <hr />
+                    }
+                    else if (i == 0)
+                    {
+                        <div class="row">
+                            <div class="col-md-1"><b>LineID</b></div>
+                            <div class="col-md-2"><b>Full Name</b></div>
+                            <div class="col-md-1"><b>R/ship</b></div>
+                            <div class="col-md-1"><b>DOB</b></div>
+                            <div class="col-md-1"><b>IDType</b></div>
+                            <div class="col-md-2"><b>ID</b></div>
+                            <div class="col-md-2"><b>Premium</b></div>
+                            <div class="col-md-2"><b>Cover</b></div>
+                        </div>
+                        <hr />
+                    }
+                    @if (i % 2 == 0)
+                    {
+                        <div class="row bg-light">
+                            <div class="col-md-1">
+                                <input type="hidden" asp-for="@Model.PolicyBeneficiaryLineDetails[i].LineId" />
+                                @beneficiary.LineId
+                            </div>
+                            <div class="col-md-2">@beneficiary.FullName</div>
+                            <div class="col-md-1">@beneficiary.Relationship</div>
+                            <div class="col-md-1">@beneficiary.DOB.ToShortDateString()</div>
+                            <div class="col-md-1">@beneficiary.IDType</div>
+                            <div class="col-md-2">@beneficiary.ID</div>
+                            <div class="col-md-2">@Model.PolicyBeneficiaryLineDetails[i].Premium </div> 
+                            <div class="col-md-2">@Model.PolicyBeneficiaryLineDetails[i].Cover</div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="row">
+                            <div class="col-md-1">
+                                <input type="hidden" asp-for="@Model.PolicyBeneficiaryLineDetails[i].LineId" />
+                                @beneficiary.LineId
+                            </div>
+                            <div class="col-md-2">@beneficiary.FullName</div>
+                            <div class="col-md-1">@beneficiary.Relationship</div>
+                            <div class="col-md-1">@beneficiary.DOB.ToShortDateString()</div>
+                            <div class="col-md-1">@beneficiary.IDType</div>
+                            <div class="col-md-2">@beneficiary.ID</div>
+                            <div class="col-md-2">@Model.PolicyBeneficiaryLineDetails[i].Premium </div>
+                            <div class="col-md-2">@Model.PolicyBeneficiaryLineDetails[i].Cover</div>
+                        </div>
+                    }
+
+                </div>
+                <br />
+            }
+            <hr/>
+        <div class="row">
+                <div class="col-md-8">
+                </div>
+            <div class="col-md-2 bg-info">
+                    <b>Total Premium:</b>
+                </div>
+            <div class="col-md-2 bg-info text-end">
+                    <span id="totalPremiumAmount">0.00</span>
+                </div>
+            </div>
+        <div class="row">
+            <div class="col-md-8">
+                </div>
+            <div class="col-md-2 bg-light">
+                    <b>Total Cover:</b>
+                </div>
+            <div class="col-md-2 bg-light text-end">
+                    <span id="totalCoverAmount">0.00</span>
+                </div>
+            </div>  
+    </div>
+   
+</div>

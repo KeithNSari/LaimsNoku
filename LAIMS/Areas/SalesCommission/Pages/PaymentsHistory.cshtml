@@ -1,0 +1,44 @@
+﻿@page
+@using System.Data
+@model LAIMS.Areas.SalesCommission.Pages.PaymentsHistoryModel
+@{
+}
+@{
+    Layout = "/Pages/Shared/_LayoutProducts.cshtml";
+}
+<h1>Commission Payments</h1>
+<hr />
+<p>Latest records</p>
+<hr />
+<div class="row mb-3">
+    <form method="post">
+        <table class="table table-hover">
+            <tr>
+                <th>No</th>
+                <th>Year</th>
+                <th>Month</th>
+                <th>AgentCode</th>
+                <th>Agent Name</th>
+                <th>Type</th>
+                <th>Currency</th>
+                <th>Amount</th> 
+            </tr>
+            @if (Model.PaymentsDT != null)
+            {
+                @foreach (DataRow DR in Model.PaymentsDT.Rows)
+                {
+                    <tr>
+                        <td>@DR["ID"]</td>
+                        <td>@DR["Year"]</td>
+                        <td>@DR["Month"]</td>
+                        <td>@DR["AgentCode"]</td>
+                        <td>@DR["MemberName"]</td>
+                        <td>@DR["TransactionType"]</td>
+                        <td>@DR["Currency"]</td>
+                        <td>@DR["Amount"]</td>                      
+                    </tr>
+                }
+            }
+        </table>
+    </form>
+</div>

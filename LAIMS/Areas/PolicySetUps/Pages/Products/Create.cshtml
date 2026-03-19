@@ -1,0 +1,138 @@
+﻿@page
+@using System.Data;
+@using Microsoft.AspNetCore.Http.Extensions;
+@model LAIMS.Areas.PolicySetUps.Pages.Products.CreateModel
+@{
+}
+@{
+    Layout = "/Pages/Shared/_LayoutProducts.cshtml";
+}
+<h2>Create Product</h2>
+<hr />
+@if (!string.IsNullOrEmpty(ViewData["ErrorMessage"]?.ToString()))
+{
+    <p class="text-danger">@ViewData["ErrorMessage"]</p>
+}
+<div class="row">
+    <div class="col-md-5">
+        <form method="post">
+            <input type="hidden" asp-for="ReturnUrl" />
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="mb-3">
+                <label asp-for="Product.CategoryID" class="control-label"><b>Category</b></label>
+                <select asp-for="Product.CategoryID" class="form-control" aria-required="true">
+                    <option value="">Select Option</option>
+                    <option value=1>Investment Product</option>
+                    <option value=2>Risk Product</option>
+                    <option value=3>Hybrid Product (Risk + Investment)</option>
+                    <option value=4>Rider</option>
+                </select>
+                <span asp-validation-for="Product.CategoryID" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Product.TermID" class="control-label"><b>Term Type</b></label>
+                <select asp-for="Product.TermID" class="form-control" aria-required="true">
+                    <option value="">Select Option</option>
+                    <option value=0>N/A</option>
+                    <option value=1>Term Product</option>
+                    <option value=2>Whole Life</option> 
+                </select>
+                <span asp-validation-for="Product.TermID" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Product.ProductName" class="control-label"><b>Product Name</b></label>
+                <input asp-for="Product.ProductName" class="form-control" maxlength="250" />
+                <div id="productHelp" class="form-text black-text">*If you have saved the same product before, this submission will be ignored!</div>
+                <div class="mt-2 form-text  black-text">
+                    <span id="remainingChars1">250</span> characters remaining
+                </div>
+                <span asp-validation-for="Product.ProductName" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Product.Description" class="control-label"><b>Description</b></label> 
+                <textarea asp-for="Product.Description" class="form-control" rows="4" maxlength="500"></textarea>
+                <div class="mt-2 form-text  black-text">
+                    <span id="remainingChars2">500</span> characters remaining
+                </div>
+                <span asp-validation-for="Product.Description" class="text-danger"></span>
+            </div>
+            <input type="submit" value="Create" class="btn btn-primary" />
+            <a class="btn btn-success" asp-page="Index"> View Full List</a>
+        </form>
+    </div>
+    <div class="col-md-7">
+        <div class="card">
+            <div class="card-body">
+            <form method="post">
+            <input type="hidden" asp-for="ReturnUrl" />
+            <div class="small text-inverse text-opacity-50 mb-3">
+                <table class="table">
+                    <thead class="table-dark">
+                        <tr>
+                            <th scope="col">Product</th>
+                            <th scope="col"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                      @if (Model.ProductsDT != null)
+                       {
+                        @foreach (DataRow DR in Model.ProductsDT.Rows)
+                           {
+                                <tr>
+                                    <td>@DR["Product"]</td>
+                                    <td class="text-end">
+                                        <a asp-page="Edit" asp-route-id="@DR["ID"]" class="btn btn-outline-primary btn-sm">Edit</a>
+                                        <a asp-page="Details" asp-route-id="@DR["ID"]" class="btn btn-info btn-sm">Details</a>
+                                        <button type="submit" asp-route-id="@Model.Product?.ID" asp-route-entryid="@DR["ID"]" asp-page-handler="Remove" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to archive this item?');">Archive</button>
+                                    </td>
+                                </tr>
+                           }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </form>
+            </div>
+        </div>
+       
+    </div>
+</div>
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            document.getElementById('Product_Description').addEventListener('input', function () {
+                var maxLength = parseInt(this.getAttribute('maxlength'));
+                var currentLength = this.value.length;
+                var remainingChars = maxLength - currentLength;
+
+                // Display remaining characters (optional)
+                document.getElementById('remainingChars2').textContent = remainingChars;
+
+                // Truncate the input value if it exceeds the maxlength
+                if (currentLength > maxLength) {
+                    this.value = this.value.slice(0, maxLength);
+                }
+            });
+        });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            document.getElementById('Product_ProductName').addEventListener('input', function () {
+                var maxLength = parseInt(this.getAttribute('maxlength'));
+                var currentLength = this.value.length;
+                var remainingChars = maxLength - currentLength;
+
+                // Display remaining characters (optional)
+                document.getElementById('remainingChars1').textContent = remainingChars;
+
+                // Truncate the input value if it exceeds the maxlength
+                if (currentLength > maxLength) {
+                    this.value = this.value.slice(0, maxLength);
+                }
+            });
+        });
+    </script>
+} 

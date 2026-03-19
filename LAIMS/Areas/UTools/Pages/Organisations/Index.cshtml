@@ -1,0 +1,150 @@
+﻿@page
+@using System.Data
+@model LAIMS.Areas.UTools.Pages.Organisations.IndexModel
+@{
+}
+@{
+    Layout = "/Pages/Shared/_LayoutSearch.cshtml";
+}
+<h2>Organisations</h2>
+@if (!string.IsNullOrEmpty(ViewData["ErrorMessage"]?.ToString()))
+{
+    <h4 class="text-danger">@ViewData["ErrorMessage"]</h4>
+}
+<hr />
+<div class="row mb-3">
+    <div class="col-7 bg-white rounded">
+        <div class="container mt-4">
+            <h3>Instructions</h3>
+            <ul class="list-unstyled">
+                <li class="ms-4">1. Click on choose file and navigate to the Excel file location on your device.</li>
+                <li class="ms-4">2. Your Excel file must have the following columns: Organisation, Address Line 1,Address Line 2, Address Line 3,City,Country.</li>
+                <li class="ms-4">3. The column names must be spelt Exactly as above!</li>
+                <li class="ms-4">4. Address Line 2 and Address Line 3 are optional, the rest of the columns are mandatory!</li>
+            </ul>
+        </div>
+    </div>
+    <div class="col-5">
+        <form method="post" enctype="multipart/form-data">
+            <div class="form-group">
+                <div class="col-md-10">
+                    <h3>Upload Organisations</h3>
+                    <input class="form-control" multiple="multiple" type="file" asp-for="Upload" />
+                </div>
+            </div>
+            <br />
+            <div class="form-group">
+                <div class="col-md-10">
+                    <input class="btn btn-primary" type="submit" value="Upload File" />
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<div class="row mb-3">
+    <h4>@ViewData["Notification"]</h4>
+</div>
+<div class="row mb-3">
+    @if (Model.DT != null)
+    {
+        <table class="table table-striped">
+            <tr> 
+                <th>Organisation</th>
+                <th>Address Line 1</th>
+                <th>Address Line 2</th>
+                <th>Address Line 3</th>
+                <th>City</th>
+                <th>Country</th>
+                <th></th>
+            </tr>
+            @foreach (DataRow DR in Model.DT.Rows)
+            {
+                <tr> 
+                    <td>
+                        @DR["Organisation"]
+                        <input type="hidden" class="rowId" value="@DR["UID"]">
+                    </td>
+                    <td>@DR["Address Line 1"]</td>
+                    <td>@DR["Address Line 2"]</td>
+                    <td>@DR["Address Line 3"]</td>
+                    <td>@DR["City"]</td>
+                    <td>@DR["Country"]</td>
+                    <td><button type="button" class="btn btn-sm btn-primary btn-show-modal">Contacts</button></td>
+                </tr>
+            }
+        </table>
+    }
+</div>
+<!-- Your modal -->
+<div class="modal fade" id="contactModal" tabindex="-1" aria-labelledby="contactModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="contactModalLabel">Contacts</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Display the table in the modal form -->
+                <table class="table">
+                    <thead> 
+                        <tr>
+                            <th>Contact Name</th>
+                            <th>Line 1</th> 
+                        </tr>
+                    </thead>
+                    <tbody id="modalTableBody">
+                        <!-- Table rows will be dynamically added here -->
+                    </tbody>
+                </table>
+
+                <!-- ... (unchanged form and button) -->
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            // Function to open the modal and fetch data
+            function openModalAndFetchData(rowId) {
+                // Make AJAX request to fetch data based on the row ID
+                $.ajax({
+                    url: '/utools/organisations/Index?handler=LoadContacts',
+                    type: 'GET',
+                    data: { id: rowId },
+                    success: function (data) {
+                        // Clear existing content in the table body
+                        $('#modalTableBody').empty();
+
+                        // Display the fetched data in the modal
+                        if (data && data.length > 0) {
+                            data.forEach(function (row) {
+                                var newRow = '<tr><td>' + (row.contactTypeName || '') + '</td><td>' + (row.line1 || '') + '</td></tr>';
+                                $('#modalTableBody').append(newRow);
+                            });
+
+                            // Show the modal
+                            $('#contactModal').modal('show');
+                        } else {
+                            console.log('No data received or data is empty.');
+                        }
+                    },
+                    error: function () {
+                        // Handle error
+                        alert('Failed to fetch data from the server.');
+                    }
+                });
+            }
+
+            // Attach the function to the button click event for each row
+            $(document).on('click', '.btn-show-modal', function () {
+                var row = $(this).closest('tr');
+                var rowId = row.find('.rowId').val(); 
+
+                // Call the function to open the modal and fetch data
+                openModalAndFetchData(rowId);
+            });
+        });
+    </script>
+} 

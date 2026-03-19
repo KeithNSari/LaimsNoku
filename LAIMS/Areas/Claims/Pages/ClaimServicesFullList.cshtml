@@ -1,0 +1,105 @@
+﻿@page
+@using System.Data
+@model LAIMS.Areas.Claims.Pages.ClaimServicesFullListModel
+@{
+}
+@{
+    Layout = "/Pages/Shared/_LayoutProducts.cshtml";
+}
+<h2>Sevice Breakdown</h2>
+<div class="nav-wizards-container">
+    <nav class="nav nav-wizards-1 mb-2">
+        <div class="nav-item col">
+            <a class="nav-link completed" href="#">
+                <div class="nav-no">1</div>
+                <div class="nav-text">Create Claim</div>
+            </a>
+        </div>
+        <div class="nav-item col">
+            <a class="nav-link completed" asp-page="DeathClaims" asp-route-id="@Model.ProposerID" asp-route-policyid="@Model.PolicyID" asp-route-policyTypeId="@Model.PolicyTypeID" asp-route-reqid="@Model.RequestID">
+                <div class="nav-no">2</div>
+                <div class="nav-text">Add Deceased</div>
+            </a>
+        </div>
+        <div class="nav-item col">
+            <a class="nav-link completed" asp-page="Claimants" asp-route-id="@Model.ProposerID" asp-route-policyid="@Model.PolicyID" asp-route-policyTypeId="@Model.PolicyTypeID" asp-route-reqid="@Model.RequestID">
+                <div class="nav-no">3</div>
+                <div class="nav-text">Payment Details</div>
+            </a>
+        </div>
+        <div class="nav-item col">
+            <a class="nav-link active" href="#">
+                <div class="nav-no">4</div>
+                <div class="nav-text">Service Breakdown</div>
+            </a>
+        </div>
+        <div class="nav-item col">
+            <a class="nav-link disabled" href="#">
+                <div class="nav-no">5</div>
+                <div class="nav-text">Documents</div>
+            </a>
+        </div>
+        <div class="nav-item col">
+            <a class="nav-link disabled" href="#">
+                <div class="nav-no">6</div>
+                <div class="nav-text">Submission</div>
+            </a>
+        </div>
+    </nav>
+</div>
+<h3>Add Service Breakdown</h3>
+<div class="row mb-3">
+    <form method="post">
+        <input type="hidden" asp-for="ReturnUrl" />
+        <input type="hidden" asp-for="@Model.PolicyID" />
+        <input type="hidden" asp-for="@Model.PolicyTypeID" />
+        <input type="hidden" asp-for="@Model.ProposerID" />
+        <input type="hidden" asp-for="@Model.RequestID" /> 
+        <table class="table table-striped">
+            <tr>
+                <th class="col-md-6">Service</th>
+                <th class="col-md-3">Allocated</th>
+                <th class="col-md-3">Allocate</th>
+                <th class="col-md-1"></th>
+            </tr>
+            @if (Model.ServiceBreakdownDT != null)
+            {
+                @foreach (DataRow DR in Model.ServiceBreakdownDT.Rows)
+                {
+                    <tr>
+                        <td>@DR["Service"]</td>
+                        <td>@DR["Amount"]</td>
+                        <td>
+                            <input type="hidden" name="SVIDS" value="@DR["ID"]" />
+                            <input type="number" name="SVShares" value="@DR["Amount"]" />
+                        </td>
+                        <td>
+                            <button type="submit" asp-page-handler="Remove" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to remove this item?');">Remove</button>
+                        </td>
+                    </tr>
+                }
+            }
+        </table>
+        <div class="row mb-3">
+            <div class="col-md-10">
+            </div>
+            <div class="col-md-2">
+                <button type="submit" asp-page-handler="AddShares" class="btn btn-primary text-end float-end">Update</button>
+            </div>
+        </div>
+    </form>
+</div>
+<form method="post">
+    <div class="row mb-3">
+        <input type="hidden" asp-for="ReturnUrl" />
+        <input type="hidden" asp-for="@Model.PolicyID" />
+        <input type="hidden" asp-for="@Model.PolicyTypeID" />
+        <input type="hidden" asp-for="@Model.ProposerID" />
+        <input type="hidden" asp-for="@Model.RequestID" />
+        <div class="col-md-10">
+        </div>
+        <div class="col-md-2">
+            <button type="submit" asp-page-handler="Next" class="btn btn-info text-end">Next>></button>
+        </div>
+    </div>
+</form>

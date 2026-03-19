@@ -1,0 +1,96 @@
+﻿@page
+@using System.Data;
+@using Microsoft.AspNetCore.Http.Extensions;
+@model LAIMS.Areas.PolicySetUps.Pages.PolicyTypes.ClaimDocumentsModel
+@{
+}
+@{
+    Layout = "/Pages/Shared/_LayoutProducts.cshtml";
+}
+<h2>Policy Name: @Html.DisplayFor(model => model.MyPolicyType.Name)</h2>
+@if (!string.IsNullOrEmpty(ViewData["ErrorMessage"]?.ToString()))
+{
+    <p class="text-danger">@ViewData["ErrorMessage"]</p>
+}
+<hr />
+
+<form method="post">
+    <div class="row mb-3">
+        <label asp-for="MyPolicyTypeLinesBenefit.PTLID" class="control-label"><h4>Select Product</h4></label>
+        <select asp-for="MyPolicyTypeLinesBenefit.PTLID" class="form-control" asp-items="Model.MyProducts"></select> @* onchange="this.form.submit(); *@
+        <span asp-validation-for="MyPolicyTypeLinesBenefit.PTLID" class="text-danger"></span>
+    </div> 
+    <div class="row mb-3 border bg-light">
+        <h4>Claim Documents</h4>
+        <hr />
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="row mb-3">
+            <div class="col-sm-6">
+                <label asp-for="MyPolicyTypeLinesBenefitDocument.DocumentID" class="control-label"><b>Document</b></label>
+                <select asp-for="MyPolicyTypeLinesBenefitDocument.DocumentID" class="form-control" asp-items="Model.DocumentsList"></select>
+                <span asp-validation-for="MyPolicyTypeLinesBenefitDocument.DocumentID" class="text-danger"></span>
+            </div>
+            <div class="col-sm-6">
+                <label asp-for="MyPolicyTypeLinesBenefitDocument.Optional" class="control-label"><b>Optional/ Required?</b></label>
+                <select asp-for="MyPolicyTypeLinesBenefitDocument.Optional" required class="form-control" aria-required="true">
+                    <option value="">Select Option</option>
+                    <option value=1>Required</option>
+                    <option value=0>Optional</option>
+                </select>
+                <span asp-validation-for="MyPolicyTypeLinesBenefitDocument.Optional" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-sm-6">
+                <label asp-for="MyPolicyTypeLinesBenefitDocument.ValidationGroup" class="control-label"><b>Validation Group</b></label>
+                <input asp-for="MyPolicyTypeLinesBenefitDocument.ValidationGroup" class="form-control" />
+                <span asp-validation-for="MyPolicyTypeLinesBenefitDocument.ValidationGroup" class="text-danger"></span>
+            </div>
+            <div class="col-sm-6">
+                <label asp-for="MyPolicyTypeLinesBenefitDocument.TestedBusiness" class="control-label"><b>Un/Tested Business?</b></label>
+                <select asp-for="MyPolicyTypeLinesBenefitDocument.TestedBusiness" required class="form-control" aria-required="true">
+                    <option value="">Select Option</option>
+                    <option value=0>Untested</option>
+                    <option value=1>Tested</option>
+                    <option value=2>All</option>
+                </select>
+                <span asp-validation-for="MyPolicyTypeLinesBenefitDocument.TestedBusiness" class="text-danger"></span>
+            </div>           
+        </div>
+        <div class="row">
+            <div class="col-sm-6"> 
+                <button type="submit" asp-route-id="@Model.MyPolicyType?.ID" asp-page-handler="SaveDocument" class="btn btn-primary">Add Document</button>
+            </div>
+        </div>
+        <div class="row mb-3">
+            <table class="table table-striped">
+                <tr>
+                    <th>Product</th>
+                    <th>Type</th>
+                    <th>Document</th>
+                    <th>Constraint</th>
+                    <th>Validation Group</th>
+                    <th>Added On</th>
+                    <th></th>
+                </tr>
+                @if (Model.ClaimDocumentsDT != null)
+                {
+                    @foreach (DataRow DR in Model.ClaimDocumentsDT.Rows)
+                    {
+                        <tr>
+                            <td>@DR["Product"]</td>
+                            <td>@DR["TestedBusiness"]</td>
+                            <td>@DR["Document"]</td>
+                            <td>@DR["OptionalDesc"]</td>
+                            <td>@DR["ValidationGroup"]</td>
+                            <td>@DR["AddedOn"]</td>
+                            <td class="text-end">
+                                <button type="submit" asp-route-id="@Model.MyPolicyType?.ID" asp-route-entryID="@DR["ID"]" asp-page-handler="RemoveDocument" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to remove this item?');">Archive</button>
+                            </td>
+                        </tr>
+                    }
+                }
+            </table>
+        </div>
+    </div>
+</form> 

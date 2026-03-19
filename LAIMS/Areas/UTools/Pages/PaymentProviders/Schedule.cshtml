@@ -1,0 +1,73 @@
+﻿@page
+@using System.Data;
+@model LAIMS.Areas.UTools.Pages.PaymentProviders.ScheduleModel
+@{
+}
+@{
+    Layout = "/Pages/Shared/_LayoutSearch.cshtml";
+}
+<h2>Billing Calendar</h2>
+@if (!string.IsNullOrEmpty(ViewData["ErrorMessage"]?.ToString()))
+{
+    <p class="text-danger">@ViewData["ErrorMessage"]</p>
+}
+<hr /> 
+ <div class="row mb-3">
+        <form method="post">  
+                <div class="row mb-3">
+                <select asp-for="@Model.MemberID" class="form-control" required asp-items="Model.PaymentProvidersList">
+                        <option value="">Select Provider</option>
+                    </select>
+                    <span asp-validation-for="@Model.MemberID" class="text-danger"></span>
+                </div>
+            
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="@Model.PaymentMethodID"><b>Payment Method</b></label>
+                        <select asp-for="@Model.PaymentMethodID" class="form-control" aria-required="true">
+                            <option value="">Select Option</option>
+                            <option value=1>Debit Order</option>
+                            <option value=2>Stop Order</option>
+                        </select>
+                        <span asp-validation-for="@Model.PaymentMethodID" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <label asp-for="@Model.BillingDate" class="control-label"><b>Billing Date</b></label>
+                    <input type="date" asp-for="@Model.BillingDate" required class="form-control"/>
+                    <span asp-validation-for="@Model.BillingDate" class="text-danger"></span>
+                </div> 
+            </div>
+            <div class="row mb-3">
+                <div class="form-group">
+                    <br />
+                    <button type="submit" class="btn btn-primary float-end">Submit</button>
+                </div>
+            </div>
+        </form>
+    </div> 
+<div class="row mb-3">
+    @if (Model.EntriesDT != null)
+    {
+        <table class="table table-striped">
+            <tr>
+                <th class="col-md-3">Month</th>
+                <th class="col-md-2">Collection Day</th>
+                <th class="col-md-3">Provider</th>
+                <th class="col-md-2">Method</th>
+                <th class="col-md-2"></th>
+            </tr>
+            @foreach (DataRow DR in Model.EntriesDT.Rows)
+            {
+                <tr>
+                    <td>@DR["MonthName"]</td>
+                    <td>@DR["CollectionDay"]</td>
+                    <td>@DR["Provider"]</td>
+                    <td>@DR["Method"]</td>
+                    <td><button type="submit" asp-route-entryid="@DR["ID"]" asp-page-handler="Remove" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to archive this item?');">Archive</button></td>
+                </tr>
+            }
+        </table>
+    }
+</div>

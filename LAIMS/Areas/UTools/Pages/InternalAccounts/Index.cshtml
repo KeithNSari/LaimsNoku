@@ -1,0 +1,83 @@
+﻿@page
+@using System.Data
+@model LAIMS.Areas.UTools.Pages.InternalAccounts.IndexModel
+@{
+}
+@{
+    Layout = "/Pages/Shared/_LayoutProducts.cshtml";
+}
+<h2>Add Internal Bank Accounts</h2>
+@if (!string.IsNullOrEmpty(ViewData["ErrorMessage"]?.ToString()))
+{
+    <p class="text-danger">@ViewData["ErrorMessage"]</p>
+}
+<div class="row mb-3">
+    <form method="post">
+        <div class="row mb-3">
+            <div class="col-md-7">
+                <div class="form-group">
+                    <label asp-for="MemberBankAccount.AccountName"><b>Account Name</b></label>
+                    <input asp-for="MemberBankAccount.AccountName" required class="form-control" />
+                    <span asp-validation-for="MemberBankAccount.AccountName" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="col-md-5">
+                <div class="form-group">
+                    <label asp-for="MemberBankAccount.CurrencyID" class="control-label"><b>Currency</b></label>
+                    <select asp-for="MemberBankAccount.CurrencyID" required class="form-control" asp-items="Model.Currencies"></select>
+                    <span asp-validation-for="MemberBankAccount.CurrencyID" class="text-danger"></span>
+                </div>
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-md-2">
+                <div class="form-group">
+                    <label asp-for="MemberBankAccount.BranchCode"><b>Branch Code</b></label>
+                    <input asp-for="MemberBankAccount.BranchCode" required class="form-control" autocomplete="off" />
+                    <span asp-validation-for="MemberBankAccount.BranchCode" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="col-md-5">
+                <div class="form-group">
+                    <label asp-for="MemberBankAccount.BankAccountNo"><b>Account No</b></label>
+                    <input asp-for="MemberBankAccount.BankAccountNo" required class="form-control" />
+                    <span asp-validation-for="MemberBankAccount.BankAccountNo" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="col-md-5">
+                <div class="form-group">
+                    <label asp-for="@Model.BankAccountConfirm"><b>Confirm Account</b></label>
+                    <input asp-for="@Model.BankAccountConfirm" required class="form-control" autocomplete="off" />
+                    <span asp-validation-for="@Model.BankAccountConfirm" class="text-danger"></span>
+                </div>
+            </div>          
+           
+        </div>
+        <button type="submit" class="btn btn-primary float-end">Save</button>
+    </form>
+</div>
+<div class="row mb-3">
+    <table class="table table-striped">
+        <tr>
+            <th class="col-md-1"></th>
+            <th class="col-md-4">Account Name</th>
+            <th class="col-md-4">Account No</th>
+            <th class="col-md-2">Currency</th>
+            <th class="col-md-1"></th>
+        </tr>
+        @foreach (DataRow DR in Model.AccountsDT.Rows )
+        {
+            <tr>
+                <td>@DR["RowNo"]</td>
+                <td>@DR["AccountName"]</td>
+                <td>@DR["BranchCode"]@DR["BankAccountNo"]</td>
+                <td>@DR["Currency"]</td> 
+                <td>
+                    <form method="post" asp-page-handler="Archive" asp-route-id="@DR["ID"]">
+                        <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to archive this item?');">Archive</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </table>
+</div>

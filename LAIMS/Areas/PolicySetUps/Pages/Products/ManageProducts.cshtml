@@ -1,0 +1,50 @@
+﻿@page
+@using System.Data;
+@using Microsoft.AspNetCore.Http.Extensions;
+@model LAIMS.Areas.PolicySetUps.Pages.Products.ManageProductsModel
+@{
+}
+@{
+    Layout = "/Pages/Shared/_LayoutProducts.cshtml";
+}
+<h2>Manage Products</h2>
+<hr />
+@if (!string.IsNullOrEmpty(ViewData["ErrorMessage"]?.ToString()))
+{
+    <p class="text-danger">@ViewData["ErrorMessage"]</p>
+}
+<div class="row"> 
+        <div class="card">
+            <div class="card-body">
+                <form method="post">
+                <input type="hidden" asp-for="ReturnUrl" />
+                    <div class="small text-inverse text-opacity-50 mb-3">
+                        <table class="table">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th scope="col">Product</th>
+                                    <th scope="col"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.ProductsDT != null)
+                                {
+                                    @foreach (DataRow DR in Model.ProductsDT.Rows)
+                                    {
+                                        <tr>
+                                            <td>@DR["Product"]</td>
+                                            <td class="text-end">
+                                                <a asp-page="Edit" asp-route-id="@DR["ID"]" class="btn btn-outline-primary btn-sm">Edit</a>
+                                                <a asp-page="Details" asp-route-id="@DR["ID"]" class="btn btn-info btn-sm">Details</a>
+                                                <button type="submit" asp-route-entryid="@DR["ID"]" asp-page-handler="Remove" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to archive this item?');">Archive</button>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </form>
+            </div>
+        </div> 
+</div> 

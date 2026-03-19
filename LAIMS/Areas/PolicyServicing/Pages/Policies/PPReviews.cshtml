@@ -1,0 +1,63 @@
+﻿@page
+@using System.Data
+@model LAIMS.Areas.PolicyServicing.Pages.Policies.PPReviewsModel
+@{
+}
+@{
+    Layout = "/Pages/Shared/_LayoutSearch.cshtml";
+}
+<h1>Changes Awaiting Approval</h1>
+<hr />
+<div class="row mb-3">
+    <form method="post">
+        <table class="table table-hover">
+            <tr>
+                <th>Entry </th>
+                <th>Applied</th>
+                <th>Change Type</th>
+                <th>Identifier</th>
+                <th>Policy</th>
+                <th>Status</th>
+                <th>Status Date</th>
+                <th></th>
+            </tr>
+            @if (Model.PoliciesDT != null)
+            {
+                @foreach (DataRow DR in Model.PoliciesDT.Rows)
+                {
+                    <tr>
+                        <td>@DR["EntryNo"]</td>
+                        <td>@DR["AddedOn"]</td>
+                        <td>@DR["ChangeType"]</td>
+                        <td>@DR["Identifier"]</td>
+                        <td>@DR["PolicyTypeName"]</td>
+                        <td>@DR["Status"]</td>
+                        <td>@DR["AddedOn"]</td>
+                        <td class="text-end">
+                            @if ((Convert.ToInt32(@DR["StatusID"]) == 6) || (Convert.ToInt32(@DR["StatusID"])==8))
+                            {
+                                @switch (Convert.ToInt32(@DR["ChangeTypeID"]))
+                                {
+                                    case 5:
+                                        <a asp-route-id="@DR["ProposerUID"]" asp-route-policyTypeid="@DR["PolicyType"]" asp-route-policyid="@DR["ID"]" asp-route-reqid="@DR["RequestID"]" asp-page="PPApproval" class="btn btn-info btn-sm">Approve</a>
+                                        break;
+                                    case 6:
+                                        <a asp-route-id="@DR["ProposerUID"]" asp-route-policyTypeid="@DR["PolicyType"]" asp-route-policyid="@DR["ID"]" asp-route-reqid="@DR["RequestID"]" asp-page="StatusApproval" class="btn btn-info btn-sm">Approve</a>
+                                        break;
+                                    case 7:
+                                        <a asp-route-id="@DR["ProposerUID"]" asp-route-policyTypeid="@DR["PolicyType"]" asp-route-policyid="@DR["ID"]" asp-route-reqid="@DR["RequestID"]" asp-page="Underwriting/Details" class="btn btn-info btn-sm">Approve</a>
+                                        break;
+                                    case 8:
+                                        <a asp-area="PolicyServicing" asp-route-id="@DR["ProposerUID"]" asp-route-reqid="@DR["RequestID"]" asp-page="/Deaths/Approve" class="btn btn-info btn-sm">Approve</a>
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            }                           
+                        </td>
+                    </tr>
+                }
+            }
+        </table>
+    </form>
+</div>

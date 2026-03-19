@@ -1,0 +1,65 @@
+﻿@page
+@using System.Data
+@model LAIMS.Areas.PaymentCollection.Pages.DebitOrdersIndexModel
+@{
+}
+@{
+    Layout = "/Pages/Shared/_LayoutProducts.cshtml";
+} 
+<h1>Adhoc Debit Order</h1>
+<p>To generate a debit order, select a provider and code then click "Generate".</p>
+<hr />
+<form method="post">
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <label asp-for="@Model.PCCID" class="control-label"><b>Debit Order Provider</b></label>
+            <select asp-for="@Model.PCCID" required asp-items="Model.DebitOrderProviderList" id="paymentProviderDropdown" class="form-control" aria-required="true">
+                <option value="">Select Option</option>
+            </select>
+            <span asp-validation-for="@Model.PCCID" class="text-danger"></span>
+        </div>
+        <div class="col-md-2">
+            <label asp-for="@Model.CollectionDate" class="control-label"><b>Collection Due</b></label>
+            <input type="date" class="form-control" asp-for="@Model.CollectionDate" required />
+        </div>
+        <div class="col-md-2">
+            <br />
+            <button type="submit" class="btn btn-primary float-end">Generate</button>
+        </div>
+    </div>
+</form>
+<div class="row mb-3">
+    <table class="table table-hover">
+        <tr>
+            <th class="col-md-2">Date</th>
+            <th class="col-md-3">Batch</th>
+            <th class="col-md-3">Debit Order</th>
+            <th class="col-md-1">Entries</th>
+            <th class="col-md-1"></th>
+           @*  <th class="col-md-1"></th> *@
+        </tr>
+        @if (Model.BatchesDT != null)
+        {
+            @foreach (DataRow DR in Model.BatchesDT.Rows)
+            {
+                <tr>
+                    <td>@DR["DateAdded"]</td>
+                    <td>@DR["BatchID"]</td>
+                    <td>@DR["Debit Order"]</td>
+                    <td>@DR["Entries"]</td>
+                    <td><a href="/PaymentCollection/DebitOrdersIndex?handler=DownloadCsv&PCCID=@DR["PCCID"]&batchid=@DR["BatchID"]" class="btn btn-primary">Download</a></td>
+                  @*   <td>
+                        @if (Convert.ToDecimal(DR["PaidTotalAmount"]) == 0)
+                        {
+                            <a asp-page="ProcessBillingFile" asp-route-pid="@DR["PaymentProviderID"]" asp-route-pccid="@DR["PCCID"]" asp-route-batchid="@DR["BatchID"]" class="btn btn-danger">Process</a>
+                        }
+                        else
+                        {
+                            <a asp-page="BatchSupenseIndex" asp-route-batchid="@DR["BatchID"]" class="btn btn-success">View</a>
+                        }
+                    </td> *@
+                </tr>
+            }
+        }
+    </table>
+</div> 

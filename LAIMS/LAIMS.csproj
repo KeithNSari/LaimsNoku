@@ -1,0 +1,221 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>aspnet-LAIMS-403d56dc-2583-428e-9114-e10dbe39a8d6</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Areas\Identity\Pages\Account\Manage\**" />
+    <Compile Remove="Pages\Lifeproducts\**" />
+    <Content Remove="Areas\Identity\Pages\Account\Manage\**" />
+    <Content Remove="Pages\Lifeproducts\**" />
+    <EmbeddedResource Remove="Areas\Identity\Pages\Account\Manage\**" />
+    <EmbeddedResource Remove="Pages\Lifeproducts\**" />
+    <None Remove="Areas\Identity\Pages\Account\Manage\**" />
+    <None Remove="Pages\Lifeproducts\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="Areas\Identity\Pages\Account\ForgotPassword.cshtml.cs" />
+    <Compile Remove="Areas\Identity\Pages\Account\ForgotPasswordConfirmation.cshtml.cs" />
+    <Compile Remove="Areas\Identity\Pages\Account\ResetPassword.cshtml.cs" />
+    <Compile Remove="Areas\Identity\Pages\Account\ResetPasswordConfirmation.cshtml.cs" />
+    <Compile Remove="Areas\NewBusiness\Pages\policies\Applicants.cshtml.cs" />
+    <Compile Remove="Areas\NewBusiness\Pages\policies\EmploymentDetails.cshtml.cs" />
+    <Compile Remove="Areas\NewBusiness\Pages\policies\NewApplication.cshtml.cs" />
+    <Compile Remove="Areas\NewBusiness\Pages\policies\Payments.cshtml.cs" />
+    <Compile Remove="Areas\NewBusiness\Pages\policies\pdfdownloader.cshtml.cs" />
+    <Compile Remove="Areas\NewBusiness\Pages\policies\PolicyList.cshtml.cs" />
+    <Compile Remove="Areas\NewBusiness\Pages\policies\PPDetails.cshtml.cs" />
+    <Compile Remove="Areas\NewBusiness\Pages\policies\tabstest.cshtml.cs" />
+    <Compile Remove="Areas\NewBusiness\Pages\policies\test10.cshtml.cs" />
+    <Compile Remove="Areas\NewBusiness\Pages\policies\test11.cshtml.cs" />
+    <Compile Remove="Areas\NewBusiness\Pages\policies\test12.cshtml.cs" />
+    <Compile Remove="Areas\NewBusiness\Pages\policies\test13CoverPremiums.cshtml.cs" />
+    <Compile Remove="Areas\NewBusiness\Pages\policies\test2.cshtml.cs" />
+    <Compile Remove="Areas\NewBusiness\Pages\policies\test3.cshtml.cs" />
+    <Compile Remove="Areas\NewBusiness\Pages\policies\test4.cshtml.cs" />
+    <Compile Remove="Areas\NewBusiness\Pages\policies\test5.cshtml.cs" />
+    <Compile Remove="Areas\NewBusiness\Pages\policies\test6.cshtml.cs" />
+    <Compile Remove="Areas\NewBusiness\Pages\policies\test7.cshtml.cs" />
+    <Compile Remove="Areas\NewBusiness\Pages\policies\test8.cshtml.cs" />
+    <Compile Remove="Areas\NewBusiness\Pages\policies\test9.cshtml.cs" />
+    <Compile Remove="Areas\NewBusiness\Pages\policies\testpdfdownload.cshtml.cs" />
+    <Compile Remove="Areas\UTools\Pages\PaymentProviders\Orders\OrderPayment.cshtml.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="Areas\Claims\Pages\ExpensesTestPage.cshtml" />
+    <Content Remove="Areas\Claims\Pages\PaymentsIndex.cshtml" />
+    <Content Remove="Areas\Identity\Pages\Account\ForgotPassword.cshtml" />
+    <Content Remove="Areas\Identity\Pages\Account\ForgotPasswordConfirmation.cshtml" />
+    <Content Remove="Areas\Identity\Pages\Account\ResetPassword.cshtml" />
+    <Content Remove="Areas\Identity\Pages\Account\ResetPasswordConfirmation.cshtml" />
+    <Content Remove="Areas\Members\Pages\AddStatii.cshtml" />
+    <Content Remove="Areas\NewBusiness\Pages\Membership\ContactDetails.cshtml" />
+    <Content Remove="Areas\NewBusiness\Pages\Membership\DocumentUploads.cshtml" />
+    <Content Remove="Areas\NewBusiness\Pages\Membership\ManageCities.cshtml" />
+    <Content Remove="Areas\NewBusiness\Pages\policies\Applicants.cshtml" />
+    <Content Remove="Areas\NewBusiness\Pages\policies\EmploymentDetails.cshtml" />
+    <Content Remove="Areas\NewBusiness\Pages\policies\NewApplication.cshtml" />
+    <Content Remove="Areas\NewBusiness\Pages\policies\PaymentDetails.cshtml" />
+    <Content Remove="Areas\NewBusiness\Pages\policies\Payments.cshtml" />
+    <Content Remove="Areas\NewBusiness\Pages\policies\pdfdownloader.cshtml" />
+    <Content Remove="Areas\NewBusiness\Pages\policies\PolicyList.cshtml" />
+    <Content Remove="Areas\NewBusiness\Pages\policies\PPDetails.cshtml" />
+    <Content Remove="Areas\NewBusiness\Pages\policies\tabstest.cshtml" />
+    <Content Remove="Areas\NewBusiness\Pages\policies\test10.cshtml" />
+    <Content Remove="Areas\NewBusiness\Pages\policies\test11.cshtml" />
+    <Content Remove="Areas\NewBusiness\Pages\policies\test12.cshtml" />
+    <Content Remove="Areas\NewBusiness\Pages\policies\test13CoverPremiums.cshtml" />
+    <Content Remove="Areas\NewBusiness\Pages\policies\test2.cshtml" />
+    <Content Remove="Areas\NewBusiness\Pages\policies\test3.cshtml" />
+    <Content Remove="Areas\NewBusiness\Pages\policies\test4.cshtml" />
+    <Content Remove="Areas\NewBusiness\Pages\policies\test5.cshtml" />
+    <Content Remove="Areas\NewBusiness\Pages\policies\test6.cshtml" />
+    <Content Remove="Areas\NewBusiness\Pages\policies\test7.cshtml" />
+    <Content Remove="Areas\NewBusiness\Pages\policies\test8.cshtml" />
+    <Content Remove="Areas\NewBusiness\Pages\policies\test9.cshtml" />
+    <Content Remove="Areas\NewBusiness\Pages\policies\testpdfdownload.cshtml" />
+    <Content Remove="Areas\PaymentCollection\Pages\AdhocDebitOrders.cshtml" />
+    <Content Remove="Areas\Policies\Pages\Index.cshtml" />
+    <Content Remove="Areas\PolicySetUps\Pages\BusinessRules\PolicyRules.cshtml" />
+    <Content Remove="Areas\PolicySetUps\Pages\PolicyTypes\Archive.cshtml" />
+    <Content Remove="Areas\UTools\Pages\PaymentProviders\Orders\OrderPayment.cshtml" />
+    <Content Remove="Pages\Adm\Notification.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CsvHelper" Version="31.0.4" />
+    <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="8.0.14" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.14" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="8.0.14" />
+    <PackageReference Include="Microsoft.AspNetCore.Session" Version="2.2.0" />
+    <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.3">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.14">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.14" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.14" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.14">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="7.0.9" />
+    <PackageReference Include="System.Data.OleDb" Version="8.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Areas\PolicySetUps\Pages\Commissions\Intermediaries\" />
+    <Folder Include="Areas\Reports\Pages\" />
+    <Folder Include="wwwroot\Uploads\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Areas\Claims\Pages\ExpensesTestPage.cshtml" />
+    <None Include="Areas\Claims\Pages\PaymentsIndex.cshtml" />
+    <None Include="Areas\Members\Pages\AddStatii.cshtml" />
+    <None Include="Areas\NewBusiness\Pages\Membership\ContactDetails.cshtml" />
+    <None Include="Areas\NewBusiness\Pages\Membership\DocumentUploads.cshtml" />
+    <None Include="Areas\NewBusiness\Pages\Membership\ManageCities.cshtml" />
+    <None Include="Areas\NewBusiness\Pages\policies\PaymentDetails.cshtml" />
+    <None Include="Areas\PaymentCollection\Pages\AdhocDebitOrders.cshtml" />
+    <None Include="Areas\Policies\Pages\Index.cshtml" />
+    <None Include="Areas\PolicySetUps\Pages\BusinessRules\PolicyRules.cshtml" />
+    <None Include="Areas\PolicySetUps\Pages\PolicyTypes\Archive.cshtml" />
+    <None Include="Pages\Adm\Notification.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <UpToDateCheckInput Remove="Areas\PolicySetUps\Pages\PolicyTypes\Archive.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="Areas\Claims\Pages\ExpensesTestPage.cshtml" />
+    <_ContentIncludedByDefault Remove="Areas\Claims\Pages\PaymentsIndex.cshtml" />
+    <_ContentIncludedByDefault Remove="Areas\Members\Pages\AddStatii.cshtml" />
+    <_ContentIncludedByDefault Remove="Areas\NewBusiness\Pages\Membership\ContactDetails.cshtml" />
+    <_ContentIncludedByDefault Remove="Areas\NewBusiness\Pages\Membership\DocumentUploads.cshtml" />
+    <_ContentIncludedByDefault Remove="Areas\NewBusiness\Pages\Membership\ManageCities.cshtml" />
+    <_ContentIncludedByDefault Remove="Areas\NewBusiness\Pages\policies\PaymentDetails.cshtml" />
+    <_ContentIncludedByDefault Remove="Areas\NewBusiness\Pages\policies\Payments.cshtml" />
+    <_ContentIncludedByDefault Remove="Areas\NewBusiness\Pages\policies\tabstest.cshtml" />
+    <_ContentIncludedByDefault Remove="Areas\NewBusiness\Pages\policies\testpdfdownload.cshtml" />
+    <_ContentIncludedByDefault Remove="Areas\PaymentCollection\Pages\AdhocDebitOrders.cshtml" />
+    <_ContentIncludedByDefault Remove="Areas\Policies\Pages\Index.cshtml" />
+    <_ContentIncludedByDefault Remove="Areas\PolicySetUps\Pages\BusinessRules\PolicyRules.cshtml" />
+    <_ContentIncludedByDefault Remove="Areas\PolicySetUps\Pages\PolicyTypes\Archive.cshtml" />
+    <_ContentIncludedByDefault Remove="Pages\Adm\Notification.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Update="Pages\Shared\_LayoutPolicyTypes.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <UpToDateCheckInput Remove="Areas\NewBusiness\Pages\Membership\DocumentUploads.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <UpToDateCheckInput Remove="Areas\NewBusiness\Pages\Membership\ManageCities.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <UpToDateCheckInput Remove="Areas\NewBusiness\Pages\Membership\ContactDetails.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <UpToDateCheckInput Remove="Areas\NewBusiness\Pages\policies\PaymentDetails.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <UpToDateCheckInput Remove="Areas\NewBusiness\Pages\policies\Payments.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <UpToDateCheckInput Remove="Areas\PolicySetUps\Pages\BusinessRules\PolicyRules.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <UpToDateCheckInput Remove="Areas\NewBusiness\Pages\policies\testpdfdownload.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <UpToDateCheckInput Remove="Areas\NewBusiness\Pages\policies\tabstest.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <UpToDateCheckInput Remove="Areas\Members\Pages\AddStatii.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <UpToDateCheckInput Remove="Areas\PaymentCollection\Pages\AdhocDebitOrders.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <UpToDateCheckInput Remove="Areas\Policies\Pages\Index.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <UpToDateCheckInput Remove="Areas\Claims\Pages\ExpensesTestPage.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <UpToDateCheckInput Remove="Areas\Claims\Pages\PaymentsIndex.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <UpToDateCheckInput Remove="Pages\Adm\Notification.cshtml" />
+  </ItemGroup>
+
+</Project>

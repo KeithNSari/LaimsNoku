@@ -1,0 +1,84 @@
+﻿@page
+@using System.Data;
+@using Microsoft.AspNetCore.Http.Extensions;
+@model LAIMS.Areas.PolicySetUps.Pages.PolicyTypes.DocumentsModel
+@{
+}
+@{
+    Layout = "/Pages/Shared/_LayoutProducts.cshtml";
+}
+<h2>Policy Application Documents</h2>
+@if (!string.IsNullOrEmpty(ViewData["ErrorMessage"]?.ToString()))
+{
+    <p class="text-danger">@ViewData["ErrorMessage"]</p>
+}
+<hr />
+<div class="bg-light">
+    <h4>Policy Name: @Html.DisplayFor(model => model.MyPolicyType.Name)</h4>
+</div>
+<hr />
+<div class="row">
+    <div class="col-md-5">
+        <form method="post">
+            <input type="hidden" asp-for="PageUrl" />
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="row mb-3">
+                <label asp-for="MyPolicyTypeDocument.DocumentID" class="control-label"><b>Document</b></label>
+                <select asp-for="MyPolicyTypeDocument.DocumentID" class="form-control" asp-items="Model.DocumentsList"></select>
+                <span asp-validation-for="MyPolicyTypeDocument.DocumentID" class="text-danger"></span>
+            </div>
+            <div class="row mb-3">
+                <label asp-for="MyPolicyTypeDocument.Optional" class="control-label"><b>Optional/ Required?</b></label>
+                <select asp-for="MyPolicyTypeDocument.Optional" class="form-control" aria-required="true">
+                    <option value="">Select Option</option>
+                    <option value=0>Required</option>
+                    <option value=1>Optional</option>
+                </select>
+                <span asp-validation-for="MyPolicyTypeDocument.Optional" class="text-danger"></span>
+            </div>
+            <div class="row mb-3">
+                <label asp-for="MyPolicyTypeDocument.ValidationGroup" class="control-label">Validation Group</label>
+                <input asp-for="MyPolicyTypeDocument.ValidationGroup" class="form-control" />
+                <span asp-validation-for="MyPolicyTypeDocument.ValidationGroup" class="text-danger"></span>
+            </div> 
+            <div class="form-group">
+                <input type="submit" value="Add Document" class="btn btn-primary" />
+                <a asp-page="./Index" class="btn btn-outline-primary">Back to List</a>
+                <a asp-page="Products" asp-route-id="@Model.MyPolicyType?.ID" class="btn btn-success">Products</a>
+            </div>
+        </form>
+    </div>
+    <div class="col-md-7">
+        <h4>Policy Application Documents</h4>
+        <form method="post">
+            <input type="hidden" asp-for="PageUrl" />
+            <table class="table table-striped">
+                <tr>
+                    <th>Document</th>
+                    <th>Constraint</th>
+                    <th>Group</th>
+                    <th></th>
+                </tr>
+                @if (Model.DocumentsDT != null)
+                {
+                    @foreach (DataRow DR in Model.DocumentsDT.Rows)
+                    {
+                        <tr>
+                            <td>@DR["Document"]</td>
+                            <td>@DR["OptionalDesc"]</td>
+                            <td>@DR["ValidationGroup"]</td>
+                            <td class="text-end">
+                                <button type="submit" asp-route-id="@Model.MyPolicyType?.ID" asp-route-entryno="@DR["ID"]" asp-route-returnUrl="@Request.GetEncodedPathAndQuery()" asp-page-handler="Remove" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to remove this item?');">Remove</button>
+                            </td>
+                        </tr>
+                    }
+                }
+            </table>           
+        </form>
+    </div>
+</div>  
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+} 

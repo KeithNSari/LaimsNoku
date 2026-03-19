@@ -1,0 +1,40 @@
+﻿@page
+@using System.Data;
+@model LAIMS.Areas.Claims.Pages.DeceasedIndexModel
+@{
+} 
+@{
+    Layout = "/Pages/Shared/_LayoutProducts.cshtml";
+} 
+<h1>Death Index</h1>
+<hr/>
+<h3>Latest records</h3>
+<hr />
+<div class="row mb-3">
+    <form method="post">
+        <table class="table table-hover">
+            <tr>
+                <th>ID </th>
+                <th>Member Name</th>
+                <th>Gender</th>
+                <th>National ID</th>
+                <th>DOB</th>                
+                <th>Date Of Death</th>
+            </tr>
+            @if (Model.DeceasedDT != null)
+            {
+                @foreach (DataRow DR in Model.DeceasedDT.Rows)
+                {
+                    <tr>
+                        <td>@DR["ID"]</td>
+                        <td> @DR["MemberName"] </td>
+                        <td>@DR["Gender"]</td>
+                        <td>@DR["NationalID"]</td>
+                        <td>@DR["DOB"]</td>                       
+                        <td>@DR["DateOfDeath"]</td>
+                    </tr>
+                }
+            }
+        </table>
+    </form>
+</div>

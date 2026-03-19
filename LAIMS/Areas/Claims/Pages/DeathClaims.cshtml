@@ -1,0 +1,122 @@
+﻿@page
+@using System.Data;
+@model LAIMS.Areas.Claims.Pages.DeathClaimsModel
+@{
+}
+@{
+    Layout = "/Pages/Shared/_LayoutProducts.cshtml";
+}
+<h2>Details of Deceased</h2>
+<div class="nav-wizards-container">
+    <nav class="nav nav-wizards-1 mb-2">
+        <div class="nav-item col">
+            <a class="nav-link completed" href="#">
+                <div class="nav-no">1</div>
+                <div class="nav-text">Create Claim</div>
+            </a>
+        </div>
+        <div class="nav-item col">
+           <a class="nav-link active" href="#">
+                <div class="nav-no">2</div>
+                <div class="nav-text">Add Deceased</div>
+            </a>
+        </div>
+        <div class="nav-item col">
+            <a class="nav-link disabled" href="#">
+                <div class="nav-no">3</div>
+                <div class="nav-text">Payment Details</div>
+            </a>
+        </div>
+        <div class="nav-item col">
+            <a class="nav-link disabled" href="#">
+                <div class="nav-no">4</div>
+                <div class="nav-text">Service Breakdown</div>
+            </a>
+        </div>
+        <div class="nav-item col">
+            <a class="nav-link disabled" href="#">
+                <div class="nav-no">5</div>
+                <div class="nav-text">Documents</div>
+            </a>
+        </div>
+        <div class="nav-item col">
+            <a class="nav-link disabled" href="#">
+                <div class="nav-no">6</div>
+                <div class="nav-text">Submission</div>
+            </a>
+        </div> 
+    </nav>
+</div>
+<hr />
+<h4>Deceased Details</h4>
+@if (!string.IsNullOrEmpty(ViewData["ErrorMessage"]?.ToString()))
+{
+    <p class="text-danger">@ViewData["ErrorMessage"]</p>
+}
+<form method="post">
+    <input type="hidden" asp-for="@Model.PolicyID" />
+    <input type="hidden" asp-for="@Model.PolicyTypeID" />
+    <input type="hidden" asp-for="@Model.ProposerID" />
+    <input type="hidden" asp-for="@Model.RequestID" />
+    <div class="row mb-3">
+        <table class="table table-striped">
+            <tr>
+                <th>Role</th>
+                <th>Full Name</th>
+                <th>R\ship</th>
+                <th>D.O.B</th>
+                <th>ID Type</th>
+                <th>ID</th>
+                <th>Select</th> 
+            </tr>
+            @if (Model.BeneficiariesDT != null)
+            {
+                @foreach (DataRow DR in Model.BeneficiariesDT.Rows)
+                {
+                    <tr>
+                        <td>@DR["Role"]</td>
+                        <td>@DR["FullName"]</td>
+                        <td>@DR["Relationship"]</td>
+                        <td>@DR["DOB"]</td>
+                        <td>@DR["IDType"]</td>
+                        <td>@DR["IDDocument"]</td>
+                        <td><input type="radio" required name="selectedRecords" value="@DR["MemberID"]" /></td> 
+                    </tr>
+                }
+            }
+        </table>
+    </div>  
+    <div class="row mb-3">
+        <div class="col-md-8">
+        </div>
+        <div class="col-md-2">
+        </div>
+        <div class="col-md-2">
+            <button type="submit" asp-route-policyid="@Model.PolicyID" asp-route-id="@Model.ProposerID" asp-route-policytypeid="@Model.PolicyTypeID" asp-route-reqid="@Model.RequestID" asp-page-handler="Next" class="btn btn-info">Next>></button>
+        </div>
+    </div>
+</form> 
+@section scripts { 
+    <script>
+        function scrollToBottom() {
+            // Scroll to the bottom of the page
+            window.scrollTo(0, document.body.scrollHeight);
+        }
+
+        // Attach the scrollToBottom function to the window's load event
+        window.onload = scrollToBottom;
+    </script>
+    <script>
+      function toggleHealthAffectedDate() {
+        var dropdown = document.getElementById('DeathRecord_EventCauseID'); 
+        // Check the selected value of the dropdown
+        var selectedText = dropdown.options[dropdown.selectedIndex].text;
+        var dateHealthAffectedLbl = document.getElementById('dateHealthAffectedLbl'); 
+        if (selectedText.includes("Accident")) {
+            dateHealthAffectedLbl.innerHTML = '<b>Accident Date:</b>';
+        } else {
+            dateHealthAffectedLbl.innerHTML = '<b>Date Health Affected:</b>';
+        }
+      }
+    </script>
+}

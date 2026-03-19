@@ -1,0 +1,48 @@
+﻿@page
+@model LAIMS.Areas.NewBusiness.Pages.Membership.mytabsModel
+@{
+}
+@{
+    Layout = "/Pages/Shared/_LayoutTabbed.cshtml";
+} 
+
+<div id="tabs-container">
+    <div class="row">
+        <div class="tab col-sm-3" onclick="openTab('tab1')">Tab 1</div>
+        <div class="tab col-sm-3" onclick="openTab('tab2')">Tab 2</div>
+        <div class="tab col-sm-3" onclick="openTab('tab3')">Tab 3</div>
+        <div class="tab col-sm-3" onclick="openTab('tab4')">Tab 4</div>
+    </div>   
+    <!-- Add more tabs as needed -->
+    <div class="row">
+        <div id="tab1" class="tab-content">
+            <p>Content for Tab 1 goes here.</p>
+        </div>
+        <div id="tab2" class="tab-content">
+            <p>Content for Tab 2 goes here.</p>
+        </div>
+        <!-- Add more tab content as needed -->
+        <div id="tab3" class="tab-content">
+            <p>Content for Tab 3 goes here.</p>
+        </div>
+        <div id="tab4" class="tab-content">
+            <p>Content for Tab 4 goes here.</p>
+        </div>
+        <!-- Add more tab content as needed -->
+    </div>  
+</div>
+<script>
+    function openTab(tabId) {
+        // Hide all tab content
+        var tabContents = document.getElementsByClassName('tab-content');
+        for (var i = 0; i < tabContents.length; i++) {
+            tabContents[i].classList.remove('show');
+        }
+
+        // Show the selected tab content
+        var selectedTab = document.getElementById(tabId);
+        if (selectedTab) {
+            selectedTab.classList.add('show');
+        }
+    }
+</script>

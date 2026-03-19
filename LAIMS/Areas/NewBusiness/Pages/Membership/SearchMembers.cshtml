@@ -1,0 +1,59 @@
+﻿@page
+@using System.Data
+@model LAIMS.Areas.NewBusiness.Pages.Membership.SearchMembersModel
+@{
+}
+@{
+    Layout = "/Pages/Shared/_LayoutSearch.cshtml";
+} 
+    <form method="post">
+        <div class="row">
+            <div class="col-md-10">
+            <h2>Members Search Page</h2>
+            <span class="text-black">To search type in i) surname or ii) first name space surname or iii) other configured ID</span>
+            </div> 
+            <div class="col-md-1">
+            <a asp-page="Create" class="btn btn-primary fixed-width-btn">Create New</a>
+            </div>
+        </div>             
+    </form> 
+<hr /> 
+@if (Model.MembersDT != null)
+{
+    <div class="row mb-3">
+        <h5>@Model.ResultsCount result/s found for search "@Model.SearchTerm"!</h5>
+    </div>
+}
+<div class="row mb-3">
+    <table class="table table-hover">
+        <tr>
+            <th>Title</th>
+            <th>Name 1</th>
+            <th>Name 2</th>
+            <th>Name 3</th>
+            <th>Gender</th>
+            <th>ID</th>
+            <th>BC</th>
+            <th></th>
+        </tr>
+        @if (Model.MembersDT != null)
+        {
+            @foreach (DataRow DR in Model.MembersDT.Rows)
+            {
+                <tr>
+                    <td>@DR["Title"]</td>
+                    <td>@DR["Name1"]</td>
+                    <td>@DR["Name2"]</td>
+                    <td>@DR["Name3"]</td>
+                    <td>@DR["Gender"]</td>
+                    <td>@DR["NationalID"]</td>
+                    <td>@DR["BirthCertificate"]</td>
+                    <td class="text-end">
+                        <a href='@Url.Page("/policies/SelectPolicy", new { area = "NewBusiness",id=@DR["UID"] })' class="btn btn-primary btn-sm">Apply</a>
+                        <a asp-page="MemberProfile" asp-route-id="@DR["UID"]" class="btn btn-info btn-sm">Profile</a>
+                    </td>
+                </tr>
+            }
+        }
+    </table>
+</div>

@@ -1,0 +1,46 @@
+﻿@page 
+@{
+    Layout = "/Pages/Shared/_LayoutProducts.cshtml";
+}
+
+@using System.Data;
+@model LAIMS.Areas.PolicySetUps.Pages.PolicyTypes.IndexModel
+@{
+}
+<div class="row rounded bg-white">
+    <h1>Policy Definitions</h1>
+    @if (!string.IsNullOrEmpty(ViewData["ErrorMessage"]?.ToString()))
+    {
+        <p class="text-danger">@ViewData["ErrorMessage"]</p>
+    }
+    <h5>Active Policies.</h5>
+    <hr />
+    <table class="table table-striped">
+        <tr>
+            <th>Name</th>
+            <th>Open</th>
+            <th>Currency</th>  
+            <th></th>
+        </tr>
+        @if (Model.PolicyTypesDT != null)
+        {
+            @foreach (DataRow DR in Model.PolicyTypesDT.Rows)
+            {
+                <tr>
+                    <td>@DR["Name"]</td>
+                    <td>@DR["OpenForNewBusiness"]</td>
+                    <td>@DR["Currency"]</td> 
+                    <td class="text-end">
+                        <a asp-page="Edit" asp-route-id="@DR["ID"]" class="btn btn-outline-primary btn-sm">Edit</a>
+                        <a asp-page="Products" asp-route-id="@DR["ID"]" class="btn btn-outline-success btn-sm">Products</a>
+                        <a asp-page="Documents" asp-route-id="@DR["ID"]" class="btn btn-outline-info btn-sm">AP Documents</a>
+                        <a asp-page="ClaimDocuments" asp-route-id="@DR["ID"]" class="btn btn-outline-info btn-sm">CL Documents</a>
+                        <a asp-page="PTQuestionnaires" asp-route-policyid="@DR["ID"]" class="btn btn-outline-info btn-sm">Questionnaires</a>
+                        <a asp-page="Benefits" asp-route-id="@DR["ID"]" class="btn btn-success btn-sm">Benefits</a>
+                        <a asp-page="Details" asp-route-id="@DR["ID"]" class="btn btn-info btn-sm">Details</a>
+                    </td>
+                </tr>
+            }
+        }
+    </table>
+</div>

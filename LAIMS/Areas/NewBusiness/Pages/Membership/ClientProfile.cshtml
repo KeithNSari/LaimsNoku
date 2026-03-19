@@ -1,0 +1,166 @@
+﻿@page
+@using System.Data;
+@model LAIMS.Areas.NewBusiness.Pages.Membership.ClientProfileModel
+@{
+}
+@{
+    Layout = "/Pages/Shared/_LayoutTabbed.cshtml";
+}
+<h1>Client Profile</h1>
+<hr />
+<div id="tabs-container mb-3">
+    <div class="row">
+        <div class="tab col-sm-3" onclick="openTab('tab1')">Contacts</div>
+        <div class="tab col-sm-3" onclick="openTab('tab2')">Tab 2</div>
+        <div class="tab col-sm-3" onclick="openTab('tab3')">Tab 3</div>
+        <div class="tab col-sm-3" onclick="openTab('tab4')">Tab 4</div>
+    </div>
+    <!-- Add more tabs as needed -->
+    <div class="row">
+        <div id="tab1" class="tab-content">
+            <div>
+                <div class="bg-light">
+                    <h4> </h4>
+                </div>
+                <div class="row">
+                    <form method="post">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="MemberContact.ContactTypeID" class="control-label"><b>Contact Type</b></label>
+                                    <select asp-for="MemberContact.ContactTypeID" asp-items="@(new SelectList(Model.ContactTypes, "ID", "Type"))" class="form-control"></select>
+                                    <span asp-validation-for="MemberContact.ContactTypeID" class="text-danger"></span>
+                                </div>
+
+                                <div class="form-group">
+                                    <label asp-for="MemberContact.Line1" class="control-label"><b>Address Line 1</b></label>
+                                    <input asp-for="MemberContact.Line1" class="form-control" />
+                                    <span asp-validation-for="MemberContact.Line1" class="text-danger"></span>
+                                </div>
+
+                                <div class="form-group">
+                                    <label asp-for="MemberContact.Line2" class="control-label"><b>Address Line 2</b></label>
+                                    <input asp-for="MemberContact.Line2" class="form-control" />
+                                    <span asp-validation-for="MemberContact.Line2" class="text-danger"></span>
+                                </div>
+
+                                <div class="form-group">
+                                    <label asp-for="MemberContact.Line3" class="control-label"><b>Address Line 3</b></label>
+                                    <input asp-for="MemberContact.Line3" class="form-control" />
+                                    <span asp-validation-for="MemberContact.Line3" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="CountryID" class="control-label"><b>Country</b></label>
+                                    <select asp-for="CountryID" asp-items="@(new SelectList(Model.Countries, "CountryID", "CountryName"))" class="form-control" id="countryDropdown">
+                                        <option value="">Select Country</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label asp-for="CityID" class="control-label"><b>City</b></label>
+                                    <select asp-for="CityID" id="cityDropdown" class="form-control"></select>
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="CustomCity" class="control-label"><b>Or Enter City</b></label>
+                                    <input asp-for="CustomCity" class="form-control" />
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="MemberContact.Preferred" class="control-label"><b>Preferred</b></label>
+                                    <select asp-for="MemberContact.Preferred" class="form-control" aria-required="true">
+                                        <option value="">Select Option</option>
+                                        <option value=0>No</option>
+                                        <option value=1>Yes</option>
+                                    </select>
+                                    <span asp-validation-for="MemberContact.Preferred" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <hr />
+                            <button type="submit" class="btn btn-primary">Create</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="row">
+                    <form method="post">
+
+                        <table class="table table-hover">
+                            <tr>
+                                <th>Type</th>
+                                <th>Line 1</th>
+                                <th>Line 2</th>
+                                <th>Line 3</th>
+                                <th>City</th>
+                                <th>Country</th>
+                                <th></th>
+                            </tr>
+                            @if (Model.ContactsDT != null)
+                            {
+                                @foreach (DataRow DR in Model.ContactsDT.Rows)
+                                {
+                                    <tr>
+                                        <td>@DR["ContactType"]</td>
+                                        <td>@DR["Line1"]</td>
+                                        <td>@DR["Line2"]</td>
+                                        <td>@DR["Line3"]</td>
+                                        <td>@DR["City"]</td>
+                                        <td>@DR["Country"]</td>
+                                        <td class="text-end">
+                                            <a asp-page="EditContacts" asp-route-MemberUID="@DR["MemberUID"]" asp-route-ContactID="@DR["ID"]" class="btn btn-outline-primary btn-sm">Edit</a>
+                                            <button type="submit" asp-route-MemberUID="@DR["MemberUID"]" asp-route-ContactID="@DR["ID"]" asp-page-handler="Archive" class="btn btn-danger" onclick="return confirm('Are you sure you want to Archive this item?');">Archive</button>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                        </table>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div id="tab2" class="tab-content">
+            <p>Content for Tab 2 goes here.</p>
+        </div>
+        <!-- Add more tab content as needed -->
+        <div id="tab3" class="tab-content">
+            <p>Content for Tab 3 goes here.</p>
+        </div>
+        <div id="tab4" class="tab-content">
+            <p>Content for Tab 4 goes here.</p>
+        </div>
+        <!-- Add more tab content as needed -->
+    </div>
+</div>
+@section scripts {
+    <script>
+        $(function () {
+            $("#countryDropdown").on("change", function () {
+                var countryId = $(this).val();
+                $("#cityDropdown").empty();
+                $("#cityDropdown").append("<option value='0'>Select City</option>");
+                $.getJSON(`?handler=CitiesByCountry&countryid=${countryId}`, (data) => {
+                    $.each(data, function (i, city) {
+                        $("#cityDropdown").append(`<option value="${city.id}">${city.cityName}</option>`);
+                    });
+                });
+            });
+        });
+    </script>
+    <script>
+        function openTab(tabId) {
+            // Hide all tab content
+            var tabContents = document.getElementsByClassName('tab-content');
+            for (var i = 0; i < tabContents.length; i++) {
+                tabContents[i].classList.remove('show');
+            }
+
+            // Show the selected tab content
+            var selectedTab = document.getElementById(tabId);
+            if (selectedTab) {
+                selectedTab.classList.add('show');
+            }
+        }
+    </script>
+}
+

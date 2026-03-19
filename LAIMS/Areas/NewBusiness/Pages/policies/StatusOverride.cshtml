@@ -1,0 +1,109 @@
+﻿@page
+@using System.Data
+@model LAIMS.Areas.NewBusiness.Pages.policies.StatusOverrideModel
+@{
+}
+@{
+    Layout = "/Pages/Shared/_LayoutSearch.cshtml";
+}
+<h1>Supervisor Overrides</h1>
+<hr />
+@if (Model.SearchTerm != null)
+{
+    @if ((Model.PoliciesDT != null) && (Model.PoliciesDT.Rows.Count > 0))
+    {
+        <div class="row mb-3">
+            <h5>@Model.ResultsCount results found for search "@Model.SearchTerm"!</h5>
+        </div>
+    }
+    <hr />
+}
+@* <div class="mb-3 text-end">
+    <a class="btn btn-primary" asp-page="Approve">Back To Approve...</a>
+</div> *@
+<div class="row mb-3"> 
+        <table class="table table-hover">
+            <tr>
+                <th>Entry </th>
+                <th>Applied</th>
+                <th>Application No</th>
+                <th>Policy No</th>
+                <th>Policy</th>
+                <th>Stage</th>
+                <th>Status Date</th>
+                <th></th>
+            </tr>
+            @if (Model.PoliciesDT != null)
+            {
+                @foreach (DataRow DR in Model.PoliciesDT.Rows)
+                {
+                    <tr>
+                        <td>@DR["EntryNo"]</td>
+                        <td>@DR["ApplicationDate"]</td>
+                        <td>@DR["ApplicationNo"]</td>
+                        <td>@DR["PolicyNo"]</td>
+                        <td>@DR["PolicyTypeName"]</td>
+                        <td>@DR["Status"]</td>
+                        <td>@DR["PolicyStatusDate"]</td>
+                        <td class="text-end">
+                            <button class="btn btn-primary" onclick="openOverridesModal(&quot;@DR["ID"]&quot;)">Override</button>
+                        </td>
+                    </tr>
+                }
+            }
+        </table> 
+</div>
+<form method="post">
+    <div class="modal fade" id="OverridesModal" tabindex="-1" aria-labelledby="OverridesModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-light">
+                    <h5 class="modal-title" id="OverridesModalLabel">Override Status</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <h2></h2>
+                    <input type="hidden" id="policyid" asp-for="PolicyStatiiOverride.PolicyID" />
+                    @if (TempData["PostbackSuccess"] != null && (bool)TempData["PostbackSuccess"])
+                    {
+                        <script>
+                            closeModal();
+                        </script>
+                    }
+                    <div class="row mb-3">
+                        <div class="form-group">
+                            <label asp-for="PolicyStatiiOverride.Override" class="control-label"><b>Decision</b></label>
+                            <select asp-for="PolicyStatiiOverride.Override" class="form-control" aria-required="true">
+                                <option value="">Select Option</option>
+                                <option value=1>Override</option>
+                                <option value=0>Override Request Rejected</option> 
+                            </select>
+                            <span asp-validation-for="PolicyStatiiOverride.Override" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="form-group">
+                            <label asp-for="PolicyStatiiOverride.OverridenComment"><b>Comment</b></label>
+                            <textarea asp-for="PolicyStatiiOverride.OverridenComment" class="form-control" id="commentTextarea" rows="5" cols="50" required></textarea>
+                            <span asp-validation-for="PolicyStatiiOverride.OverridenComment" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <input type="submit" value="Submit" class="btn btn-primary" />
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+@section scripts
+{
+    <script>
+        function openOverridesModal(policyid) {
+            document.getElementById('policyid').value = policyid; 
+            // Open the modal
+            $('#OverridesModal').modal('show');
+        }
+    </script>
+}

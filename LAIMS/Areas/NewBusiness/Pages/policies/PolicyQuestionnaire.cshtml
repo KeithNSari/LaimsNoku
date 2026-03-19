@@ -1,0 +1,130 @@
+﻿@page
+@model LAIMS.Areas.NewBusiness.Pages.policies.PolicyQuestionnaireModel
+@{
+}
+@using System.Data
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - LCS</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/LAIMS.styles.css" asp-append-version="true" />
+</head>
+<body>
+    <h2>@Model.QuestionnaireTitle</h2>
+    @if (!string.IsNullOrEmpty(ViewData["ErrorMessage"]?.ToString()))
+    {
+        <p class="text-danger">@ViewData["ErrorMessage"]</p>
+    }
+    <hr />
+    <form method="post">
+        <input type="hidden" asp-for="ReturnUrl" />
+        <input type="hidden" asp-for="QuestionnaireResponseID" />
+        <input type="hidden" asp-for="MemberUID" />
+        <input type="hidden" asp-for="QuestionnaireID"/>
+        <div class="row mb-3 p-3">
+            @for (int i = 0; i < Model.Questions.Count; i++)
+            {
+                var question = Model.Questions[i];
+                <div>
+                    <p>@question.Position @question.QuestionLabel) @question.QuestionText</p>
+                    @if (question.QuestionTypeID == 1)
+                    {
+                        foreach (var option in question.AnswerOptions)
+                        {
+                            if (option != null)
+                            {
+                                <label>
+                                    <input type="radio" name="answers[@question.ID]" value="@option.ID" />
+                                    @option.ExpectedResponse
+                                </label>
+
+                                <br />
+                            }
+                        }
+                    }
+                    else if (question.QuestionTypeID == 2)
+                    {
+                        foreach (var option in question.AnswerOptions)
+                        {
+                            <label>
+                                <input type="checkbox" name="answers[@question.ID]"
+                                       value="@option.ID" />
+                                @option.ExpectedResponse
+                            </label>
+
+                            <br />
+                        }
+                    }
+                    else if (question.QuestionTypeID == 3)
+                    {
+                        <textarea name="answers[@question.ID]" rows="4" cols="50"></textarea>
+                    }
+                </div>
+            }            
+        </div>  
+        <div class="row mb-3 bg-light">
+            <div class="col-md-11"></div>
+            <div class="col-md-1">
+                <button type="submit" class="btn btn-primary float-end">Submit</button>
+            </div>            
+        </div>
+    </form>
+    <div class="row mb-3 p-3">
+        <h3>Previous Responses</h3>
+        @if (Model.PreviousResponsesDT.Rows.Count > 0)
+        {
+            <b>Added:</b> @Model.PreviousResponseDate
+            <table class="table table-striped">
+                <tr>
+                    <th class="col-md-1"></th>
+                    <th class="col-md-4">Question</th>
+                    <th class="col-md-7">Response</th>
+                </tr>
+                @{
+                    int position = 1;
+                    @for (int i = 0; i < Model.PreviousResponsesDT.Rows.Count; i++)
+                    {
+                        DataRow DR = Model.PreviousResponsesDT.Rows[i];
+                        <tr>
+                            <td>
+                                @if ((i > 0) && (Convert.ToInt32(Model.PreviousResponsesDT.Rows[i - 1]["QuestionNo"]) != Convert.ToInt32(DR["QuestionNo"])))
+                                {
+                                    position += 1;
+                                }
+                                @position@DR["QuestionLabel"]
+                            </td>
+                            <td>@DR["Question"]</td>
+                            <td>@DR["Responses"]</td>
+                        </tr>
+                    }
+                }
+            </table>
+        }
+        else
+        {
+            <p>No responses submitted as yet.</p>
+        }
+    </div>
+
+    <script>
+        function scrollToBottom() {
+            // Scroll to the bottom of the page
+            window.scrollTo(0, document.body.scrollHeight);
+        }
+
+        // Attach the scrollToBottom function to the window's load event
+        window.onload = scrollToBottom;
+    </script>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script> 
+</body>
+</html>

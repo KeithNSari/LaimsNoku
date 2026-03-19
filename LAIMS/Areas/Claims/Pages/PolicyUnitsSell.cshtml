@@ -1,0 +1,149 @@
+﻿@page
+@using System.Data
+@model LAIMS.Areas.Claims.Pages.PolicyUnitsSellModel
+@{
+}
+@{
+    Layout = "/Pages/Shared/_LayoutSearch.cshtml";
+}
+<h1>Units Sales</h1>
+<p>Search for a policy to get started. N.B: Policy must have an investment product!</p>
+<hr />
+@if (Model.SearchTerm != null)
+{
+    @if (Model.PoliciesDT != null)
+    {
+        <div class="row mb-3">
+            @if (@Model.ResultsCount == 0)
+            {
+                <h5>0 valid policies found for search "@Model.SearchTerm"! Please note that the policy must have an investment product!</h5>
+                <hr />
+            }
+        </div>
+    }
+
+}
+<div class="row mb-3">
+    @if (Model.PoliciesDT != null)
+    {
+        @foreach (DataRow DR in Model.PoliciesDT.Rows)
+        {
+            <h3>Client: @DR["MemberName"].ToString()</h3>
+            <hr />
+            <table class="table table-hover">
+                <tr>
+                    <th>Entry</th>
+                    <th>Commencement</th>
+                    <th>Policy No</th>
+                    <th>Policy</th>
+                    <th>Investment Content</th>
+                </tr>
+                <tr>
+                    <td>@DR["EntryNo"]</td>
+                    <td>@DR["CommencementDate"]</td>
+                    <td>@DR["PolicyNo"]</td>
+                    <td>@DR["PolicyTypeName"]</td>
+                    <td>@DR["InvestmentContentBalance"]</td>
+                </tr>
+            </table>
+        }
+    }
+</div>
+<form method="post">
+    <input type="hidden" asp-for="@Model.SearchTerm" />
+    <div class="row mb-3">
+        @if ((Model.UnitTrustBalancesDT != null) && (Model.UnitTrustBalancesDT.Rows.Count > 0))
+        {
+            <h3>Fund Balances</h3>
+            <hr />
+            <table class="table table-hover">
+                <tr>
+                    <th>Fund</th>
+                    <th>Units</th>
+                    <th>Bid Price</th>
+                    <th>Quantity</th>
+                    <th>Total</th>
+                </tr>
+                @foreach (DataRow DR in Model.UnitTrustBalancesDT.Rows)
+                {
+                    <tr>
+                        <td>@DR["UnitTrust"]</td>
+                        <td>@DR["TotalUnits"]</td>
+                        <td class="price">@DR["BidPrice"]</td>
+                        <td>
+                            <input type="hidden" name="UnitTrustIDS" value="@DR["UnitTrustID"]" />
+                            <input type="number" name="PurchaseQuantities" value="0" min="0" required class="quantity" oninput="updateTotal(this)" />
+                        </td>
+                        <td class="total">0</td>
+                    </tr>
+                }
+                <tfoot>
+                    <tr>
+                        <td colspan="4"><b>Total Amount</b></td>
+                        <td id="grandTotal">0.00</td>
+                    </tr>
+                </tfoot>
+            </table>
+            <div class="row mb-3">
+                <div class="col-md-11"></div>
+                <div class="col-md-1">
+                    <input type="submit" value="Add" class="btn btn-primary" />
+                </div>
+            </div>
+        }
+    </div>
+</form>
+<div class="row mb-3">
+    @if ((Model.TransactionHistoryDT != null) && (Model.TransactionHistoryDT.Rows.Count > 0))
+    {
+        <h3>Sales Transaction History</h3>
+        <hr />
+
+        <table class="table table-hover">
+            <tr>
+                <th>Fund</th>
+                <th>Units</th>
+                <th>Bid Price</th>
+                <th>Value</th>
+                <th>Date</th>
+            </tr>
+            @foreach (DataRow DR in Model.TransactionHistoryDT.Rows)
+            {
+                <tr>
+                    <td>@DR["UnitTrust"]</td>
+                    <td>@DR["Units"]</td>
+                    <td>@DR["BidPrice"]</td>
+                    <td>@DR["Value"]</td>
+                    <td>@DR["AddedOn"]</td>
+                </tr>
+            }
+        </table>
+    }
+</div>
+@section Scripts{
+    <script>
+        function updateTotal(input) {
+            const row = input.parentElement.parentElement;
+            const price = parseFloat(row.querySelector('.price').innerText);
+            const quantity = parseFloat(input.value);
+            const totalCell = row.querySelector('.total');
+            const total = price * quantity;
+            totalCell.innerText = total.toFixed(7);
+            updateGrandTotal();
+        }
+
+        function updateGrandTotal() {
+            const totalCells = document.querySelectorAll('.total');
+            let grandTotal = 0;
+            totalCells.forEach(cell => {
+                grandTotal += parseFloat(cell.innerText);
+            });
+            document.getElementById('grandTotal').innerText = grandTotal.toFixed(7);
+        }
+
+        // Initial grand total calculation on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            updateGrandTotal();
+        });
+    </script>
+}

@@ -1,0 +1,130 @@
+﻿@page
+@model LAIMS.Areas.Investments.Pages.BuyUnitsModel
+@{
+}
+@{
+    Layout = "/Pages/Shared/_LayoutProducts.cshtml";
+}
+<h2>Buy Units</h2> 
+<div class="nav-wizards-container">
+    <nav class="nav nav-wizards-1 mb-2">
+        <div class="nav-item col">
+            <a class="nav-link completed" asp-page="PolicyDetails" asp-route-id="@Model.ProposerID" asp-route-policyid="@Model.PolicyID" asp-route-policyTypeId="@Model.PolicyTypeID">
+                <div class="nav-no">1</div>
+                <div class="nav-text">View Details</div>
+            </a>
+        </div>
+        <div class="nav-item col">
+            <a class="nav-link completed" asp-page="PolicyDetails" asp-route-id="@Model.ProposerID" asp-route-policyid="@Model.PolicyID" asp-route-policyTypeId="@Model.PolicyTypeID">
+                <div class="nav-no">2</div>
+                <div class="nav-text">Add Risk Claims</div>
+            </a>
+        </div>
+        <div class="nav-item col">
+            <a class="nav-link active" href="#">
+                <div class="nav-no">3</div>
+                <div class="nav-text">Add Investment Claims</div>
+            </a>
+        </div>
+        <div class="nav-item col">
+            <a class="nav-link disabled" href="#">
+                <div class="nav-no">3</div>
+                <div class="nav-text">Add Investment Claims</div>
+            </a>
+        </div>
+        <div class="nav-item col">
+            <a class="nav-link disabled" href="#">
+                <div class="nav-no">4</div>
+                <div class="nav-text">Questionnaires</div>
+            </a>
+        </div>
+        <div class="nav-item col">
+            <a class="nav-link disabled" href="#">
+                <div class="nav-no">5</div>
+                <div class="nav-text">Payment Details</div>
+            </a>
+        </div>
+        <div class="nav-item col">
+            <a class="nav-link disabled" href="#">
+                <div class="nav-no">6</div>
+                <div class="nav-text">Submission</div>
+            </a>
+        </div>
+    </nav>
+</div>
+<hr />
+<h2>Units Sales</h2>
+
+@if (@Model.Cart.Count > 0)
+{
+    <form asp-action="UpdateCart" method="post">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Unit Trust</th>
+                    <th>Offer Price</th>
+                    <th>Quantity To Dispose</th>
+                    <th>Total Cost</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (var i = 0; i < @Model.Cart.Count; i++)
+                {
+                    <tr>
+                        <td>
+                            @Model.Cart[i].UnitTrust
+                            <input type="hidden" name="cartRows[@i].UnitTrustID" value=" @Model.Cart[i].UnitTrustID" />
+                        </td>
+                        <td>@Model.Cart[i].UnitCost</td>
+                        <td>
+                            <input type="number" name="cartRows[@i].Quantity" value="@Model.Cart[i].Quantity" min="0" />
+                        </td>
+                        <td>@Model.Cart[i].TotalRowCost</td>
+                        <td>
+                            <a asp-action="RemoveFromCart" asp-route-id="@Model.Cart[i].UnitTrustID">Remove</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <p>Total Cart Cost: @Model.Cart.Sum(row => row.TotalRowCost)</p>
+        <button type="submit" asp-page-handler="UpdateCart">Update Cart</button>
+    </form>
+}
+else
+{
+    <p>Your shopping cart is empty.</p>
+}
+@section scripts
+{
+    <script>
+        $(document).ready(function () {
+            $('input[name^="cartRows"]').on('change', function () {
+                updateRowTotal(this);
+            });
+
+            function updateRowTotal(input) {
+                var row = $(input).closest('tr');
+                var quantity = parseInt($(input).val());
+                var unitCost = parseFloat(row.find('td:eq(1)').text());
+                var rowTotalCell = row.find('.rowTotal');
+                var rowTotal = quantity * unitCost;
+
+                rowTotalCell.text(rowTotal.toFixed(2));
+
+                updateOverallTotal();
+            }
+
+            function updateOverallTotal() {
+                var totalCost = 0;
+
+                $('.rowTotal').each(function () {
+                    totalCost += parseFloat($(this).text());
+                });
+
+                $('#totalCost').text(totalCost.toFixed(2));
+            }
+        });
+    </script>
+}

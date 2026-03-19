@@ -1,0 +1,96 @@
+﻿@page
+@model LAIMS.Areas.NewBusiness.Pages.policies.test5Model
+@{
+}
+@{
+    Layout = "/Pages/Shared/_LayoutNewBusiness.cshtml";
+}
+<!-- Your main page content -->
+<table class="table" id="dataTable">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Full Name</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        <!-- Example row with hidden values and button -->
+        <tr>
+            <td><input type="hidden" class="rowId" value="1">1</td>
+            <td><input type="hidden" class="rowFullName" value="John Doe">John Doe</td>
+            <td><button type="button" class="btn btn-primary btn-show-modal">Show Modal</button></td>
+        </tr>
+        <tr>
+            <td><input type="hidden" class="rowId" value="3">3</td>
+            <td><input type="hidden" class="rowFullName" value="Jackie">Jackie</td>
+            <td><button type="button" class="btn btn-primary btn-show-modal">Show Modal</button></td>
+        </tr>
+        <!-- Add more rows as needed -->
+    </tbody>
+</table>
+<div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Modal Title</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Bind input fields to ModalData properties -->
+                <input type="text" id="modalField1" class="form-control" asp-for="ModalData.Field1" />
+                <input type="text" id="modalField2" class="form-control" asp-for="ModalData.Field2" />
+                <!-- Add more fields as needed -->
+                <!-- Your other modal content goes here -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <!-- Add other buttons as needed -->
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            // Function to open the modal and fetch data
+            function openModalAndFetchData(rowId, rowFullName) {
+                $.ajax({
+                    url: 'test5?handler=LoadData',
+                    type: 'GET',
+                    data: { id: rowId },
+                    success: function (data) {
+                        if (data && data.length > 0) {
+                            var rowData = data[0]; // Assuming only one row is fetched
+
+                            // Set modal data model properties
+                            $('#modalField1').val(rowData.column1);
+                            $('#modalField2').val(rowData.column2);
+                            // Add more fields as needed
+
+                            // Show the modal
+                            $('#myModal').modal('show');
+                        } else {
+                            console.log('No data received or data is empty.');
+                        }
+                    },
+                    error: function () {
+                        alert('Failed to fetch data from the server.');
+                    }
+                });
+            }
+
+
+            // Attach the function to the button click event for each row
+            $(document).on('click', '.btn-show-modal', function () {
+                var row = $(this).closest('tr');
+                var rowId = row.find('.rowId').val();
+                var rowFullName = row.find('.rowFullName').val();
+
+                // Call the function to open the modal and fetch data
+                openModalAndFetchData(rowId, rowFullName);
+            });
+        });
+    </script>
+}

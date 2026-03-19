@@ -1,0 +1,777 @@
+﻿@page
+@using System.Data;
+@model LAIMS.Areas.PolicyServicing.Pages.Policies.PPDetailsModel
+@{
+} 
+@{
+    Layout = "/Pages/Shared/_LayoutProducts.cshtml";
+}
+<h1>Policy: Manage Premiums</h1>
+<div class="bg-light">
+    <hr />
+    <h3>Policy: @Model.PolicyName</h3>
+    <div class="nav-wizards-container">
+        <nav class="nav nav-wizards-1 mb-2">
+            <div class="nav-item col">
+                <a class="nav-link completed" asp-page="SelectPolicy" asp-route-id="@Model.MemberID">
+                    <div class="nav-no">1</div>
+                    <div class="nav-text">Select Policy</div>
+                </a>
+            </div>
+            <div class="nav-item col">
+                <a class="nav-link completed" asp-page="NewApplication" asp-route-id="@Model.MemberID" asp-route-policyid="@Model.PolicyID" asp-route-policyTypeId="@Model.PolicyTypeID">
+                    <div class="nav-no">2</div>
+                    <div class="nav-text">Add Riders</div>
+                </a>
+            </div> 
+            <div class="nav-item col">
+                <a class="nav-link active" href="#">
+                    <div class="nav-no">3</div>
+                    <div class="nav-text">Submission</div>
+                </a>
+            </div>
+            <div class="nav-item col">
+                <a class="nav-link disabled" href="#">
+                    <div class="nav-no">4</div>
+                    <div class="nav-text">Supervisor Approval</div>
+                </a>
+            </div>
+        </nav>
+    </div>
+    <hr />
+</div>
+<h3>Proposer</h3>
+<table class="table table-hover">
+    <tr>
+        <th class="col-md-2"></th>
+        <th class="col-md-2"></th>
+        <th class="col-md-2"></th>
+        <th class="col-md-2"></th>
+        <th class="col-md-2"></th>
+        <th class="col-md-2"></th>
+        <th class="col-md-2"></th>
+    </tr>
+    <tr>
+        <td><b>First Name:</b></td>
+        <td>@Model.Member.Name1</td>
+        <td><b>Middle Name:</b></td>
+        <td>@Model.Member.Name2</td>
+        <td><b>Surname:</b></td>
+        <td>@Model.Member.Name3</td>
+    </tr>
+    <tr>
+        <td><b>Gender:</b></td>
+        <td>@Model.Member.Gender</td>
+        <td><b>Title:</b></td>
+        <td>@Model.Member.Title</td>
+        <td><b>Marital Status:</b></td>
+        <td>@Model.Member.MaritalStatus</td>
+    </tr>
+    <tr>
+        <td><b>D.O.B:</b></td>
+        <td>@Model.Member.DOB</td>
+        <td><b>Birth Country:</b></td>
+        <td>@Model.Member.BirthCountry</td>
+        <td><b>Place Of Birth:</b></td>
+        <td>@Model.Member.PlaceOfBirth</td>
+    </tr>
+    <tr>
+        <td><b>Citizenship:</b></td>
+        <td>@Model.Member.Country</td>
+        <td><b>Member No:</b></td>
+        <td>@Model.Member.MemberNo</td>
+        <td><b>National ID:</b></td>
+        <td>@Model.Member.NationalID</td>
+    </tr>
+    <tr>
+        <td><b>Passport:</b></td>
+        <td>@Model.Member.Passport</td>
+        <td><b>Birth Certificate:</b></td>
+        <td>@Model.Member.BirthCertificate</td>
+        <td></td>
+        <td></td>
+    </tr>
+</table>   
+
+@if ((Model.PremiumDetails != null) && (Model.PremiumDetails.Rows.Count > 0))
+{
+    <h3>Payment Collection Details</h3> 
+    @if (Model.PremiumPayerID > 0)
+    {
+        <hr />
+        <h4>Premium Payer</h4>
+        <table class="table table-hover">
+            <tr>
+                <th class="col-md-2"></th>
+                <th class="col-md-2"></th>
+                <th class="col-md-2"></th>
+                <th class="col-md-2"></th>
+                <th class="col-md-2"></th>
+                <th class="col-md-2"></th>
+                <th class="col-md-2"></th>
+            </tr>
+            <tr>
+                <td><b>First Name:</b></td>
+                <td>@Model.PremiumPayer.Name1</td>
+                <td><b>Middle Name:</b></td>
+                <td>@Model.PremiumPayer.Name2</td>
+                <td><b>Surname:</b></td>
+                <td>@Model.PremiumPayer.Name3</td>
+            </tr>
+            <tr>
+                <td><b>Gender:</b></td>
+                <td>@Model.PremiumPayer.Gender</td>
+                <td><b>Title:</b></td>
+                <td>@Model.PremiumPayer.Title</td>
+                <td><b>Marital Status:</b></td>
+                <td>@Model.PremiumPayer.MaritalStatus</td>
+            </tr>
+            <tr>
+                <td><b>D.O.B:</b></td>
+                <td>@Model.PremiumPayer.DOB</td>
+                <td><b>Birth Country:</b></td>
+                <td>@Model.PremiumPayer.BirthCountry</td>
+                <td><b>Place Of Birth:</b></td>
+                <td>@Model.PremiumPayer.PlaceOfBirth</td>
+            </tr>
+            <tr>
+                <td><b>Citizenship:</b></td>
+                <td>@Model.PremiumPayer.Country</td>
+                <td><b>Member No:</b></td>
+                <td>@Model.PremiumPayer.MemberNo</td>
+                <td><b>National ID:</b></td>
+                <td>@Model.PremiumPayer.NationalID</td>
+            </tr>
+            <tr>
+                <td><b>Passport:</b></td>
+                <td>@Model.PremiumPayer.Passport</td>
+                <td><b>Birth Certificate:</b></td>
+                <td>@Model.PremiumPayer.BirthCertificate</td>
+                <td></td>
+                <td></td>
+            </tr>
+        </table> 
+    } 
+    DataRow DR = @Model.PremiumDetails.Rows[0];
+    <div class="row">
+        <div class="row mb-3">
+            <div class="form-group">
+                <label class="control-label"><b>Bank/ Service Provider</b></label><br />
+                @DR["PaymentProvider"]
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label><b>Branch Code</b></label><br />
+                    @DR["BranchCode"]
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label><b>Account No</b></label><br />
+                    @DR["BankAccountNo"]
+                </div>
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label><b>Method</b></label><br />
+                    @DR["PaymentMethod"]
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label><b>Frequency</b></label><br />
+                    @DR["PaymentFrequency"]
+                </div>
+            </div>
+        </div>
+    </div> 
+}
+<h3>Participants</h3>
+<hr />  
+@if(@Model.HasMainLifeAssured)
+{
+    <h4>Main Life Assured</h4>
+    <div class="row mb-3">
+        <table class="table table-striped">
+            <tr>
+                <th>Full Name</th>
+                <th>R\ship</th>
+                <th>D.O.B</th>
+                <th>ID Type</th>
+                <th>ID</th> 
+            </tr>
+            @if (Model.MainLifeDT != null)
+            {
+                @foreach (DataRow DR in Model.MainLifeDT.Rows)
+                {
+                    <tr>
+                        <td>@DR["FullName"]</td>
+                        <td>@DR["Relationship"]</td>
+                        <td>@DR["DOB"]</td>
+                        <td>@DR["IDType"]</td>
+                        <td>@DR["IDDocument"]</td> 
+                    </tr>
+                }
+            }
+        </table>
+    </div>
+}
+@if (Model.HasAdditionalLifeAssured)
+{
+    @if (Model.HasAdditionalLifeAssured)
+    {
+        <h4>Additional Lives Assured</h4>
+        <div class="row mb-3">
+            <table class="table table-striped">
+                <tr>
+                    <th>Full Name</th>
+                    <th>R\ship</th>
+                    <th>D.O.B</th>
+                    <th>ID Type</th>
+                    <th>ID</th> 
+                </tr>
+                @if (Model.AdditionalLifeDT != null)
+                {
+                    @foreach (DataRow DR in Model.AdditionalLifeDT.Rows)
+                    {
+                        @if ((Convert.ToByte(@DR["ProposeToArchive"]) == 1) || (Convert.ToByte(@DR["Approved"]) == 0))
+                        {
+                            <tr class="bg-white">
+                                <td class="text-danger">
+                                    @DR["FullName"]<br />
+                                    @if (Convert.ToByte(@DR["ProposeToArchive"]) == 1)
+                                    {
+                                        <b>Submitted for archiving</b>
+                                    }
+                                    else
+                                    {
+                                        <b>New Entry</b>
+                                    }
+                                </td>
+                                <td class="text-danger">@DR["Relationship"]</td>
+                                <td class="text-danger">@DR["DOB"]</td>
+                                <td class="text-danger">@DR["IDType"]</td>
+                                <td class="text-danger">@DR["IDDocument"]</td> 
+                            </tr>
+                        }
+                        else
+                        {
+                            <tr>
+                                <td>@DR["FullName"]</td>
+                                <td>@DR["Relationship"]</td>
+                                <td>@DR["DOB"]</td>
+                                <td>@DR["IDType"]</td>
+                                <td>@DR["IDDocument"]</td> 
+                            </tr>
+                        }
+                    }
+                }
+            </table>
+        </div>
+    }
+}
+<h4>Beneficiaries</h4>
+<div class="row mb-3">
+    <table class="table table-striped">
+        <tr> 
+            <th>Full Name</th>
+            <th>R\ship</th>
+            <th>D.O.B</th>
+            <th>ID Type</th>
+            <th>ID</th> 
+        </tr>
+        @if (Model.BeneficiariesDT != null)
+        {
+            @foreach (DataRow DR in Model.BeneficiariesDT.Rows)
+            {
+                <tr> 
+                    <td>@DR["FullName"]</td>
+                    <td>@DR["Relationship"]</td>
+                    <td>@DR["DOB"]</td>
+                    <td>@DR["IDType"]</td>
+                    <td>@DR["IDDocument"]</td> 
+                </tr>
+            }
+        }
+    </table>
+</div>     
+<h3>Premiums</h3>
+<hr />
+<div class="row mb-3">
+    <form method="post">
+        <input type="hidden" asp-for="ReturnUrl" />
+        <input type="hidden" asp-for="RequestID" />
+        <input type="hidden" asp-for="PolicyPremiumID" />
+        <input type="hidden" asp-for="MemberID" />
+        <input type="hidden" asp-for="PolicyTypeID" />
+        <input type="hidden" asp-for="PolicyID" />
+        @for (var i = 0; i < Model.PolicyBeneficiaryLineDetails.Count; i++)
+        {
+            var beneficiary = Model.PolicyBeneficiaryLineDetails[i];
+            @if (i > 0 && (@Model.PolicyBeneficiaryLineDetails[i].Product != @Model.PolicyBeneficiaryLineDetails[i - 1].Product))
+            {
+                <h5>@beneficiary.Product</h5>
+            }
+            else if (i == 0)
+            {
+                <h5>@beneficiary.Product</h5>
+            }
+            @if ((Model.PolicyBeneficiaryLineDetails[i].PolicyBeneficiariesLineApproved == 0) || (Model.PolicyBeneficiaryLineDetails[i].ProposeToArchive == 1))
+            {
+                <div class="col-md-12 text-danger bg-white">
+                    @if ((Model.PolicyBeneficiaryLineDetails[i].PolicyBeneficiariesLineApproved == 0))
+                    {
+                        <b>Proposed New Entry</b>
+                    }
+                    else
+                    {
+                        <b>Submitted for archiving</b>
+                    }
+                    @if (i > 0 && (@Model.PolicyBeneficiaryLineDetails[i].Product != @Model.PolicyBeneficiaryLineDetails[i - 1].Product))
+                    {
+                        <div class="row">
+                            <div class="col-md-1"><b>LineID</b></div>
+                            <div class="col-md-2"><b>Full Name</b></div>
+                            <div class="col-md-1"><b>R\ship</b></div>
+                            <div class="col-md-1"><b>DOB</b></div>
+                            <div class="col-md-1"><b>IDType</b></div>
+                            <div class="col-md-2"><b>ID</b></div>
+                            <div class="col-md-2"><b>Premium</b></div>
+                            @if (@Model.PolicyBeneficiaryLineDetails[i].CategoryID == 1)
+                            {
+                                @* <div class="col-md-2"><b>Sum Assured (optional)</b></div> *@
+                            }
+                            else
+                            {
+                                <div class="col-md-2"><b>Cover</b></div>
+                            }
+                        </div>
+                        <hr />
+                    }
+                    else if (i == 0)
+                    {
+                        <div class="row">
+                            <div class="col-md-1"><b>LineID</b></div>
+                            <div class="col-md-2"><b>Full Name</b></div>
+                            <div class="col-md-1"><b>R/ship</b></div>
+                            <div class="col-md-1"><b>DOB</b></div>
+                            <div class="col-md-1"><b>IDType</b></div>
+                            <div class="col-md-2"><b>ID</b></div>
+                            <div class="col-md-2"><b>Premium</b></div>
+                            @if (@Model.PolicyBeneficiaryLineDetails[i].CategoryID == 1)
+                            {
+                                // <div class="col-md-2"><b>Sum Assured (optional)</b></div>
+                            }
+                            else
+                            {
+                                <div class="col-md-2"><b>Cover</b></div>
+                            }
+                        </div>
+                        <hr />
+                    }
+                    <div class="row">
+                        <div class="col-md-1">
+                            <input type="hidden" asp-for="@Model.PolicyBeneficiaryLineDetails[i].LineId" />
+                            @beneficiary.LineId
+                        </div>
+                        <div class="col-md-2">@beneficiary.FullName</div>
+                        <div class="col-md-1">@beneficiary.Relationship</div>
+                        <div class="col-md-1">@beneficiary.DOB.ToShortDateString()</div>
+                        <div class="col-md-1">@beneficiary.IDType</div>
+                        <div class="col-md-2">@beneficiary.ID</div>
+                        <div class="col-md-2">
+                            @if (Model.PolicyBeneficiaryLineDetails[i].ProposeToArchive == 1)
+                            {
+                                <input type="text" readonly id="premiumTxt" name="premiumTxt" value="@Model.PolicyBeneficiaryLineDetails[i].Premium" />
+                            }
+                            else
+                            {
+                                <input type="text" readonly asp-for="@Model.PolicyBeneficiaryLineDetails[i].Premium" class="premium-input" />
+                            }
+                        </div>
+                        <div class="col-md-2">
+                            @if (@Model.PolicyBeneficiaryLineDetails[i].CategoryID == 1)
+                            {
+                                @* <input type="text" asp-for="@Model.PolicyBeneficiaryLineDetails[i].Cover"/> *@
+                            }
+                            else
+                            {
+                                @if (Model.PolicyBeneficiaryLineDetails[i].ProposeToArchive == 1)
+                                {
+                                    <input type="text" readonly id="coverTxt" name="coverTxt" value="@Model.PolicyBeneficiaryLineDetails[i].Cover" />
+                                }
+                                else
+                                {
+                                    <input type="text" readonly asp-for="@Model.PolicyBeneficiaryLineDetails[i].Cover" class="cover-input" />
+                                }
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div>
+                    @if (i > 0 && (@Model.PolicyBeneficiaryLineDetails[i].Product != @Model.PolicyBeneficiaryLineDetails[i - 1].Product))
+                    {
+                        <div class="row">
+                            <div class="col-md-1"><b>LineID</b></div>
+                            <div class="col-md-2"><b>Full Name</b></div>
+                            <div class="col-md-1"><b>R\ship</b></div>
+                            <div class="col-md-1"><b>DOB</b></div>
+                            <div class="col-md-1"><b>IDType</b></div>
+                            <div class="col-md-2"><b>ID</b></div>
+                            <div class="col-md-2"><b>Premium</b></div>
+                            @if (@Model.PolicyBeneficiaryLineDetails[i].CategoryID == 1)
+                            {
+                                @* <div class="col-md-2"><b>Sum Assured (optional)</b></div> *@
+                            }
+                            else
+                            {
+                                <div class="col-md-2"><b>Cover</b></div>
+                            }
+                        </div>
+                        <hr />
+                    }
+                    else if (i == 0)
+                    {
+                        <div class="row">
+                            <div class="col-md-1"><b>LineID</b></div>
+                            <div class="col-md-2"><b>Full Name</b></div>
+                            <div class="col-md-1"><b>R/ship</b></div>
+                            <div class="col-md-1"><b>DOB</b></div>
+                            <div class="col-md-1"><b>IDType</b></div>
+                            <div class="col-md-2"><b>ID</b></div>
+                            <div class="col-md-2"><b>Premium</b></div>
+                            @if (@Model.PolicyBeneficiaryLineDetails[i].CategoryID == 1)
+                            {
+                                // <div class="col-md-2"><b>Sum Assured (optional)</b></div>
+                            }
+                            else
+                            {
+                                <div class="col-md-2"><b>Cover</b></div>
+                            }
+                        </div>
+                        <hr />
+                    }
+                    @if (i % 2 == 0)
+                    {
+                        <div class="row bg-light">
+                            <div class="col-md-1">
+                                <input type="hidden" asp-for="@Model.PolicyBeneficiaryLineDetails[i].LineId" />
+                                @beneficiary.LineId
+                            </div>
+                            <div class="col-md-2">@beneficiary.FullName</div>
+                            <div class="col-md-1">@beneficiary.Relationship</div>
+                            <div class="col-md-1">@beneficiary.DOB.ToShortDateString()</div>
+                            <div class="col-md-1">@beneficiary.IDType</div>
+                            <div class="col-md-2">@beneficiary.ID</div>
+                            <div class="col-md-2">
+                                <input type="text" readonly asp-for="@Model.PolicyBeneficiaryLineDetails[i].Premium" class="premium-input" />
+                            </div>
+                            <div class="col-md-2">
+                                @if (@Model.PolicyBeneficiaryLineDetails[i].CategoryID == 1)
+                                {
+                                    @* <input type="text" asp-for="@Model.PolicyBeneficiaryLineDetails[i].Cover"/> *@
+                                }
+                                else
+                                {
+                                    <input type="text" readonly asp-for="@Model.PolicyBeneficiaryLineDetails[i].Cover" class="cover-input" />
+                                }
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="row">
+                            <div class="col-md-1">
+                                <input type="hidden" asp-for="@Model.PolicyBeneficiaryLineDetails[i].LineId" />
+                                @beneficiary.LineId
+                            </div>
+                            <div class="col-md-2">@beneficiary.FullName</div>
+                            <div class="col-md-1">@beneficiary.Relationship</div>
+                            <div class="col-md-1">@beneficiary.DOB.ToString("yyyy-MM-dd")</div>
+                            <div class="col-md-1">@beneficiary.IDType</div>
+                            <div class="col-md-2">@beneficiary.ID</div>
+                            <div class="col-md-2">
+                                <input type="text" asp-for="@Model.PolicyBeneficiaryLineDetails[i].Premium" class="premium-input" />
+                            </div>
+                            <div class="col-md-2">
+                                @if (@Model.PolicyBeneficiaryLineDetails[i].CategoryID == 1)
+                                {
+                                    //<input type="text" asp-for="@Model.PolicyBeneficiaryLineDetails[i].Cover"/>
+                                }
+                                else
+                                {
+                                    <input type="text" readonly asp-for="@Model.PolicyBeneficiaryLineDetails[i].Cover" class="cover-input" />
+                                }
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+            <br /> 
+        }
+        <div class="row">
+            <div class="col-md-8">
+            </div>
+            <div class="col-md-2">
+                <b>Total Premium:</b>
+            </div>
+            <div class="col-md-2">
+                <span id="totalPremiumAmount">0.00</span>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-8">
+            </div>
+            <div class="col-md-2">
+                <b>Total Cover:</b>
+            </div>
+            <div class="col-md-2">
+                <span id="totalCoverAmount">0.00</span>
+            </div>
+        </div>
+    </form>
+</div>
+<h3>Contract Dates</h3>
+<hr/>
+<form method="post">
+    <input type="hidden" asp-for="ReturnUrl" />
+    <input type="hidden" asp-for="RequestID" />
+    <div class="row mb-3">
+        <div class="col-sm-3">
+            <label asp-for="PolicyDates.ClientSignedDate"><b>@Html.DisplayNameFor(m => m.PolicyDates.ClientSignedDate)</b></label>
+            <input type="date" readonly asp-for="PolicyDates.ClientSignedDate" class="form-control" />
+            <span asp-validation-for="PolicyDates.ClientSignedDate" class="text-danger"></span>
+        </div>
+        <div class="col-sm-3">
+            <label asp-for="PolicyDates.AgentSignedDate"><b>@Html.DisplayNameFor(m => m.PolicyDates.AgentSignedDate)</b></label>
+            <input type="date" readonly asp-for="PolicyDates.AgentSignedDate" class="form-control" />
+            <span asp-validation-for="PolicyDates.AgentSignedDate" class="text-danger"></span>
+        </div>
+        <div class="col-sm-3">
+            <label asp-for="PolicyDates.DateApplicationReceived"><b>@Html.DisplayNameFor(m => m.PolicyDates.DateApplicationReceived)</b></label>
+            <input type="date" readonly asp-for="PolicyDates.DateApplicationReceived" class="form-control" />
+            <span asp-validation-for="PolicyDates.DateApplicationReceived" class="text-danger"></span>
+        </div>
+        <div class="col-sm-3">
+            <label asp-for="PolicyDates.ProposedStartDate"><b>@Html.DisplayNameFor(m => m.PolicyDates.ProposedStartDate)</b></label>
+            <input type="date" readonly asp-for="PolicyDates.ProposedStartDate" class="form-control" />
+            <span asp-validation-for="PolicyDates.ProposedStartDate" class="text-danger"></span>
+        </div>
+        <div class="col-sm-3">
+            <label asp-for="PolicyDates.PreferredBillingDay"><b>@Html.DisplayNameFor(m => m.PolicyDates.PreferredBillingDay)</b></label>
+            <input readonly asp-for="PolicyDates.PreferredBillingDay" class="form-control" />
+            <span asp-validation-for="PolicyDates.PreferredBillingDay" class="text-danger"></span>
+        </div>
+        <div class="col-sm-3">
+            <label asp-for="PolicyDates.DeductionStartDate"><b>@Html.DisplayNameFor(m => m.PolicyDates.DeductionStartDate)</b></label>
+            <input readonly type="date" asp-for="PolicyDates.DeductionStartDate" class="form-control" />
+            <span asp-validation-for="PolicyDates.DeductionStartDate" class="text-danger"></span>
+        </div> 
+    </div>
+    <hr/>
+    <h3>Intermediaries</h3>
+    <div class="row mb-3">
+        <h4>Proposed Premium Agents</h4>
+        <table class="table table-hover">
+            <tr>
+                <th class="col-md-4">Agent Name</th>
+                <th class="col-md-2">Agent Code</th>
+                <th class="col-md-2">Type</th>
+                <th class="col-md-4">Reports To</th>
+            </tr>
+            @if (Model.IntermediariesDT != null)
+            {
+                @foreach (DataRow DR in Model.IntermediariesDT.Rows)
+                {
+                    <tr>
+                        <td>@DR["AgentName"]</td>
+                        <td>@DR["AgentCode"]</td>
+                        <td>@DR["Type"]</td>
+                        <td>@DR["ReportsTo"]</td>
+                    </tr>
+                }
+            }
+        </table>
+    </div>
+     <div class="row mb-3">
+        <h4>Current Premium Agents</h4>
+        <table class="table table-hover">
+            <tr>
+                <th class="col-md-4">Agent Name</th>
+                <th class="col-md-2">Agent Code</th>
+                <th class="col-md-2">Type</th>
+                <th class="col-md-4">Reports To</th>
+            </tr>
+            @if (Model.ExistingIntermediariesDT != null)
+            {
+                @foreach (DataRow DR in Model.ExistingIntermediariesDT.Rows)
+                {
+                    <tr>
+                        <td>@DR["AgentName"]</td>
+                        <td>@DR["AgentCode"]</td>
+                        <td>@DR["Type"]</td>
+                        <td>@DR["ReportsTo"]</td>
+                    </tr>
+                }
+            }
+        </table>
+    </div> 
+</form>
+@if (!string.IsNullOrEmpty(ViewData["ErrorMessage"]?.ToString()))
+{
+    <p class="text-danger">@ViewData["ErrorMessage"]</p>
+}
+@section scripts {
+    <script>
+        $(document).ready(function () {
+            $('#PolicyBeneficiaryLine_Cover').on('input', function () {
+                var cover = parseFloat($(this).val()); 
+                if (!isNaN(cover)) {
+                    var productId = $('#policyBeneficiaryLineProductID').val(); // Get the value from the dropdown
+                    var policyBeneficiaryid = $('#policyBeneficiaryid').val();  
+                    if (productId) {
+                        $.ajax({
+                            url: '?handler=FetchPremium',
+                            type: 'GET',
+                            data: {
+                                productId: productId,
+                                policyBeneficiaryid: policyBeneficiaryid, 
+                                cover: cover 
+                            },
+                            success: function (data) { 
+                                $('#premium').val(data);
+                            },
+                            error: function (error) {
+                                console.error('Error:', error);
+                            }
+                        });
+                    }
+                }
+            });
+        });
+    </script>   
+
+    <script>
+        function closeModal(modalName) {
+            var modal = document.getElementById(modalName);
+            modal.style.display = 'none';
+        }
+    </script>
+
+    <script>
+        //script to blur the id textbox, so that the person won't copy during a confirm
+        function hideInputContent(input) {
+            // Add a CSS class to visually hide the content
+            input.classList.add('hidden');
+        }
+
+        function showInputContent(input) {
+            // Remove the CSS class to show the content
+            input.classList.remove('hidden');
+        }
+    </script>
+    <script>
+        function openCoverModal(id) {
+            // Set the ID in the hidden field
+            document.getElementById('policyBeneficiaryid').value = id;
+            // Open the modal
+            $('#premiumsModal').modal('show');
+        }
+    </script>
+
+    <script>
+        document.addEventListener('input', function (e) {
+            if (e.target.classList.contains('premium-input')) {
+                updatePremiumTotal();
+            }
+            else if (e.target.classList.contains('cover-input')) {
+                updateCoverTotal();
+            }
+        });
+
+        function updatePremiumTotal() {
+            var totalPremium = 0;
+            var premiumInputs = document.querySelectorAll('.premium-input');
+            premiumInputs.forEach(function (input) {
+                totalPremium += parseFloat(input.value) || 0;
+            });
+
+            document.getElementById('totalPremiumAmount').textContent = totalPremium.toFixed(2);
+        }
+        function updateCoverTotal() {
+            var totalCover = 0;
+            var coverInputs = document.querySelectorAll('.cover-input');
+            coverInputs.forEach(function (input) {
+                totalCover += parseFloat(input.value) || 0;
+            });
+
+            document.getElementById('totalCoverAmount').textContent = totalCover.toFixed(2);
+        }
+        // Initial update on page load
+        document.addEventListener('DOMContentLoaded', updatePremiumTotal);
+        document.addEventListener('DOMContentLoaded', updateCoverTotal);
+    </script>
+    <script>
+        function scrollToBottom() {
+            // Scroll to the bottom of the page
+            window.scrollTo(0, document.body.scrollHeight);
+        }
+
+        // Attach the scrollToBottom function to the window's load event
+        window.onload = scrollToBottom;
+    </script>
+    <script>
+        function preventPaste(event) {
+            event.preventDefault();
+            alert("Pasting of IDs is not allowed!");
+            return false;
+        }
+    </script>
+    <script>
+        function toggleTextBox() {
+            var dropdown = document.getElementById('PolicyBeneficiaryLine_ProductID');
+            var div = document.getElementById('coverDiv');
+
+            // Check the selected value of the dropdown
+            var selectedText = dropdown.options[dropdown.selectedIndex].text;
+
+            // Show or hide the div based on the selected value
+            if (selectedText.includes("(Investment Product)")) {
+                div.style.display = 'none';  // Show
+                // var coverLbl = document.getElementById('coverLbl');
+                // // Update the label text based on whether product includes (Investment)
+                // coverLbl.textContent = 'Sum Assured (optional)';
+            }
+            else {
+                div.style.display = 'block';   // Hide
+            }
+        }
+    </script>
+    <script>
+    $(document).ready(function() {
+        $('#PolicyTerm').on('input', function() {
+            var newValue = $(this).val();
+            var id = $(this).data('id');  
+
+            $.ajax({
+                type: 'GET',
+                    url: '?handler=AddPolicyTerm',
+                data: { policyid: id, policyTerm: newValue },
+                success: function(response) {
+                    console.log('Value updated successfully');
+                },
+                error: function(error) {
+                    console.log('Error updating value');
+                }
+            });
+        });
+    });
+</script>
+}

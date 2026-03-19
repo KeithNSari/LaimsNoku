@@ -1,0 +1,113 @@
+﻿@page
+@model LAIMS.Areas.NewBusiness.Pages.policies.test8Model
+@{
+}
+<div class="row mb-3">
+    <form method="post">
+        @for (var i = 0; i < Model.PolicyBeneficiaryLineDetails.Count; i++)
+        {
+            var beneficiary = Model.PolicyBeneficiaryLineDetails[i];
+            @if (i > 0 && (@Model.PolicyBeneficiaryLineDetails[i].Product != @Model.PolicyBeneficiaryLineDetails[i - 1].Product))
+            {
+                <h5>@beneficiary.Product</h5>
+            }
+            else if (i == 0)
+            {
+                <h5>@beneficiary.Product</h5>
+            }
+            <div>
+                @if (i > 0 && (@Model.PolicyBeneficiaryLineDetails[i].Product != @Model.PolicyBeneficiaryLineDetails[i - 1].Product))
+                {
+                    <div class="row">
+                        <div class="col-md-1"><b>LineID</b></div>
+                        <div class="col-md-2"><b>Full Name</b></div>
+                        <div class="col-md-1"><b>Relationship</b></div>
+                        <div class="col-md-1"><b>DOB</b></div>
+                        <div class="col-md-1"><b>IDType</b></div>
+                        <div class="col-md-2"><b>ID</b></div>
+                        <div class="col-md-2"><b>Premium (editable)</b></div>
+                        <div class="col-md-2"><b>Cover (editable)</b></div>
+                    </div>
+                    <hr />
+                }
+                else if (i == 0)
+                {
+                    <div class="row">
+                        <div class="col-md-1"><b>LineID</b></div>
+                        <div class="col-md-2"><b>Full Name</b></div>
+                        <div class="col-md-1"><b>Relationship</b></div>
+                        <div class="col-md-1"><b>DOB</b></div>
+                        <div class="col-md-1"><b>IDType</b></div>
+                        <div class="col-md-2"><b>ID</b></div>
+                        <div class="col-md-2"><b>Premium (editable)</b></div>
+                        <div class="col-md-2"><b>Cover (editable)</b></div>
+                    </div>
+                    <hr />
+                }
+                @if (i % 2 == 0)
+                {
+                    <div class="row bg-light">
+                        <div class="col-md-1">
+                            <input type="hidden" asp-for="@Model.PolicyBeneficiaryLineDetails[i].LineId" />
+                            @beneficiary.LineId
+                        </div>
+                        <div class="col-md-2">@beneficiary.FullName</div>
+                        <div class="col-md-1">@beneficiary.Relationship</div>
+                        <div class="col-md-1">@beneficiary.DOB.ToShortDateString()</div>
+                        <div class="col-md-1">@beneficiary.IDType</div>
+                        <div class="col-md-2">@beneficiary.ID</div>
+                        <div class="col-md-2">
+                            <input type="text" asp-for="@Model.PolicyBeneficiaryLineDetails[i].Premium" class="premium-input" />
+                        </div>
+                        <div class="col-md-2">
+                            <input type="text" asp-for="@Model.PolicyBeneficiaryLineDetails[i].Cover" class="cover-input" />
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div class="row">
+                        <div class="col-md-1">
+                            <input type="hidden" asp-for="@Model.PolicyBeneficiaryLineDetails[i].LineId" />
+                            @beneficiary.LineId
+                        </div>
+                        <div class="col-md-2">@beneficiary.FullName</div>
+                        <div class="col-md-1">@beneficiary.Relationship</div>
+                        <div class="col-md-1">@beneficiary.DOB.ToShortDateString()</div>
+                        <div class="col-md-1">@beneficiary.IDType</div>
+                        <div class="col-md-2">@beneficiary.ID</div>
+                        <div class="col-md-2">
+                            <input type="text" asp-for="@Model.PolicyBeneficiaryLineDetails[i].Premium" class="premium-input" />
+                        </div>
+                        <div class="col-md-2">
+                            <input type="text" asp-for="@Model.PolicyBeneficiaryLineDetails[i].Cover" class="cover-input" />
+                        </div>
+                    </div>
+                }
+
+            </div>
+            <br />
+        }
+        <div class="row">
+            <div class="col-md-8">
+            </div>
+            <div class="col-md-2">
+                <b>Total Premium:</b>
+            </div>
+            <div class="col-md-2">
+                <span id="totalPremiumAmount">0.00</span>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-8">
+            </div>
+            <div class="col-md-2">
+                <b>Total Cover:</b>
+            </div>
+            <div class="col-md-2">
+                <span id="totalCoverAmount">0.00</span>
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary float-end">Save Changes</button>
+    </form>
+</div>

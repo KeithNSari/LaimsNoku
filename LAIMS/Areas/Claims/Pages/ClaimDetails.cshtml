@@ -1,0 +1,348 @@
+﻿@page
+@model LAIMS.Areas.Claims.Pages.ClaimDetailsModel
+@{
+}
+@{
+    Layout = "/Pages/Shared/_LayoutProducts.cshtml";
+}
+<h2>Select Risk Product Claimants</h2>
+<div class="nav-wizards-container">
+    <nav class="nav nav-wizards-1 mb-2">
+        <div class="nav-item col">
+            <a class="nav-link completed" asp-page="PolicyDetails" asp-route-id="@Model.ProposerID" asp-route-policyid="@Model.PolicyID" asp-route-policyTypeId="@Model.PolicyTypeID">
+                <div class="nav-no">1</div>
+                <div class="nav-text">View Details</div>
+            </a>
+        </div>      
+        <div class="nav-item col">
+            <a class="nav-link active" href="#">
+                <div class="nav-no">2</div>
+                <div class="nav-text">Add Risk Claims</div>
+            </a>
+        </div>
+        <div class="nav-item col">
+            <a class="nav-link disabled" href="#">
+                <div class="nav-no">3</div>
+                <div class="nav-text">Add Investment Claims</div>
+            </a>
+        </div>
+        <div class="nav-item col">
+            <a class="nav-link disabled" href="#">
+                <div class="nav-no">4</div>
+                <div class="nav-text">Questionnaires</div>
+            </a>
+        </div>
+        <div class="nav-item col">
+            <a class="nav-link disabled" href="#">
+                <div class="nav-no">5</div>
+                <div class="nav-text">Payment Details</div>
+            </a>
+        </div>
+        <div class="nav-item col">
+            <a class="nav-link disabled" href="#">
+                <div class="nav-no">6</div>
+                <div class="nav-text">Submission</div>
+            </a>
+        </div>
+    </nav>
+</div>
+<hr />
+<form method="post" asp-page-handler="SubmitSelectedRecords">
+    <input type="hidden" asp-for="@Model.PolicyID" />
+    <input type="hidden" asp-for="@Model.PolicyTypeID" />
+    <input type="hidden" asp-for="@Model.ProposerID" />
+    <input type="hidden" asp-for="@Model.RequestID"/>
+    <div class="row mb-3">
+        @for (var i = 0; i < Model.PolicyBeneficiaryLineDetails.Count; i++)
+        {
+            @if (!((@Model.PolicyBeneficiaryLineDetails[i].CategoryID == 1) || ((@Model.PolicyBeneficiaryLineDetails[i].CategoryID == 3))))
+            {
+                var beneficiary = Model.PolicyBeneficiaryLineDetails[i];
+                @if (i > 0 && (@Model.PolicyBeneficiaryLineDetails[i].Product != @Model.PolicyBeneficiaryLineDetails[i - 1].Product))
+                {
+                    <div class="row mb-3">
+                        <h5>@beneficiary.Product</h5>
+                    </div>
+                }
+                else if (i == 0)
+                {
+                    <div class="row mb-3">
+                        <h5>@beneficiary.Product</h5>
+                    </div>
+                }
+                <div>
+                    @if (i > 0 && (@Model.PolicyBeneficiaryLineDetails[i].Product != @Model.PolicyBeneficiaryLineDetails[i - 1].Product))
+                    {
+                        <div class="row mb-3">
+                            <div class="col-md-1"><b>LineID</b></div>
+                            <div class="col-md-2"><b>Full Name</b></div>
+                            <div class="col-md-2"><b>R\ship</b></div>
+                            <div class="col-md-1"><b>DOB</b></div>
+                            <div class="col-md-1"><b>IDType</b></div>
+                            <div class="col-md-2"><b>ID</b></div>
+                            <div class="col-md-1"><b>Premium</b></div>
+                            @if (!((@Model.PolicyBeneficiaryLineDetails[i].CategoryID == 1) || ((@Model.PolicyBeneficiaryLineDetails[i].CategoryID == 3))))
+                            {
+                                <div class="col-md-1"><b>Cover</b></div>
+                            }
+                            <div class="col-md-1"><b>Select</b></div>
+                        </div>
+                        <hr />
+                    }
+                    else if (i == 0)
+                    {
+                        <div class="row mb-3">
+                            <div class="col-md-1"><b>LineID</b></div>
+                            <div class="col-md-2"><b>Full Name</b></div>
+                            <div class="col-md-2"><b>R/ship</b></div>
+                            <div class="col-md-1"><b>DOB</b></div>
+                            <div class="col-md-1"><b>IDType</b></div>
+                            <div class="col-md-2"><b>ID</b></div>
+                            <div class="col-md-1"><b>Premium</b></div>
+                            @if (!((@Model.PolicyBeneficiaryLineDetails[i].CategoryID == 1) || ((@Model.PolicyBeneficiaryLineDetails[i].CategoryID == 3))))
+                            {
+                                <div class="col-md-1"><b>Cover</b></div>
+                            }
+                            <div class="col-md-1"><b>Select</b></div>
+                        </div>
+                        <hr />
+                    }
+                    @if (i % 2 == 0)
+                    {
+                        <div class="row bg-light mb-3">
+                            <div class="col-md-1">
+                                <input type="hidden" asp-for="@Model.PolicyBeneficiaryLineDetails[i].LineId" />
+                                @beneficiary.LineId
+                            </div>
+                            <div class="col-md-2">@beneficiary.FullName</div>
+                            <div class="col-md-2">@beneficiary.Relationship</div>
+                            <div class="col-md-1">@beneficiary.DOB.ToShortDateString()</div>
+                            <div class="col-md-1">@beneficiary.IDType</div>
+                            <div class="col-md-2">@beneficiary.ID</div>
+                            <div class="col-md-1">
+                                @Model.PolicyBeneficiaryLineDetails[i].Premium
+                            </div>
+                            <div class="col-md-1">
+                                @Model.PolicyBeneficiaryLineDetails[i].Cover
+                            </div>
+                            <div class="col-md-1">
+                                <input type="checkbox" class="product-checkbox form-check-input form-check-input-lg" data-price="@Model.PolicyBeneficiaryLineDetails[i].Cover" name="selectedRecords" value="@Model.PolicyBeneficiaryLineDetails[i].LineId" />
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="row mb-3">
+                            <div class="col-md-1">
+                                <input type="hidden" asp-for="@Model.PolicyBeneficiaryLineDetails[i].LineId" />
+                                @beneficiary.LineId
+                            </div>
+                            <div class="col-md-2">@beneficiary.FullName</div>
+                            <div class="col-md-2">@beneficiary.Relationship</div>
+                            <div class="col-md-1">@beneficiary.DOB.ToShortDateString()</div>
+                            <div class="col-md-1">@beneficiary.IDType</div>
+                            <div class="col-md-2">@beneficiary.ID</div>
+                            <div class="col-md-1">
+                                @Model.PolicyBeneficiaryLineDetails[i].Premium
+                            </div>
+                            <div class="col-md-1">
+                                @Model.PolicyBeneficiaryLineDetails[i].Cover
+                            </div>
+                            <div class="col-md-1">
+                                <input type="checkbox" class="product-checkbox form-check-input form-check-input-lg" data-price="@Model.PolicyBeneficiaryLineDetails[i].Cover" name="selectedRecords" value="@Model.PolicyBeneficiaryLineDetails[i].LineId" />
+                            </div>
+                        </div>
+                    }
+
+                </div>
+                <br />
+            }          
+        } 
+        <div class="row">
+            <div class="col-md-8">
+            </div>
+            <div class="col-md-2"> 
+            </div>
+            <div class="col-md-2">
+                <h4>Total: <span id="total">0.00</span></h4>
+            </div>
+        </div>      
+        <div class="row">
+            <div class="col-md-8">
+            </div>
+            <div class="col-md-2">
+            </div>
+            <div class="col-md-2">
+                <button type="button" class="btn btn-info float-end mx-2 fixed-width-btn" data-bs-toggle="modal" data-bs-target="#servicesProviderModal">
+                    Pay Service Provider
+                </button>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-8">
+            </div>
+            <div class="col-md-2">              
+            </div>
+            <div class="col-md-2">
+                <button class="btn btn-success" type="submit">Submit</button>
+            </div>
+        </div>
+    </div>   
+</form>
+<form method="post" id="myForm">
+    <input type="hidden" asp-for="@Model.PolicyID" />
+    <input type="hidden" asp-for="@Model.PolicyTypeID" />
+    <input type="hidden" asp-for="@Model.ProposerID" />
+    <input type="hidden" asp-for="@Model.RequestID"/>
+    <div class="modal fade" id="servicesProviderModal" tabindex="-1" aria-labelledby="servicesProviderModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header bg-light">
+                    <h5 class="modal-title" id="servicesProviderModalLabel">Service Provider Payment</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <h2></h2>
+                    @if (TempData["PostbackSuccess"] != null && (bool)TempData["PostbackSuccess"])
+                    {
+                        <script>
+                            closeModal('ServicesProvider');
+                        </script>
+                    }
+                    <div class="row mb-3">
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <label asp-for="@Model.ServicesProviderSearch" class="control-label"><b>Service Provider Search</b></label>
+                                </div>
+                                <div class="col-md-7">
+                                    <input asp-for="@Model.ServicesProviderSearch" class="form-control"/>
+                                </div>
+                                <div class="col-md-2">
+                                    <input type="submit" id="searchBtn" value="Save Changes" asp-page-handler="SearchProviders" class="btn btn-success" />
+                                </div>
+                            </div>  
+                            <div class="row">
+                                @if (Model.ServicesProviderFound)
+                                {  
+                                    <h3>@Model.ResultsCount Organisation/s Found:</h3>
+                                    <div class="row mb-3">
+                                        <select asp-for="@Model.ServicesProviderID" id="servicesDropdown" class="form-control" required asp-items="Model.ServicesProviderList">
+                                            <option value="">Select Provider</option>
+                                        </select>
+                                        <span asp-validation-for="@Model.ServicesProviderID" class="text-danger"></span>
+                                    </div>
+                              }
+                                else
+                                {
+                                    <h3>Provider Not Found</h3>
+                                    <p>Search again or type the full name and proceed to save the record!</p>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                    <hr />
+                    <h5>Add Bank Account</h5>
+                    <div class="row mb-3">
+                        <div class="form-group">
+                            <label asp-for="ServicesProvider.BankID" class="control-label"><b>Bank</b></label>
+                            <select asp-for="ServicesProvider.BankID" asp-items="Model.BanksSelectList" class="form-control" aria-required="true">
+                                <option value="">Select Option</option>
+                            </select>
+                            <span asp-validation-for="ServicesProvider.BankID" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <label asp-for="ServicesProvider.BranchCode"><b>Branch Code</b></label>
+                                <input asp-for="ServicesProvider.BranchCode" class="form-control" autocomplete="off" />
+                                <span asp-validation-for="ServicesProvider.BranchCode" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-5">
+                            <div class="form-group">
+                                <label asp-for="ServicesProvider.BankAccountNo"><b>Account</b></label>
+                                <input asp-for="ServicesProvider.BankAccountNo" class="form-control" autocomplete="off" />
+                                <span asp-validation-for="ServicesProvider.BankAccountNo" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-5">
+                            <div class="form-group">
+                                <label asp-for="ServicesProvider.BankAccountNoConfirm"><b>Confirm Account</b></label>
+                                <input asp-for="ServicesProvider.BankAccountNoConfirm" class="form-control" autocomplete="off" />
+                                <span asp-validation-for="@Model.ServicesProvider.BankAccountNoConfirm" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div> 
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <input type="submit" value="Save Changes" asp-page-handler="AddServicesProvider" class="btn btn-primary" />
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+@section scripts {
+    <script>
+        $(document).ready(function () {
+            $(".product-checkbox").change(function () {
+                updateTotal();
+            });
+
+            function updateTotal() {
+                var total = 0;
+                $(".product-checkbox:checked").each(function () {
+                    total += parseFloat($(this).data("price"));
+                });
+                $("#total").text(total.toFixed(2));
+            }
+        });
+    </script>
+    <script>
+        $(function () {
+            $("#countryDropdown").on("click", function () {
+                var countryId = $(this).val();
+                $("#cityDropdown").empty();
+                $("#cityDropdown").append("<option value=''>Select City</option>");
+                $.getJSON(`?handler=CitiesByCountry&countryid=${countryId}`, (data) => {
+                    $.each(data, function (i, city) {
+                        $("#cityDropdown").append(`<option value="${city.Id}">${city.cityName}</option>`);
+                    });
+                });
+            });
+        });
+    </script>
+    <script>
+        // Attach event listener to the form submit event
+        document.getElementById("myForm").addEventListener("submit", function (event) {
+            // Prevent the default form submission behavior
+            event.preventDefault();
+
+            // Serialize form data
+            var formData = new FormData(this);
+
+            // Send AJAX request
+            fetch("ClaimDetails?handler=SearchProviders", {
+                method: "POST",
+                body: formData
+            })
+                .then(response => {
+                    if (response.ok) {
+                        // Handle successful response (optional)
+                        // For example, you might update the modal content or close the modal
+                        console.log("Success");
+                    } else {
+                        // Handle error response (optional)
+                        console.error("Error");
+                    }
+                })
+                .catch(error => {
+                    // Handle network errors (optional)
+                    console.error("Network Error:", error);
+                });
+        });
+    </script>
+}

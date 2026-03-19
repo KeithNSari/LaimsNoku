@@ -1,0 +1,48 @@
+﻿@page
+@using System.Data
+@model LAIMS.Areas.UTools.Pages.BatchJobs.IndexModel
+@{
+}
+@{
+    Layout = "/Pages/Shared/_LayoutProducts.cshtml";
+}
+<h1>Jobs</h1>
+<hr />
+<div class="row bg-white rounded">
+    <div class="card">
+        <div class="card-body">
+            <div class="small text-inverse text-opacity-50 mb-3">
+                <table class="table">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Job</th>
+                            <th>Batch ID</th>
+                            <th>Status</th>
+                            <th>Message</th>
+                            <th>Added On</th>    
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.JobsDT != null)
+                        {
+                            @foreach (DataRow DR in Model.JobsDT.Rows)
+                            {
+                                <tr>
+                                    <td><b>@DR["Job"]</b></td>
+                                    <td><b>@DR["BatchID"]</b></td>
+                                    <td>@DR["Status"]</td>
+                                    <td>@DR["Message"]</td>
+                                    <td>@DR["Time"]</td>     
+                                    <td class="text-end">
+                                        <a asp-page="Details" asp-route-id="@DR["ID"]" class="btn btn-info btn-sm">Details</a>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody> 
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

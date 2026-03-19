@@ -1,0 +1,17 @@
+﻿@page
+@model LAIMS.Pages.Adm.NotificationModel
+@{
+}
+<h2>Notification</h2>
+<div class="container" style="height: 100vh; display: flex; justify-content: center; align-items: center;">
+    <h3 style="color: red; font-weight: bold;">
+        @if (Model.Success)
+        {
+            <span>**Success!**</span>
+        }
+        else
+        {
+            <span>**Failed!**</span>
+        }
+    </h3>
+</div>

@@ -1,0 +1,58 @@
+﻿@page
+@model LAIMS.Areas.NewBusiness.Pages.policies.test6Model
+@{
+}
+@{
+    Layout = "/Pages/Shared/_LayoutNewBusiness.cshtml";
+}
+<form method="post">
+    <table>
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Amount</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (int i = 0; i < Model.MyDataList.Count; i++)
+            {
+                <tr>
+                    <td>
+                        <input type="hidden" asp-for="MyDataList[i].Id" />
+                        @Model.MyDataList[i].Id
+                    </td>
+                    <td>
+                        <input type="text" asp-for="MyDataList[i].Amount" class="amount-input" />
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+   <div>Total: <span id="totalAmount2">@Model.TotalAmount</span></div> 
+    <div>Total: <span id="totalAmount">0.00</span></div>
+
+    <button type="submit">Submit</button>
+</form>
+
+@section Scripts {
+    <script>
+        document.addEventListener('input', function (e) {
+            if (e.target.classList.contains('amount-input')) {
+                updateTotal();
+            }
+        });
+
+        function updateTotal() {
+            var total = 0;
+            var amountInputs = document.querySelectorAll('.amount-input');
+            amountInputs.forEach(function (input) {
+                total += parseFloat(input.value) || 0;
+            });
+
+            document.getElementById('totalAmount').textContent = total.toFixed(2);
+        }
+
+        // Initial update on page load
+        document.addEventListener('DOMContentLoaded', updateTotal);
+    </script>
+}

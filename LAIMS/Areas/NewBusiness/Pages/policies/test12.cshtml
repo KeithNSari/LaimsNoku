@@ -1,0 +1,79 @@
+﻿@page
+@model LAIMS.Areas.NewBusiness.Pages.policies.test12Model
+@{
+}
+@{
+    Layout = "/Pages/Shared/_LayoutProducts.cshtml";
+} 
+@*   <ul class="nav nav-pills">
+            <li class="nav-item">
+                <a class="nav-link active" onclick="openTab('tab1')" data-bs-toggle="pill" href="#home">Home</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" onclick="openTab('tab2')" data-bs-toggle="pill" href="#menu1">Menu 1</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" onclick="openTab('tab3')" data-bs-toggle="pill" href="#menu2">Menu 2</a>
+            </li>
+        </ul> *@
+<ul class="nav nav-tabs bg-white">
+    <li class="nav-item me-1"><a href="#home" onclick="openTab('tab1')" class="nav-link active" data-bs-toggle="tab">Home</a></li>
+    <li class="nav-item me-1"><a href="#profile" onclick="openTab('tab2')" class="nav-link" data-bs-toggle="tab">Profile</a></li>
+    <li class="nav-item me-1 dropdown">
+        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
+            Dropdown
+        </a>
+        <div class="dropdown-menu">
+            <a href="#dropdown1" class="dropdown-item" onclick="openTab('tab3')" data-bs-toggle="tab">fat</a>
+            <a href="#dropdown2" class="dropdown-item" onclick="openTab('tab1')" data-bs-toggle="tab">mdo</a>
+        </div>
+    </li>
+</ul>
+        <div id="tabs-container mb-3 border border-primary"> 
+            <div class="row">
+                <div id="tab1" class="tab-content show active border-0">
+                    tab 1
+                </div>
+                <div id="tab2" class="tab-content border-0">
+                    tab2
+                </div>
+                <!-- Add more tab content as needed -->
+                <div id="tab3" class="tab-content border-0">
+                    tab 3
+                </div>
+                <div id="tab4" class="tab-content border-0">
+                    tab 4
+                </div>
+            </div>
+        </div> 
+@section scripts {
+    <script> 
+        function getQueryParam(name) {
+            var urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(name);
+        }
+
+        // Use the query parameter to open the specified tab on page load
+        document.addEventListener('DOMContentLoaded', function () {
+            var initialTab = getQueryParam('tab');
+            if (initialTab) {
+                openTab(initialTab);
+            }
+        });
+    </script> 
+    <script>
+        function openTab(tabId) {
+            // Hide all tab content
+            var tabContents = document.getElementsByClassName('tab-content');
+            for (var i = 0; i < tabContents.length; i++) {
+                tabContents[i].classList.remove('show');
+            }
+
+            // Show the selected tab content
+            var selectedTab = document.getElementById(tabId);
+            if (selectedTab) {
+                selectedTab.classList.add('show');
+            }
+        }
+    </script>
+}

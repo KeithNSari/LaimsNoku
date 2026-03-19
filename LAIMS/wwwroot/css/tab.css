@@ -1,0 +1,25 @@
+#tabs-container {
+    display: flex;
+    flex-direction: column;
+}
+
+.tab {
+    cursor: pointer;
+    padding: 10px;
+    border: 1px solid #ccc;
+    /*background-color: #f1f1f1;*/
+}
+
+    .tab:hover {
+        background-color: #ddd;
+    }
+
+.tab-content {
+    display: none;
+    padding: 20px;
+    border: 1px solid #ccc;
+}
+
+    .tab-content.show {
+        display: block;
+    }

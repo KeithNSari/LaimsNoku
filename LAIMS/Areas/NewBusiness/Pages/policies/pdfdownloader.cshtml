@@ -1,0 +1,84 @@
+﻿@page
+@model LAIMS.Areas.NewBusiness.Pages.policies.pdfdownloaderModel
+@{
+}
+@{
+    Layout = "/Pages/Shared/_LayoutProducts.cshtml";
+}
+<form method="get" enctype="multipart/form-data">
+    @* <button type="button" class="btn btn-primary" id="openModalButton" data-bs-toggle="modal" data-bs-target="#pdfModal" data-pdfsource="Reviews?handler=DownloadPdfFromDatabase&docId=d0e0b2ed-6f35-4655-ab23-ab53496ec298">Open Modal</button> *@
+    <button type="button" data-bs-toggle="modal" data-bs-target="#pdfModal" data-url="pdfdownloader?handler=DownloadPdfFromDatabase&docId=388f43c9-5e14-4e35-a617-c42f3b1a5a64">Open PDF 1</button>
+   
+</form>
+
+<!-- Modal -->
+<div class="modal fade" id="pdfModal" tabindex="-1" role="dialog" aria-labelledby="pdfModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="pdfModalLabel">PDF Viewer</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Add an iframe for displaying the PDF -->
+                <iframe id="pdfIframe" width="100%" height="400px" frameborder="0"></iframe>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts { 
+    <script>
+        $(document).ready(function () {
+            $('#pdfModal').on('show.bs.modal', function (event) {
+                var button = $(event.relatedTarget);
+                var url = button.data('url');
+                openPdfModal(url);
+            });
+        });
+
+        function openPdfModal(pdfSource) {
+            // Make a Fetch API request to fetch PDF data from the server
+            fetch(pdfSource, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/pdf', // Adjust the content type as needed
+                },
+                responseType: 'blob', // Specify that you want the response as a Blob
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.blob(); // Get the response as a Blob
+                })
+                .then(blobData => {
+                    try {
+                        console.log('Blob created:', blobData);
+
+                        // Create a data URL from the Blob
+                        var pdfUrl = URL.createObjectURL(blobData);
+                        console.log('PDF URL created:', pdfUrl);
+
+                        // Update the iframe source with the PDF data URL
+                        $('#pdfIframe').attr('src', pdfUrl);
+                        console.log('IFrame src:', pdfUrl);
+
+                        // Show the modal
+                        $('#pdfModal').modal('show');
+                    } catch (error) {
+                        console.error('Error processing PDF data:', error);
+                    }
+                })
+                .catch(error => {
+                    console.error('Fetch error:', error);
+                });
+        }
+    </script>
+
+}

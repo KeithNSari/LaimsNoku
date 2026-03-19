@@ -1,0 +1,159 @@
+﻿@page
+@using System.Data
+@model LAIMS.Areas.UTools.Pages.PaymentProviders.CreateModel
+@{
+}
+@{
+    Layout = "/Pages/Shared/_LayoutSearch.cshtml";
+}
+<h2>Add payment providers</h2>
+@if (!string.IsNullOrEmpty(ViewData["ErrorMessage"]?.ToString()))
+{
+    <h4 class="text-danger">@ViewData["ErrorMessage"]</h4>
+}
+<hr />
+<div class="row mb-3">
+    <div class="col-7 bg-white rounded">
+        <div class="container mt-4">
+            <h3>Instructions</h3>
+            <ul class="list-unstyled">
+                <li class="ms-4">1. Click on choose file and navigate to the Excel file location on your device.</li>
+                <li class="ms-4">2. Use the provided template.</li>
+             </ul>
+        </div>
+    </div>
+    <div class="col-5">
+        <form method="post" enctype="multipart/form-data">
+            <div class="form-group">
+                <div class="col-md-10">
+                    <h3>File Upload</h3>
+                    <input class="form-control" multiple="multiple" type="file" asp-for="Upload" />
+                </div>
+            </div>
+            <br />
+            <div class="form-group">
+                <div class="col-md-10">
+                    <input class="btn btn-primary" type="submit" value="Upload File" />
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<div class="row mb-3">
+    <h4>@ViewData["Notification"]</h4>
+</div>
+<div class="row mb-3">
+    @if (Model.DT != null)
+    {
+        <table class="table table-striped">
+            <tr>
+                <th>Provider</th>
+                <th>Code</th>
+                <th>A/CNo</th>
+                <th>Currency</th>
+                <th>Aggregated</th>
+                <th>BD</th>
+                <th>CCRate</th>
+                <th>G/N</th>
+                <th></th>
+            </tr>
+            @foreach (DataRow DR in Model.DT.Rows)
+            {
+                <tr>
+                    <td>
+                        @DR["Provider"]
+                        <input type="hidden" class="rowId" value="@DR["UID"]">
+                    </td>
+                    <td>@DR["StopOrderCode"]</td>
+                    <td>@DR["BankAccountNo"]</td>
+                    <td>@DR["Currency"]</td>
+                    <td>@DR["Aggregated"]</td>
+                    <td>@DR["Billingdate"]</td>
+                    <td>@DR["CollectionCommissionRate"]</td>
+                    <td>@DR["Net"]</td>
+                    <td><button type="button" class="btn btn-sm btn-primary btn-show-modal">Contacts</button></td>
+                </tr>
+            }
+        </table>
+    }
+</div>
+<!-- Contacts modal --> 
+<div class="modal fade" id="contactModal" tabindex="-1" aria-labelledby="contactModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="myModalLabel">Contacts</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Type</th>
+                            <th>Contact Name</th>
+                            <th>Designation</th>
+                            <th>Line 1</th>
+                            <th>Line 2</th>
+                            <th>Line 3</th>
+                        </tr>
+                    </thead>
+                    <tbody id="modalTableBody">
+                        <!-- Table rows will be dynamically added here -->
+                    </tbody>
+                </table>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button> 
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            // Function to open the modal and fetch data
+            function openModalAndFetchData(rowId) {
+                // Make AJAX request to fetch data based on the row ID
+                $.ajax({
+                    url: '/utools/PaymentProviders/Create?handler=LoadContacts',
+                    type: 'GET',
+                    data: { id: rowId },
+                    success: function (data) {
+                        // Clear existing content in the table body
+                        $('#modalTableBody').empty();
+
+                        // Display the fetched data in the modal
+                        if (data && data.length > 0) {
+                            data.forEach(function (row) {
+                                var newRow = '<tr><td>' + (row.contactTypeName || '') + '</td><td>' + (row.contactName || '') + '</td><td>' + (row.designation || '') + '</td><td>' + (row.line1 || '') + '</td><td>' + (row.line2 || '') + '</td><td>' + (row.line3 || '') + '</td></tr>';
+                                $('#modalTableBody').append(newRow);
+                            });
+
+                            // Show the modal
+                            $('#contactModal').modal('show');
+                        } else {
+                            console.log('No data received or data is empty.');
+                        }
+                    },
+                    error: function () {
+                        // Handle error
+                        alert('Failed to fetch data from the server.');
+                    }
+                });
+            }
+
+            // Attach the function to the button click event for each row
+            $(document).on('click', '.btn-show-modal', function () {
+                var row = $(this).closest('tr');
+                var rowId = row.find('.rowId').val();
+
+                // Call the function to open the modal and fetch data
+                openModalAndFetchData(rowId);
+            });
+        });
+    </script>
+} 

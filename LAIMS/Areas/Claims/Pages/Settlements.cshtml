@@ -1,0 +1,59 @@
+﻿@page
+@using System.Data
+@model LAIMS.Areas.Claims.Pages.SettlementsModel
+@{
+}
+@{
+    Layout = "/Pages/Shared/_LayoutSearch.cshtml";
+}
+<h1>Claim Settlements</h1>
+<p>Latest claims list.</p>
+<hr />
+@if (Model.ClaimsDT != null)
+{
+    <div class="row mb-3">
+        @if (Model.SearchTerm != null)
+        {
+            <h5>@Model.ResultsCount result/s found for search "@Model.SearchTerm"!</h5>
+        }
+        else
+        {
+            <h5>@Model.ResultsCount claim/s found!</h5>
+        }
+    </div>
+}
+<hr />
+<div class="row mb-3">
+    <form method="post">
+        <table class="table table-hover">
+            <tr>
+                <th>Entry </th>
+                <th>Policy No</th>
+                <th>PolicyName</th>
+                <th>Policy Owner</th>
+                <th>Currency</th>
+                <th>Gross</th>
+                <th>Deductions</th>
+                <th>Net</th>
+                <th>Approved</th> 
+            </tr>
+            @if (Model.ClaimsDT != null)
+            {
+                @foreach (DataRow DR in Model.ClaimsDT.Rows)
+                {
+                    <tr>
+                        <td>@DR["EntryNo"]</td>
+                        <td>@DR["PolicyNo"]</td>
+                        <td>@DR["PolicyName"]</td>
+                        <td>@DR["PolicyOwner"]</td>
+                        <td>@DR["Currency"]</td>
+                        <td>@DR["DisbursementAmount"]</td>
+                        <td>@DR["Deductions"]</td>
+                        <td>@DR["NetAmount"]</td>
+                        <td>@DR["AddedOn"]</td> 
+                    </tr>
+                }
+            }
+        </table>
+    </form>
+</div>

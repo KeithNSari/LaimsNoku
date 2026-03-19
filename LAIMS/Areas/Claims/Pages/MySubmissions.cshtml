@@ -1,0 +1,60 @@
+﻿@page
+@using System.Data
+@model LAIMS.Areas.Claims.Pages.MySubmissionsModel
+@{
+}
+@{
+    Layout = "/Pages/Shared/_LayoutSearch.cshtml";
+}
+<h1>My Submissions</h1>
+<hr />
+@if (Model.SearchTerm != null)
+{
+    @if ((Model.ClaimsDT != null) && (Model.ClaimsDT.Rows.Count > 0))
+    {
+        <div class="row mb-3">
+            <h5>@Model.ResultsCount results found for search "@Model.SearchTerm"!</h5>
+        </div>
+    }
+    <hr />
+} 
+<div class="row mb-3">
+    <form method="post">
+        <table class="table table-hover">
+            <tr>
+                <th>Entry </th>
+                <th>Policy No</th>
+                <th>PolicyName</th>
+                <th>Policy Owner</th>
+                <th>Status</th> 
+                <th>Status Date</th>
+                <th></th>
+            </tr>
+            @if (Model.ClaimsDT != null)
+            {
+                @foreach (DataRow DR in Model.ClaimsDT.Rows)
+                {
+                    <tr>
+                        <td>@DR["EntryNo"]</td>
+                        <td>@DR["PolicyNo"]</td>
+                        <td>@DR["PolicyName"]</td>
+                        <td>@DR["PolicyOwner"]</td> 
+                        <td>@DR["Status"]</td>
+                        <td>@DR["StatusDate"]</td>
+                        <td class="text-end">
+                            @if (Convert.ToInt32(DR["ClaimTypeID"]) == 1) @* death claim for risk *@
+                            {
+                                <a asp-route-id="@DR["UID"]" asp-route-policyTypeid="@DR["PolicyTypeID"]" asp-route-policyid="@DR["PolicyID"]" asp-route-reqid="@DR["RequestID"]" asp-page="SubmitClaim" class="btn btn-info btn-sm">Review</a> 
+                            }
+                            else
+                            {
+                                <a asp-route-id="@DR["UID"]" asp-route-reqid="@DR["RequestID"]" asp-page="PUSubmitClaim" class="btn btn-info btn-sm">Review</a>
+                            }
+                           
+                        </td>
+                    </tr>
+                }
+            }
+        </table>
+    </form>
+</div>

@@ -1,0 +1,768 @@
+﻿@page
+@using System.Data
+@model LAIMS.Areas.Claims.Pages.ClaimantsModel
+@{
+}
+@{
+    Layout = "/Pages/Shared/_LayoutProducts.cshtml";
+}
+<h2>Details of Person/s Claiming</h2>
+<div class="nav-wizards-container">
+    <nav class="nav nav-wizards-1 mb-2">
+        <div class="nav-item col">
+            <a class="nav-link completed" href="#">
+                <div class="nav-no">1</div>
+                <div class="nav-text">Create Claim</div>
+            </a>
+        </div>
+        <div class="nav-item col">
+            <a class="nav-link completed" asp-page="DeathClaims" asp-route-id="@Model.ProposerID" asp-route-policyid="@Model.PolicyID" asp-route-policyTypeId="@Model.PolicyTypeID" asp-route-reqid="@Model.RequestID">
+                <div class="nav-no">2</div>
+                <div class="nav-text">Add Deceased</div>
+            </a>
+        </div>
+        <div class="nav-item col">
+            <a class="nav-link active" href="#">
+                <div class="nav-no">3</div>
+                <div class="nav-text">Payment Details</div>
+            </a>
+        </div>
+        <div class="nav-item col">
+            <a class="nav-link disabled" href="#">
+                <div class="nav-no">4</div>
+                <div class="nav-text">Service Breakdown</div>
+            </a>
+        </div>
+        <div class="nav-item col">
+            <a class="nav-link disabled" href="#">
+                <div class="nav-no">5</div>
+                <div class="nav-text">Documents</div>
+            </a>
+        </div>
+        <div class="nav-item col">
+            <a class="nav-link disabled" href="#">
+                <div class="nav-no">6</div>
+                <div class="nav-text">Submission</div>
+            </a>
+        </div>
+    </nav>
+</div>
+<h3>Cover Details</h3>
+<div class="row mb-3">
+    <div class="row mb-3"> 
+        <table class="table table-striped">
+            <tr>
+                <th class="col-md-3">Product</th>
+                <th class="col-md-1">Type</th>
+                <th class="col-md-1">Premium</th>
+                <th class="col-md-2">Cover</th>
+                <th class="col-md-2">Balance</th>
+                <th class="col-md-3">Claims</th>
+            </tr>
+            @if (Model.CoverDT != null)
+            {
+                @foreach (DataRow DR in Model.CoverDT.Rows)
+                {
+                    <tr>
+                        <td>@DR["Product"]</td>
+                        <td>@DR["CoverType"]</td>
+                        <td>@DR["Premium"]</td>
+                        <td>@DR["Cover"]</td>
+                        <td>@DR["Balance"]</td>
+                        <td>
+                            <button class="btn btn-success btn-sm" onclick="openPrincipalClaimModal(@DR["policyBeneficiariesLineID"],@DR["Main"])">Principal</button>
+                            <button class="btn btn-info btn-sm" onclick="openIndividualClaimModal(@DR["policyBeneficiariesLineID"],@DR["Main"])">Individual</button>
+                            <button class="btn btn-primary btn-sm" onclick="openServiceProviderClaimModal(@DR["policyBeneficiariesLineID"],@DR["Main"])">Third Party</button>
+                        </td>
+                    </tr>
+                }
+            }
+        </table>
+    </div> 
+</div> 
+@* <hr />   *@
+<form method="post">
+    <div class="modal fade" id="PrincipalClaimModal" tabindex="-1" aria-labelledby="PrincipalClaimModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-light">
+                    <h5 class="modal-title" id="IndividualClaimModalLabel">Principal Claim</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    @if (TempData["PostbackSuccess"] != null && (bool)TempData["PostbackSuccess"])
+                    {
+                        <script>
+                            closeModal('claimant');
+                        </script>
+                    }
+                    <div asp-validation-summary="All" class="text-danger"></div>
+                    <input type="hidden" asp-for="ReturnUrl" />
+                    <input type="hidden" asp-for="@Model.PolicyID" />
+                    <input type="hidden" asp-for="@Model.PolicyTypeID" />
+                    <input type="hidden" asp-for="@Model.ProposerID" />
+                    <input type="hidden" asp-for="@Model.RequestID" />
+                    <input type="hidden" id="policyBeneficiariesLineID" asp-for="@Model.PolicyBeneficiariesLineID" />
+                    <input type="hidden" id="mainCover" asp-for="@Model.MainCover" />
+
+                    <h5>Bank Account</h5>
+                    <div class="border rounded p-3 mb-3">
+                        <div class="row mb-3">
+                            <div class="form-group">
+                                <label asp-for="MemberBankAccount.BankID" class="control-label"><b>Bank</b></label>
+                                <select asp-for="MemberBankAccount.BankID" asp-items="Model.BanksSelectList" class="form-control" aria-required="true">
+                                    <option value="">Select Option</option>
+                                </select>
+                                <span asp-validation-for="MemberBankAccount.BankID" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <label asp-for="MemberBankAccount.BranchCode"><b>Branch Code</b></label>
+                                    <input asp-for="MemberBankAccount.BranchCode" class="form-control" autocomplete="off" />
+                                    <span asp-validation-for="MemberBankAccount.BranchCode" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-5">
+                                <div class="form-group">
+                                    <label asp-for="MemberBankAccount.BankAccountNo"><b>Account</b></label>
+                                    <input asp-for="MemberBankAccount.BankAccountNo" class="form-control" autocomplete="off" />
+                                    <span asp-validation-for="MemberBankAccount.BankAccountNo" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-5">
+                                <div class="form-group">
+                                    <label asp-for="MemberBankAccount.BankAccountNoConfirm"><b>Confirm Account</b></label>
+                                    <input asp-for="MemberBankAccount.BankAccountNoConfirm" class="form-control" autocomplete="off" />
+                                    <span asp-validation-for="MemberBankAccount.BankAccountNoConfirm" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <label asp-for="@Model.PayAfter"><b>Pay After</b></label>
+                                    <input min="0" required asp-for="@Model.PayAfter" class="form-control" autocomplete="off" />
+                                    <small class="text-muted">Months</small>
+                                    <span asp-validation-for="@Model.PayAfter" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-5">
+                                <div class="form-group">
+                                    <label asp-for="@Model.Amount"><b>Amount</b></label>
+                                    <input asp-for="@Model.Amount" required class="form-control" autocomplete="off" />
+                                    <small class="text-muted">Amount to be paid out.</small>
+                                    <span asp-validation-for="@Model.Amount" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mt-3">
+                        <div class="col-12 text-end">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <input type="submit" value="Save Changes" asp-page-handler="AddPrincipalClaimant" class="btn btn-primary" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+
+<form method="post">
+    <div class="modal fade" id="IndividualClaimModal" tabindex="-1" aria-labelledby="IndividualClaimModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-light">
+                    <h5 class="modal-title" id="IndividualClaimModalLabel">Individuals Claim</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    @if (TempData["PostbackSuccess"] != null && (bool)TempData["PostbackSuccess"])
+                    {
+                        <script>
+                            closeModal('claimant');
+                        </script>
+                    }
+                    <div asp-validation-summary="All" class="text-danger"></div>
+                    <input type="hidden" asp-for="ReturnUrl" />
+                    <input type="hidden" asp-for="@Model.PolicyID" />
+                    <input type="hidden" asp-for="@Model.PolicyTypeID" />
+                    <input type="hidden" asp-for="@Model.ProposerID" />
+                    <input type="hidden" asp-for="@Model.RequestID" />
+                    <input type="hidden" id="policyBeneficiariesLineID" asp-for="@Model.PolicyBeneficiariesLineID" />
+                    <input type="hidden" id="mainCover" asp-for="@Model.MainCover"/>
+                    <div class="accordion" id="modalAccordion">
+                        <!-- Personal Details Section -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="headingOne">
+                                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                    <h5>Add Personal Details</h5>
+                                </button>
+                            </h2>
+                            <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#modalAccordion">
+                                <div class="accordion-body">
+                                    <div class="row mb-3">
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label asp-for="@Model.RelationshipID"><b>Relationship</b></label>
+                                                <select asp-for="@Model.RelationshipID" class="form-control" asp-items="Model.MyRelationships" onchange="toggleDiv()">
+                                                    <option value="">Select Option</option>
+                                                </select>
+                                                <span asp-validation-for="@Model.RelationshipID" class="text-danger"></span>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4" id="idContentDiv">
+                                            <div class="form-group">
+                                                <label asp-for="@Model.IDContent"><b>ID</b></label>
+                                                <input asp-for="@Model.IDContent" required onpaste="return preventPaste(event)" class="form-control" autocomplete="off" />
+                                                <span asp-validation-for="@Model.IDContent" class="text-danger"></span>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4" id="confirmIDContentDiv">
+                                            <div class="form-group">
+                                                <label asp-for="@Model.ConfirmIDContent"><b>Confirm ID</b></label>
+                                                <input asp-for="@Model.ConfirmIDContent" required onpaste="return preventPaste(event)" class="form-control" autocomplete="off" />
+                                                <span asp-validation-for="@Model.ConfirmIDContent" class="text-danger"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row mb-3">
+                                        <div class="col-md-4" id="name1Div">
+                                            <div class="form-group">
+                                                <label asp-for="NewMember.Name1"><b>First Name</b></label>
+                                                <input asp-for="NewMember.Name1" class="form-control" autocomplete="off" />
+                                                <span asp-validation-for="NewMember.Name1" class="text-danger"></span>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4" id="name2Div">
+                                            <div class="form-group">
+                                                <label asp-for="NewMember.Name2"><b>Middle Name</b></label>
+                                                <input asp-for="NewMember.Name2" class="form-control" autocomplete="off" />
+                                                <span asp-validation-for="NewMember.Name2" class="text-danger"></span>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4" id="name3Div">
+                                            <div class="form-group">
+                                                <label asp-for="NewMember.Name3"><b>Surname</b></label>
+                                                <input asp-for="NewMember.Name3" class="form-control" autocomplete="off" />
+                                                <span asp-validation-for="NewMember.Name3" class="text-danger"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row mb-3" id="sexDiv">
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label asp-for="NewMember.GenderID"><b>Gender</b></label>
+                                                <select asp-for="NewMember.GenderID" asp-items="Model.GenderList" class="form-control">
+                                                    <option value="">Select Gender</option>
+                                                </select>
+                                                <span asp-validation-for="NewMember.GenderID" class="text-danger"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Contacts Section -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="headingTwo">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                    <h5>Contacts</h5>
+                                </button>
+                            </h2>
+                            <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#modalAccordion">
+                                <div class="accordion-body">
+                                    <div class="row mb-3">
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label asp-for="ContactCard.CellPhone"><b>Mobile No</b></label>
+                                                <input asp-for="ContactCard.CellPhone" required class="form-control" autocomplete="off" />
+                                                <span asp-validation-for="ContactCard.CellPhone" class="text-danger"></span>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label asp-for="ContactCard.Telephone"><b>Telephone No</b></label>
+                                                <input asp-for="ContactCard.Telephone" class="form-control" autocomplete="off" />
+                                                <span asp-validation-for="ContactCard.Telephone" class="text-danger"></span>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label asp-for="ContactCard.EmailAddress"><b>Email Address</b></label>
+                                                <input type="email" asp-for="ContactCard.EmailAddress" class="form-control" autocomplete="off" />
+                                                <span asp-validation-for="ContactCard.EmailAddress" class="text-danger"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Address Section -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="headingThree">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                                    <h5>Address</h5>
+                                </button>
+                            </h2>
+                            <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#modalAccordion">
+                                <div class="accordion-body">
+                                    <div class="row mb-3">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label asp-for="ContactCard.AddressLine1" class="control-label"><b>Address Line 1</b></label>
+                                                <input asp-for="ContactCard.AddressLine1" class="form-control" />
+                                                <span asp-validation-for="ContactCard.AddressLine1" class="text-danger"></span>
+                                            </div>
+                                            <div class="form-group">
+                                                <label asp-for="ContactCard.AddressLine2" class="control-label"><b>Address Line 2</b></label>
+                                                <input asp-for="ContactCard.AddressLine2" class="form-control" />
+                                                <span asp-validation-for="ContactCard.AddressLine2" class="text-danger"></span>
+                                            </div>
+                                            <div class="form-group">
+                                                <label asp-for="ContactCard.AddressLine3" class="control-label"><b>Address Line 3</b></label>
+                                                <input asp-for="ContactCard.AddressLine3" class="form-control" />
+                                                <span asp-validation-for="ContactCard.AddressLine3" class="text-danger"></span>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label asp-for="CountryID" class="control-label"><b>Country</b></label>
+                                                <select asp-for="CountryID" asp-items="@(new SelectList(Model.Countries, "CountryID", "CountryName"))" class="form-control" id="countryDropdown">
+                                                    <option value="">Select Country</option>
+                                                </select>
+                                            </div>
+                                            <div class="form-group">
+                                                <label asp-for="ContactCard.City" class="control-label"><b>City</b></label>
+                                                <select asp-for="ContactCard.City" id="cityDropdown" class="form-control"></select>
+                                            </div>
+                                            <div class="form-group">
+                                                <label asp-for="CustomCity" class="control-label"><b>Or Enter City</b></label>
+                                                <input asp-for="CustomCity" class="form-control" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Bank Account Section -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="headingFour">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                                    <h5>Bank Account</h5>
+                                </button>
+                            </h2>
+                            <div id="collapseFour" class="accordion-collapse collapse" aria-labelledby="headingFour" data-bs-parent="#modalAccordion">
+                                <div class="accordion-body">
+                                    <div class="row mb-3">
+                                        <div class="form-group">
+                                            <label asp-for="MemberBankAccount.BankID" class="control-label"><b>Bank</b></label>
+                                            <select asp-for="MemberBankAccount.BankID" asp-items="Model.BanksSelectList" class="form-control" aria-required="true">
+                                                <option value="">Select Option</option>
+                                            </select>
+                                            <span asp-validation-for="MemberBankAccount.BankID" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                    <div class="row mb-3">
+                                        <div class="col-md-2">
+                                            <div class="form-group">
+                                                <label asp-for="MemberBankAccount.BranchCode"><b>Branch Code</b></label>
+                                                <input asp-for="MemberBankAccount.BranchCode" class="form-control" autocomplete="off" />
+                                                <span asp-validation-for="MemberBankAccount.BranchCode" class="text-danger"></span>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-5">
+                                            <div class="form-group">
+                                                <label asp-for="MemberBankAccount.BankAccountNo"><b>Account</b></label>
+                                                <input asp-for="MemberBankAccount.BankAccountNo" class="form-control" autocomplete="off" />
+                                                <span asp-validation-for="MemberBankAccount.BankAccountNo" class="text-danger"></span>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-5">
+                                            <div class="form-group">
+                                                <label asp-for="MemberBankAccount.BankAccountNoConfirm"><b>Confirm Account</b></label>
+                                                <input asp-for="MemberBankAccount.BankAccountNoConfirm" class="form-control" autocomplete="off" />
+                                                <span asp-validation-for="MemberBankAccount.BankAccountNoConfirm" class="text-danger"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row mb-3">
+                                        <div class="col-md-2">
+                                            <div class="form-group">
+                                                <label asp-for="@Model.PayAfter"><b>Pay After</b></label>
+                                                <input min="0" required asp-for="@Model.PayAfter" class="form-control" autocomplete="off" />
+                                                <small class="text-muted">Months</small>
+                                                <span asp-validation-for="@Model.PayAfter" class="text-danger"></span>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-5">
+                                            <div class="form-group">
+                                                <label asp-for="@Model.Amount"><b>Amount</b></label>
+                                                <input asp-for="@Model.Amount" required class="form-control" autocomplete="off" />
+                                                <small class="text-muted">Amount to be paid out.</small>
+                                                <span asp-validation-for="@Model.Amount" class="text-danger"></span>
+                                            </div>
+                                        </div> 
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-12 text-end">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <input type="submit" value="Save Changes" asp-page-handler="AddClaimant" class="btn btn-primary" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+<div class="row mb-3">
+    <div class="modal fade" id="serviceProviderClaimModal" tabindex="-1" aria-labelledby="serviceProviderClaimModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="serviceProviderClaimModalLabel">Third Party Claim</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="text" id="searchTerm" class="form-control" placeholder="Search by member name..." oninput="searchMembers()" />
+                    <form method="post" id="selectMemberForm">
+                        <input type="hidden" asp-for="ReturnUrl" />
+                        <input type="hidden" asp-for="@Model.PolicyID" />
+                        <input type="hidden" asp-for="@Model.PolicyTypeID" />
+                        <input type="hidden" asp-for="@Model.ProposerID" />
+                        <input type="hidden" asp-for="@Model.RequestID" />
+                        <input type="hidden" id="policyBeneficiariesLineID2" asp-for="@Model.PolicyBeneficiariesLineID" />
+                        <input type="hidden" id="mainCover2" asp-for="@Model.MainCover"/>
+                        <div id="searchResults" class="mt-3">
+                            <!-- Results will be displayed here -->
+                        </div>
+                        <div class="row" id="providerDiv" style="display:none">
+                            <div class="form-group">
+                                <label asp-for="@Model.ServiceProviderName"><b>Service Provider Name</b></label>
+                                <input asp-for="@Model.ServiceProviderName" class="form-control" autocomplete="off" />
+                                <span asp-validation-for="@Model.ServiceProviderName" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label asp-for="ContactCard.CellPhone"><b>Mobile No</b></label>
+                                    <input asp-for="ContactCard.CellPhone" required class="form-control" autocomplete="off" />
+                                    <span asp-validation-for="ContactCard.CellPhone" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label asp-for="ContactCard.Telephone"><b>Telephone No</b></label>
+                                    <input asp-for="ContactCard.Telephone" class="form-control" autocomplete="off" />
+                                    <span asp-validation-for="ContactCard.Telephone" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label asp-for="ContactCard.EmailAddress"><b>Email Address</b></label>
+                                    <input type="email" asp-for="ContactCard.EmailAddress" class="form-control" autocomplete="off" />
+                                    <span asp-validation-for="ContactCard.EmailAddress" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="form-group">
+                                <label asp-for="MemberBankAccount.BankID" class="control-label"><b>Bank</b></label>
+                                <select asp-for="MemberBankAccount.BankID" asp-items="Model.BanksSelectList" class="form-control" aria-required="true">
+                                    <option value="">Select Option</option>
+                                </select>
+                                <span asp-validation-for="MemberBankAccount.BankID" class="text-danger"></span>
+                            </div>
+                        </div>
+                         <div class="row mb-3">
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label asp-for="MemberBankAccount.BranchCode"><b>Branch Code</b></label>
+                                                <input asp-for="MemberBankAccount.BranchCode" class="form-control" autocomplete="off" />
+                                                <span asp-validation-for="MemberBankAccount.BranchCode" class="text-danger"></span>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label asp-for="MemberBankAccount.BankAccountNo"><b>Account</b></label>
+                                                <input asp-for="MemberBankAccount.BankAccountNo" class="form-control" autocomplete="off" />
+                                                <span asp-validation-for="MemberBankAccount.BankAccountNo" class="text-danger"></span>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label asp-for="MemberBankAccount.BankAccountNoConfirm"><b>Confirm Account</b></label>
+                                                <input asp-for="MemberBankAccount.BankAccountNoConfirm" class="form-control" autocomplete="off" />
+                                                <span asp-validation-for="MemberBankAccount.BankAccountNoConfirm" class="text-danger"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                        <div class="row mb-3">
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <label asp-for="@Model.PayAfter"><b>Pay After</b></label>
+                                    <input min="0" required asp-for="@Model.PayAfter" class="form-control" autocomplete="off" />
+                                    <small class="text-muted">Months</small>
+                                    <span asp-validation-for="@Model.PayAfter" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-5">
+                                <div class="form-group">
+                                    <label asp-for="@Model.Amount"><b>Amount</b></label>
+                                    <input asp-for="@Model.Amount" required class="form-control" autocomplete="off" />
+                                    <small class="text-muted">Amount to be paid out.</small>
+                                    <span asp-validation-for="@Model.Amount" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col-12 text-end">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                <input type="submit" value="Save Changes" asp-page-handler="AddServiceProvider" class="btn btn-primary" />
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 
+<br/>
+@if (((Model.BasicCoverClaimantsDT != null) && (Model.BasicCoverClaimantsDT.Rows.Count > 0))||((Model.SupplementaryCoverClaimantsDT != null) && (Model.SupplementaryCoverClaimantsDT.Rows.Count > 0)))
+{
+   <h2>Claimant List</h2>
+   <hr /> 
+}
+@if ((Model.BasicCoverClaimantsDT != null) && (Model.BasicCoverClaimantsDT.Rows.Count>0))
+{    
+    <div class="row mb-3">
+        <form method="post">
+            <input type="hidden" asp-for="ReturnUrl" />
+            <input type="hidden" asp-for="@Model.PolicyID" />
+            <input type="hidden" asp-for="@Model.PolicyTypeID" />
+            <input type="hidden" asp-for="@Model.ProposerID" />
+            <input type="hidden" asp-for="@Model.RequestID" />
+            <h5>Basic Cover Split Values</h5>
+            <table class="table table-striped">
+                <tr>
+                    <th>Member</th>
+                    <th>Role</th>
+                    <th>Bank</th>
+                    <th>Account No</th>
+                    <th>Allocated</th>
+                    <th>Allocate</th>
+                    <th></th>
+                </tr>
+
+                @foreach (DataRow DR in Model.BasicCoverClaimantsDT.Rows)
+                {
+                    <tr>
+                        <td>@DR["MemberName"]</td>
+                        <td>@DR["RoleName"]</td>
+                        <td>@DR["Bank"]</td>
+                        <td>@DR["BankAccountNo"]</td>
+                        <td>@DR["Amount"]</td>
+                        <td>
+                            <input type="hidden" name="PBIDS" value="@DR["ID"]" />
+                            <input type="number" name="Shares" value="@DR["Amount"]" />
+                        </td>
+                        <td>
+                            <button type="submit" asp-route-id="@DR["ID"]" asp-page-handler="Remove" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to remove this item?');">Remove</button>
+                        </td>
+                    </tr>
+                }
+            </table>
+            <div class="row mb-3">
+                <div class="col-md-11">
+                </div>
+                <div class="col-md-1">
+                    <button type="submit" asp-page-handler="AddShares" class="btn btn-primary text-end float-end">Update</button>
+                </div>
+            </div>
+        </form>
+        <hr />
+    </div>
+}
+@if ((Model.SupplementaryCoverClaimantsDT != null) && (Model.SupplementaryCoverClaimantsDT.Rows.Count > 0))
+{     
+    <div class="row mb-3">
+        <form method="post">
+            <input type="hidden" asp-for="ReturnUrl" />
+            <input type="hidden" asp-for="@Model.PolicyID" />
+            <input type="hidden" asp-for="@Model.PolicyTypeID" />
+            <input type="hidden" asp-for="@Model.ProposerID" />
+            <input type="hidden" asp-for="@Model.RequestID" />
+            <h5>Supplementary Cover Split Values</h5>
+            <table class="table table-striped">
+                <tr>
+                    <th>Member</th>
+                    <th>Product</th>
+                    <th>Bank</th>
+                    <th>Account No</th>
+                    <th>Pay After</th>
+                    <th>Allocated</th>
+                    <th>Allocate</th>
+                    <th></th>
+                </tr>
+                @foreach (DataRow DR in Model.SupplementaryCoverClaimantsDT.Rows)
+                {
+                    <tr>
+                        <td>@DR["MemberName"]</td>
+                        <td>@DR["Product"]</td>
+                        <td>@DR["Bank"]</td>
+                        <td>@DR["BankAccountNo"]</td>
+                        <td>@DR["PayAfter"]</td>
+                        <td>@DR["Amount"]</td>
+                        <td>
+                            <input type="hidden" name="SPBIDS" value="@DR["ID"]" />
+                            <input type="number" name="SShares" value="@DR["Amount"]" />
+                        </td>
+                        <td>
+                            <button type="submit" asp-route-id="@DR["ID"]" asp-page-handler="Remove" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to remove this item?');">Remove</button>
+                        </td>
+                    </tr>
+                }
+            </table>
+            <div class="row mb-3">
+                <div class="col-md-10">
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" asp-page-handler="AddSupplementaryShares" class="btn btn-primary text-end float-end">Update</button>
+                </div>
+            </div>
+        </form>
+    </div>
+}
+<form method="post">
+    <div class="row mb-3">
+        <input type="hidden" asp-for="ReturnUrl" />
+        <input type="hidden" asp-for="@Model.PolicyID" />
+        <input type="hidden" asp-for="@Model.PolicyTypeID" />
+        <input type="hidden" asp-for="@Model.ProposerID" />
+        <input type="hidden" asp-for="@Model.RequestID" />
+        <div class="col-md-11">
+        </div>
+        <div class="col-md-1">
+            <button type="submit" asp-page-handler="Next" class="btn btn-info text-end">Next>></button>
+        </div>
+    </div>
+</form>
+@section scripts {
+    <script>
+        function openPrincipalClaimModal(policyBeneficiariesLineID, mainCover) {
+            document.getElementById('policyBeneficiariesLineID').value = policyBeneficiariesLineID;
+            document.getElementById('mainCover').value = mainCover;
+            // Open the modal
+            $('#PrincipalClaimModal').modal('show');
+        }
+    </script>
+    <script>
+        function openIndividualClaimModal(policyBeneficiariesLineID, mainCover) {
+            document.getElementById('policyBeneficiariesLineID').value = policyBeneficiariesLineID;
+            document.getElementById('mainCover').value = mainCover;
+            // Open the modal
+            $('#IndividualClaimModal').modal('show');
+        }
+    </script>
+    <script>
+        function openServiceProviderClaimModal(policyBeneficiariesLineID, mainCover) {
+            document.getElementById('policyBeneficiariesLineID2').value = policyBeneficiariesLineID;
+            document.getElementById('mainCover2').value = mainCover;
+            // Open the modal
+            $('#serviceProviderClaimModal').modal('show');
+        }
+    </script>
+    <script>
+        $(function () {
+            $("#countryDropdown").on("change", function () {
+                var countryId = $(this).val();
+                $("#cityDropdown").empty();
+                $("#cityDropdown").append("<option value='0'>Select City</option>");
+                $.getJSON(`?handler=CitiesByCountry&countryid=${countryId}`, (data) => {
+                    $.each(data, function (i, city) {
+                        $("#cityDropdown").append(`<option value="${city.id}">${city.cityName}</option>`);
+                    });
+                });
+            });
+        });
+    </script>
+    <script>
+        function searchMembers() {
+            var searchTerm = $('#searchTerm').val();
+            $.ajax({
+                url: '/Claims/claimants?handler=SearchMembers',
+                type: 'get',
+                data: { searchTerm: searchTerm },
+                success: function (data) {
+                    console.log('Data received from server:', data); // Log the data to the console
+
+                    if (!Array.isArray(data)) {
+                        console.error('Returned data is not an array');
+                        return;
+                    }
+                    var providerDiv = document.getElementById("providerDiv");
+                    var resultsDiv = $('#searchResults');
+                    resultsDiv.empty();
+                    if (data.length > 0) {
+                        var table = $('<table class="table table-striped"><thead><tr><th>Member Name</th><th>Select</th></tr></thead><tbody></tbody></table>');
+                        data.forEach(function (member) {
+                            var row = $('<tr><td>' + member.name1 + '</td><td><input type="radio" name="selectedMemberId" value="' + member.id + '"></td></tr>');
+                            table.append(row);
+                        });
+                        resultsDiv.append(table); 
+                        correctPolicyDiv.style.display = "none"; 
+                    } else { 
+                            providerDiv.style.display = "block";
+                        resultsDiv.append('<p>No members found. Try entering a single keyword in your providers name, avoid abbreviations. If you still cannot find your provider, enter their full name in the text box below.</p>');
+                    }
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    console.error('AJAX error:', textStatus, errorThrown);
+                }
+            });
+        }
+    </script>
+    <script>
+        function toggleDiv() {
+            var ActionDl = document.getElementById("RelationshipID"); 
+            var name1Div = document.getElementById("name1Div");
+            var name2Div = document.getElementById("name2Div");
+            var name3Div = document.getElementById("name3Div");
+            var sexDiv = document.getElementById("sexDiv");
+            if (ActionDl.selectedIndex === 1) { 
+                name1Div.style.display = "none";
+                name2Div.style.display = "none";
+                name3Div.style.display = "none";
+                sexDiv.style.display = "none";
+            }
+            else {
+                idContentDiv.style.display = "block";
+                confirmIDContentDiv.style.display = "block";
+                name1Div.style.display = "block";
+                name2Div.style.display = "block";
+                name3Div.style.display = "block";
+                sexDiv.style.display = "block";
+            }
+        }
+    </script>
+    <script>
+        function scrollToBottom() {
+            // Scroll to the bottom of the page
+            window.scrollTo(0, document.body.scrollHeight);
+        }
+
+        // Attach the scrollToBottom function to the window's load event
+        window.onload = scrollToBottom;
+    </script>
+}

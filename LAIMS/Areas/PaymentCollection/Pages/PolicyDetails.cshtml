@@ -1,0 +1,63 @@
+﻿@page
+@using System.Data
+@model LAIMS.Areas.PaymentCollection.Pages.PolicyDetailsModel
+@{
+}
+@{
+    Layout = "/Pages/Shared/_LayoutProducts.cshtml";
+}
+<h1>Confirm Details</h1>
+<p>Once you are satisfied, click "pay". If there is no bill to be covered, the amount will be sent to policy suspense.</p>
+<hr />
+<div class="row mb-3"> 
+    <h6>Policy Name: @Model.PolicyDetailedBalance.PolicyName</h6>
+    <h6>Policy Allocation Balance: @Model.PolicyDetailedBalance.PolicyBalance</h6>
+    <h6>Policy Suspense Balance: @Model.PolicyDetailedBalance.SuspenseBalance</h6>
+    <h6>Proposer: @Model.PolicyDetailedBalance.Proposer</h6>
+    <h6>Premium Payer: @Model.PolicyDetailedBalance.PremiumPayer</h6>
+</div>
+<hr />
+
+<form method="post">
+<div class="row mb-3">
+    @if (Model.BillDT != null)
+    {
+        <table class="table table-hover">
+            <thead class="table-dark">
+                <tr>
+                    <th>Batch ID</th>
+                    <th>Invoice No</th>
+                    <th>Policy No</th>
+                    <th>Currency</th>
+                    <th>Amount</th>
+                    <th class="text-end">Payment</th>
+                </tr>
+            </thead>
+            @foreach (DataRow DR in Model.BillDT.Rows)
+            {
+                <tr>
+                    <td><h5>@DR["BatchID"]</h5></td>
+                    <td><h5>@DR["InvoiceNo"]</h5></td>
+                    <td>@DR["PolicyNo"]</td>
+                    <td>@DR["Currency"]</td>
+                    <td>@DR["Amount"]</td>
+                    <td class="text-end">
+                        @DR["Paid"]
+                    </td>
+                </tr>
+            }
+        </table>
+    }
+    else
+    {
+        <h3>No outstanding bills found.</h3>
+    }
+</div>
+    <input type="hidden" id="suspenseHeaderID" asp-for="@Model.SuspenseHeaderID" />
+    <input type="hidden" id="billId" asp-for="@Model.BillID" />
+    <input type="hidden" id="amountToAllocate" asp-for="@Model.AmountToAllocate" />
+    <input type="hidden" id="policyNo" asp-for="@Model.PolicyNo" />
+    <div class="d-flex justify-content-end"> 
+     <input type="submit" value="Pay" class="btn btn-primary" />
+    </div>
+</form>

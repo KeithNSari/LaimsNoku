@@ -1,0 +1,55 @@
+﻿@page
+@using System.Data
+@model LAIMS.Areas.UTools.Pages.Intermediaries.CreateModel
+@{
+}
+@{
+    Layout = "/Pages/Shared/_LayoutProducts.cshtml";
+}
+<div class="row mb-3">
+    <div class="col-7"></div>
+    <div class="col-5">
+        <form method="post" enctype="multipart/form-data">
+            <div class="form-group">
+                <div class="col-md-10">
+                    <h3>Upload Intemediaries File</h3>
+                    <input class="form-control" required multiple="multiple" type="file" asp-for="Upload" />
+                </div>
+            </div>
+            <br />
+            <div class="form-group">
+                <div class="col-md-10">
+                    <input class="btn btn-primary" type="submit" value="Upload File" />
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<div class="row mb-3"> 
+        @if (Model.DT != null)
+        {
+            <table class="table table-striped">
+                <tr>
+                    <th>Agent Code</th>
+                    <th>Employee Number</th>
+                    <th>Type of Agent</th>
+                    <th>Name</th>
+                    <th>National ID</th>
+                    <th>Reports To</th>
+                    <th>Cellphone</th>
+                </tr>
+                @foreach (DataRow DR in Model.DT.Rows)
+                {
+                    <tr>
+                        <td>@DR["Agent Code"]</td>
+                        <td>@DR["Employee Number"]</td>
+                        <td>@DR["Type of Agent"]</td>
+                        <td>@DR["First Name"] @DR["Surname"]</td>
+                        <td>@DR["National ID"]</td>
+                        <td>@DR["Reports To"]</td>
+                        <td>@DR["Cellphone"]</td>                         
+                    </tr>
+                }
+            </table>
+        } 
+</div>

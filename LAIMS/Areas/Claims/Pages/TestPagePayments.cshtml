@@ -1,0 +1,46 @@
+﻿@page
+@using System.Data
+@model LAIMS.Areas.Claims.Pages.TestPagePaymentsModel
+@{
+}
+@{
+    Layout = "/Pages/Shared/_LayoutProducts.cshtml";
+}
+<form asp-action="Save" method="post">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>National ID</th>
+                <th>Bank</th>
+                <th>Account No</th>
+                <th>Amount</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (int i = 0; i < Model.Claimants.Count; i++)
+            {
+                <tr>
+                    <td>@Model.Claimants[i].Name</td>
+                    <td>@Model.Claimants[i].NationalID</td>
+                    <td>
+                        <select asp-for="@Model.Claimants[i].BankId" class="form-control">
+                            <option value="">Select Bank</option>
+                            @foreach (var bank in Model.Banks)
+                            {
+                                <option value="@bank.Id">@bank.Name</option>
+                            }
+                        </select>
+                    </td>
+                    <td>
+                        <input asp-for="@Model.Claimants[i].AccountNo" class="form-control" />
+                    </td>
+                    <td>
+                        <input asp-for="@Model.Claimants[i].Amount" class="form-control" />
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <button type="submit" class="btn btn-primary">Save</button>
+</form>

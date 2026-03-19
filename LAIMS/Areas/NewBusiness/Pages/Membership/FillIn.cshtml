@@ -1,0 +1,45 @@
+﻿@page
+@model LAIMS.Areas.NewBusiness.Pages.Membership.FillInModel
+@{
+}
+<h2>Questionnaire</h2>
+
+<form method="post">
+    @foreach (var question in Model.Questions)
+    {
+        <div>
+            <p>@question.QuestionText</p>
+            @if (question.QuestionType == 1)
+            {
+                foreach (var option in question.Options)
+                {
+                    <label>
+                        <input type="radio" name="answers[@question.QuestionId]" value="@option" />
+                        @option
+                    </label>
+
+                    <br />
+                }
+            }
+            else if (question.QuestionType == 2)
+            {
+                foreach (var option in question.Options)
+                {
+                    <label>
+                        <input type="checkbox" name="answers[@question.QuestionId]"
+                               value="@option" />
+                        @option
+                    </label>
+
+                    <br />
+                }
+            }
+            else if (question.QuestionType == 3)
+            {
+                <textarea name="answers[@question.QuestionId]" rows="4" cols="50"></textarea>
+            }
+        </div>
+    }
+
+    <button type="submit">Submit</button>
+</form>

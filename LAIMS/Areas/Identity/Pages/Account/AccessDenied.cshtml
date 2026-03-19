@@ -1,0 +1,34 @@
+﻿@page
+@{
+    Layout = "/Pages/Shared/_LayoutProducts.cshtml";
+}
+@model AccessDeniedModel
+@{
+    ViewData["Title"] = "Access denied";
+}
+
+<div class="error-page">
+	<!-- BEGIN error-page-content -->
+	<div class="error-page-content">
+		<div class="error-img">
+			<div class="error-img-code">403</div>
+			<img src="~/assets/img/page/404.svg" alt="">
+		</div>
+
+		<h1>Oops, forbidden!</h1>
+		<h3>Please contact your admin.</h3>
+		<p class="text-muted mb-2">
+			Here are some helpful links instead:
+		</p>
+		<p class="mb-4">
+			<a href="/index" class="text-decoration-none">Home</a>
+			<span class="link-divider"></span>
+			<a href="MyProfile" class="text-decoration-none">Profile</a>
+			<span class="link-divider"></span>
+			<a href="/Policies/PolicyIndex" class="text-decoration-none">Policies</a>
+			<span class="link-divider"></span> 
+		</p>
+		<a href="/index" class="btn btn-theme">Home</a>
+	</div>
+	<!-- END error-page-content -->
+</div>

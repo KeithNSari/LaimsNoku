@@ -1,0 +1,76 @@
+﻿@page
+@using System.Data
+@model LAIMS.Areas.Claims.Pages.InvestmentsIndexModel 
+@{
+    Layout = "/Pages/Shared/_LayoutProducts.cshtml";
+}
+<h1>Approved Investment Claims Index</h1>
+<p>To search for approved investment claims in a period, specify the start and end date.</p>
+<hr />
+@if (!string.IsNullOrEmpty(ViewData["ErrorMessage"]?.ToString()))
+{
+    <p class="text-danger">@ViewData["ErrorMessage"]</p>
+}
+<form method="post">
+    <div class="row mb-3"> 
+        <div class="col-md-4">
+            <label asp-for="@Model.StartDate"><b>Start Date</b></label> 
+            <input asp-for="StartDate" type="date" class="form-control" />
+            <span asp-validation-for="@Model.StartDate" class="text-danger"></span>
+        </div>
+        <div class="col-md-4">
+            <label asp-for="@Model.EndDate"><b>End Date</b></label>
+            <input asp-for="EndDate" type="date" class="form-control" />
+            <span asp-validation-for="@Model.EndDate" class="text-danger"></span>
+        </div>
+        <div class="col-md-2"></div>
+        <div class="col-md-1">
+            <br />
+            <button type="submit" class="btn btn-primary float-end">Filter</button>
+        </div>
+        <div class="col-md-1">
+            <br />
+            <button type="submit" class="btn btn-success float-end" asp-page-handler="Download">Download</button>
+        </div>
+    </div>
+</form>
+<h3>Showing @Model.ResultsCount entries</h3>
+<div class="row mb-3">
+    <div class="row mb-3">
+        <table class="table table-hover">
+            <tr>
+                <th></th>
+                <th>Status Date</th>
+                <th>Status</th>
+                <th>Policy No</th>
+                <th>Policy Type</th>
+                <th>Mode</th>
+                <th>Currency</th>
+                <th>Requested</th>
+                <th>Approved</th>
+                <th>Deductions</th>
+                <th>Fund</th>
+                
+            </tr>
+            @if (Model.ClaimsDT != null)
+            {
+                @foreach (DataRow DR in Model.ClaimsDT.Rows)
+                {
+                    <tr>
+                        <td>@DR["Entry"]</td>
+                        <td>@DR["StatusDate"]</td>
+                        <td>@DR["Status"]</td>
+                        <th>@DR["PolicyNo"]</th>
+                        <td>@DR["PolicyType"]</td>
+                        <td>@DR["ValueMode"]</td>
+                        <td>@DR["Currency"]</td>
+                        <td>@DR["Requested Amount"]</td>
+                        <td>@DR["Approved Amount"]</td>
+                        <td>@DR["Deductions"]</td>
+                        <td>@DR["UnitTrust"]</td>                       
+                    </tr>
+                }
+            }
+        </table>
+    </div>
+</div>

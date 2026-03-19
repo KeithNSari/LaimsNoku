@@ -1,0 +1,116 @@
+﻿@page
+@using System.Data;
+@{
+    Layout = "/Pages/Shared/_LayoutPolicyTypes.cshtml";
+}
+@model LAIMS.Areas.NewBusiness.Pages.Membership.ContactDetailsModel
+@{
+}
+<h1>Contact Details</h1>
+<hr />
+<div>
+    <div class="bg-light">
+        <h4> </h4>
+    </div>
+    <hr />
+    <div class="row">
+        <table class="table table-hover">
+            <tr>
+                <th>Type</th>
+                <th>Line 1</th>
+                <th>Line 2</th>
+                <th>Line 3</th>
+                <th>City</th>
+                <th>Country</th>
+            </tr>
+            @if (Model.ContactsDT != null)
+            {
+                @foreach (DataRow DR in Model.ContactsDT.Rows)
+                {
+                    <tr>
+                        <td>@DR["ContactType"]</td>
+                        <td>@DR["Line1"]</td>
+                        <td>@DR["Line2"]</td>
+                        <td>@DR["Line3"]</td>
+                        <td>@DR["City"]</td>
+                        <td>@DR["Country"]</td>
+                        <td class="text-end">
+                            <a asp-page="Edit" asp-route-id="@DR["ID"]" class="btn btn-outline-primary btn-sm">Edit</a>
+                            <a asp-page="Archive" asp-route-id="@DR["ID"]" class="btn btn-danger btn-sm">Archive</a>
+                        </td>
+                    </tr>
+                }
+            }
+        </table>
+    </div>
+    <div class="row">
+          
+            <h2>Add Contact</h2>
+            <form method="post">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label asp-for="MemberContact.ContactTypeID" class="control-label">Contact Type</label>
+                    <select asp-for="MemberContact.ContactTypeID" asp-items="@(new SelectList(Model.ContactTypes, "ID", "Type"))" class="form-control"></select>
+                    <span asp-validation-for="MemberContact.ContactTypeID" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="MemberContact.Line1" class="control-label">Address Line 1</label>
+                    <input asp-for="MemberContact.Line1" class="form-control" />
+                    <span asp-validation-for="MemberContact.Line1" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="MemberContact.Line2" class="control-label">Address Line 2</label>
+                    <input asp-for="MemberContact.Line2" class="form-control" />
+                    <span asp-validation-for="MemberContact.Line2" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="MemberContact.Line3" class="control-label">Address Line 3</label>
+                    <input asp-for="MemberContact.Line3" class="form-control" />
+                    <span asp-validation-for="MemberContact.Line3" class="text-danger"></span>
+                </div>
+                </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label asp-for="CountryID" class="control-label">Country</label>
+                    <select asp-for="CountryID" asp-items="@(new SelectList(Model.Countries, "CountryID", "CountryName"))" class="form-control" id="countryDropdown">
+                        <option value="">Select Country</option>
+                    </select>
+                </div>
+
+                  <div class="form-group">
+                    <label asp-for="CityID" class="control-label">City</label>
+                    <select asp-for="CityID" id="cityDropdown" class="form-control"></select>
+                </div>
+                <div class="form-group">
+                    <label asp-for="CustomCity" class="control-label">Or Enter City</label>
+                    <input asp-for="CustomCity" class="form-control" />
+                </div>
+                <div class="form-group">
+                    <label asp-for="MemberContact.Preferred" class="control-label">Preferred</label>
+                    <input asp-for="MemberContact.Preferred" class="form-control" />
+                    <span asp-validation-for="MemberContact.Preferred" class="text-danger"></span>
+                </div>
+            </div>
+                <button type="submit" class="btn btn-primary">Create</button>
+            </form>      
+    </div>   
+</div> 
+@section scripts{
+    <script>
+        $(function () {
+            $("#countryDropdown").on("change", function () {
+                var countryId = $(this).val();
+                $("#cityDropdown").empty();
+                $("#cityDropdown").append("<option value=''>Select City</option>");
+                $.getJSON(`?handler=CitiesByCountry&countryid=${countryId}`, (data) => {
+                    $.each(data, function (i, city) {
+                        $("#cityDropdown").append(`<option value="${city.Id}">${city.cityName}</option>`);
+                    });
+                });
+            });
+        });
+    </script>
+}

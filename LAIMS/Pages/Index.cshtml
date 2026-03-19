@@ -1,0 +1,214 @@
+﻿@page
+@using System.Data
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page"; 
+}
+@{
+    Layout = "/Pages/Shared/_LayoutProducts.cshtml";
+}
+<div class="text-center">
+    <h1 class="display-4">LAIMS</h1>
+    <h2>Welcome to LAIMS Online</h2>
+</div>
+<div class="row">
+	<!-- BEGIN col-6 -->
+	<div class="col-xl-6">
+		<!-- BEGIN row -->
+		<div class="row">
+			<!-- BEGIN col-6 -->
+			<div class="col-sm-6 mb-3 d-flex flex-column">
+				<!-- BEGIN card -->
+				<div class="card mb-3 flex-1">
+					<!-- BEGIN card-body -->
+					<div class="card-body">
+						<div class="d-flex mb-3">
+							<div class="flex-grow-1">
+								<h5 class="mb-1">Incomplete Applications</h5>
+								<div>Statii: Passed, Add Details, Add Documents, Questionnaires, Payment Details, Awaiting Submission, Awaiting Approval, Under Review, Request More Information</div>
+							</div>
+							<a href="javascript:;" class="text-secondary"><i class="fa fa-redo"></i></a>
+						</div>
+
+						<div class="d-flex">
+							<div class="flex-grow-1">
+								<h3 class="mb-1">@Model.ApplicationStats.IncompleteApplications</h3>
+								<div class="text-success fw-600 fs-13px"> 
+								</div>
+							</div>
+							<div class="w-50px h-50px bg-primary bg-opacity-20 rounded-circle d-flex align-items-center justify-content-center">
+								<i class="fa fa-user fa-lg text-primary"></i>
+							</div>
+						</div>
+					</div>
+					<!-- END card-body -->
+				</div>
+				<!-- END card -->
+				<!-- BEGIN card -->
+				<div class="card">
+					<!-- BEGIN card-body -->
+					<div class="card-body">
+						<div class="d-flex mb-3">
+							<div class="flex-grow-1">
+								<h5 class="mb-1">Completed</h5>
+								<div>All time completed applications total.</div>
+							</div>
+							<a href="javascript:;" class="text-secondary"><i class="fa fa-redo"></i></a>
+						</div>
+						<div class="d-flex">
+							<div class="flex-grow-1">
+								<h3 class="mb-1">@Model.ApplicationStats.Completed</h3>
+								<div class="text-success fw-600 fs-13px">
+								</div>
+							</div>
+							<div class="w-50px h-50px bg-primary bg-opacity-20 rounded-circle d-flex align-items-center justify-content-center">
+								<i class="fa fa-user fa-lg text-primary"></i>
+							</div>
+						</div>
+					</div>
+					<!-- END card-body -->
+				</div>
+				<!-- END card -->
+			</div>
+			<!-- END col-6 -->
+			<!-- BEGIN col-6 -->
+			<div class="col-sm-6 mb-3">
+				<!-- BEGIN card -->
+				<div class="card h-100">
+					<!-- BEGIN card-body -->
+					<div class="card-body">
+						<div class="d-flex mb-3">
+							<div class="flex-grow-1">
+								<h5 class="mb-1">Stages Summary</h5>
+								<div class="fs-13px">Stages for all my applications.</div>
+							</div>
+							<a href="javascript:;" class="text-secondary"><i class="fa fa-redo"></i></a>
+						</div>
+
+						<div class="mb-4">
+							<h3 class="mb-1">@Model.ApplicationStats.IncompleteApplications</h3>
+							<div class="text-success fs-13px fw-600">
+								@* <i class="fa fa-caret-up"></i> +20.9% *@
+							</div>
+						</div>
+
+						<div class="progress mb-4" style="height: 10px;">
+							<div class="progress-bar bg-primary" style="width: 22.66%"></div>
+							<div class="progress-bar bg-teal" style="width: 56.80%"></div>
+							<div class="progress-bar bg-yellow" style="width: 15.34%"></div>
+							<div class="progress-bar bg-pink" style="width: 9.20%"></div>
+							<div class="progress-bar bg-gray-200" style="width: 5.00%"></div>
+						</div>
+
+						<div class="fs-13px">
+							<div class="d-flex align-items-center mb-2">
+								<div class="flex-grow-1 d-flex align-items-center">
+									<i class="fa fa-circle fs-9px fa-fw text-primary me-2"></i>Add Details
+								</div>
+								<div class="fw-600 text-body">@Model.ApplicationStats.AddDetails</div>
+							</div>
+							<div class="d-flex align-items-center mb-2">
+							<div class="flex-grow-1 d-flex align-items-center">
+							<i class="fa fa-circle fs-9px fa-fw text-danger me-2"></i>Add Split
+							</div>
+							<div class="fw-600 text-body">@Model.ApplicationStats.PaymentDetails</div>
+							</div>
+							<div class="d-flex align-items-center mb-2">
+								<div class="flex-grow-1 d-flex align-items-center">
+									<i class="fa fa-circle fs-9px fa-fw text-teal me-2"></i>Add Documents
+								</div>
+								<div class="fw-600 text-body">@Model.ApplicationStats.AddDocuments</div>
+							</div>
+							<div class="d-flex align-items-center mb-2">
+								<div class="flex-grow-1 d-flex align-items-center">
+									<i class="fa fa-circle fs-9px fa-fw text-warning me-2"></i>Questionnaires
+								</div>
+								<div class="fw-600 text-body">@Model.ApplicationStats.Questionnaires</div>
+							</div>							
+							<div class="d-flex align-items-center mb-15px">
+								<div class="flex-grow-1 d-flex align-items-center">
+									<i class="fa fa-circle fs-9px fa-fw text-gray-200 me-2"></i>Submitted
+								</div>
+								<div class="fw-600 text-body">@Model.ApplicationStats.Submitted</div>
+							</div>
+							<div class="fs-12px text-end">
+								<span class="fs-10px">powered by </span>
+								<span class="d-inline-flex fw-600">
+									<span class="text-success">L</span>
+									<span class="text-success">A</span>
+									<span class="text-success">I</span>
+									<span class="text-success">M</span>
+									<span class="text-success">S</span>
+								</span>
+								<span class="fs-10px">Analytics API</span>
+							</div>
+						</div>
+					</div>
+					<!-- END card-body -->
+				</div>
+				<!-- END card -->
+			</div>
+			<!-- END col-6 -->
+
+		</div> 
+	</div>
+	<!-- BEGIN col-6 -->
+	<div class="col-xl-6 mb-3">
+		<!-- BEGIN card -->
+		<div class="card h-100">
+			<!-- BEGIN card-body -->
+			<div class="card-body">
+				<div class="d-flex align-items-center mb-2">
+					<div class="flex-grow-1">
+						<h5 class="mb-1">Latest</h5>
+						<div class="fs-13px">Latest Applications</div>
+					</div>
+					<a href="#" class="text-decoration-none">See All</a>
+				</div>
+
+				<!-- BEGIN table-responsive -->
+				<div class="table-responsive mb-n2">
+					<table class="table table-borderless mb-0">
+						<thead>
+							<tr class="text-body">
+								<th class="ps-0">No</th>
+								<th>Details</th>
+								<th class="text-center">Stage</th> 
+								<th class="text-end pe-0">AP No</th>
+							</tr>
+						</thead>
+						<tbody>
+							@if (Model.LatestPoliciesDT!= null)
+							{
+								@foreach (DataRow DR in Model.LatestPoliciesDT.Rows)
+								{
+									<tr>
+										<td class="ps-0">@DR["RowNo"]</td>
+										<td>
+											<div class="d-flex align-items-center">
+												<div class="ms-3 flex-grow-1">
+													<div class="fw-600 text-body">
+														<a href="#">
+															@DR["Policy"]
+														</a>
+													</div>
+													<div class="fs-13px">@DR["MemberName"]</div>
+												</div>
+											</div>
+										</td>
+										<td class="text-center"><span style="min-width: 60px;">@DR["PolicyStatus"]</span></td>
+										<td class="text-end pe-0">@DR["ApplicationNo"]</td>
+									</tr>
+								}
+							} 							
+						</tbody>
+					</table>
+				</div>
+				<!-- END table-responsive -->
+			</div>
+			<!-- END card-body -->
+		</div>
+		<!-- END card -->
+	</div>
+	<!-- END col-6 -->
+</div> 

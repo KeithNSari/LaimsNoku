@@ -1,0 +1,19 @@
+﻿@page
+@model LAIMS.Areas.Identity.Pages.Account.TranUpdateModel
+@{
+}
+@{
+    Layout = "/Pages/Shared/_LayoutProducts.cshtml";
+}
+<div class="container" style="height: 100vh; display: flex; justify-content: center; align-items: center;">
+    <h1 style="color: red; font-weight: bold;">
+        @if (Model.Success)
+        {
+            <span>Success!</span>
+        }
+        else
+        {
+            <span>Failed!</span>
+        }
+    </h1>
+</div>

@@ -1,0 +1,40 @@
+﻿@page
+@using System.Data
+@model LAIMS.Areas.PaymentCollection.Pages.ReversalHistoryModel
+@{
+}
+@{
+    Layout = "/Pages/Shared/_LayoutProducts.cshtml";
+}
+<h1>Reversed Payments</h1> 
+<hr /> 
+<p>Latest reversal records</p>
+<hr />
+<div class="row mb-3">
+    <form method="post">
+        <table class="table table-hover">
+            <tr>
+                <th>Currency </th>
+                <th>Amount</th>
+                <th>Reason</th>
+                <th>Reversal Comment</th>
+                <th>Reversed On</th>
+                @* <th>Reversed By</th>  *@
+            </tr>
+            @if (Model.ReversalsDT != null)
+            {
+                @foreach (DataRow DR in Model.ReversalsDT.Rows)
+                {
+                    <tr>
+                        <td>@DR["Currency"]</td>
+                        <td>@DR["Amount"]</td>
+                        <td>@DR["Reason"]</td>
+                        <td>@DR["ReversalComment"]</td>
+                        <td>@DR["ReversedOn"]</td>
+                        @* <td>@DR["UserName"]</td>  *@
+                    </tr>
+                }
+            }
+        </table>
+    </form>
+</div>

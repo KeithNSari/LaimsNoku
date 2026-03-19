@@ -1,0 +1,78 @@
+﻿@page
+@using System.Data;
+@using Microsoft.AspNetCore.Http.Extensions;
+@model LAIMS.Areas.PolicySetUps.Pages.Products.PQuestionnairesModel
+@{
+}
+@{
+    Layout = "/Pages/Shared/_LayoutProducts.cshtml";
+}
+<h2>Product Application Questionnaires</h2>
+<hr />
+@if (!string.IsNullOrEmpty(ViewData["ErrorMessage"]?.ToString()))
+{
+    <p class="text-danger">@ViewData["ErrorMessage"]</p>
+}
+<div class="bg-light">
+    <h4>Product Name: @Html.DisplayFor(model => model.MyProduct.ProductName)</h4>
+</div>
+<hr />
+<div class="row">
+    <div class="col-md-6">
+        <form method="post">
+            <input type="hidden" asp-for="ReturnUrl" />
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="row mb-3">
+                <label asp-for="MyProductQuestionnaire.QuestionnaireID" class="control-label"><b>Questionnaire</b></label>
+                <select asp-for="MyProductQuestionnaire.QuestionnaireID" class="form-control" asp-items="Model.QuestionnairesList"></select>
+                <span asp-validation-for="MyProductQuestionnaire.QuestionnaireID" class="text-danger"></span>
+            </div>
+            <div class="row mb-3">
+                <label asp-for="MyProductQuestionnaire.Tested" class="control-label"><b>Tested Business?</b></label>
+                <select asp-for="MyProductQuestionnaire.Tested" class="form-control" aria-required="true">
+                    <option value="">Select Option</option>
+                    <option value=0>Untested</option>
+                    <option value=1>Tested</option>
+                    <option value=2>All</option>
+                </select>
+                <span asp-validation-for="MyProductQuestionnaire.Tested" class="text-danger"></span>
+            </div> 
+            <div class="form-group">
+                <input type="submit" value="Add Questionnaire" class="btn btn-primary" />
+                <a asp-page="./Index" class="btn btn-outline-primary">Back to List</a>
+                <a asp-page="Products" asp-route-id="@Model.MyProduct?.ID" class="btn btn-success">Products</a>
+            </div>
+        </form>
+    </div>
+    <div class="col-md-6">
+        <h4>Current Entries</h4>
+        <form method="post">
+            <input type="hidden" asp-for="ReturnUrl" />
+            <table class="table table-striped">
+                <tr>
+                    <th>Questionnaire</th>
+                    <th>Business</th> 
+                    <th></th>
+                </tr>
+                @if (Model.QuestionnaireDT != null)
+                {
+                    @foreach (DataRow DR in Model.QuestionnaireDT.Rows)
+                    {
+                        <tr>
+                            <td>@DR["Questionnaire"]</td>
+                            <td>@DR["TestedDesc"]</td> 
+                            <td class="text-end">
+                                <button type="submit" asp-route-id="@Model.MyProduct?.ID" asp-route-entryno="@DR["ID"]" asp-route-returnUrl="@Request.GetEncodedPathAndQuery()" asp-page-handler="Remove" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to remove this item?');">Remove</button>
+                            </td>
+                        </tr>
+                    }
+                }
+            </table>
+        </form>
+    </div>
+</div>
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+} 

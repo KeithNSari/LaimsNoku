@@ -1,0 +1,237 @@
+﻿@page
+@using System.Data
+@model LAIMS.Areas.PaymentCollection.Pages.BillingHistoryModel
+@{
+}
+@{
+    Layout = "/Pages/Shared/_LayoutSearch.cshtml";
+}
+<h1>Billing History</h1>
+<hr />
+@if (Model.SearchTerm!=null)
+{
+    <div class="row mb-3">
+        <h5>@Model.ResultsCount results found for search "@Model.SearchTerm"!</h5>
+    </div>
+}
+else
+{
+    <div class="row mb-3">
+        <h5>Showing @Model.ResultsCount records!</h5>
+    </div>
+}
+@if (!string.IsNullOrEmpty(ViewData["ErrorMessage"]?.ToString()))
+{
+    <h3 class="text-danger">@ViewData["ErrorMessage"]</h3>
+}
+@if ((Model.SearchTerm != null) && (Model.PolicyDetailedBalance != null))
+{
+    <hr/>
+    <h6>Policy Name: @Model.PolicyDetailedBalance.PolicyName</h6>
+    <h6>Policy Balance: @Model.PolicyDetailedBalance.PolicyBalance</h6>
+    <h6>Policy Suspense Balance: @Model.PolicyDetailedBalance.SuspenseBalance</h6>
+    <h6>Proposer: @Model.PolicyDetailedBalance.Proposer</h6>
+    <h6>Premium Payer: @Model.PolicyDetailedBalance.PremiumPayer</h6>
+}
+<div class="row">
+    @if (Model.BillsDT != null)
+    {
+        <table class="table">
+            <thead class="table-dark">
+                <tr>
+                    <th>Batch ID</th>
+                    <th>Invoice No</th>
+                    <th>Policy No</th>
+                    <th>Currency</th>
+                    <th>Amount</th>
+                    <th class="text-end">Payment</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (int i = 0; i < Model.BillsDT.Rows.Count; i++)
+                {
+                    DataRow DR = Model.BillsDT.Rows[i];
+                    @if (DR["InvoiceNo"].ToString() == "Total")
+                    {
+                        <tr>
+                            <td>@DR["BatchID"]</td>
+                            <td><h6>@DR["InvoiceNo"]</h6></td>
+                            <td>@DR["PolicyNo"]</td>
+                            <td><h5>@DR["Currency"]</h5></td>
+                            <td><h5>@DR["Amount"]</h5></td>
+                            <td class="text-end">
+                                @DR["Paid"] <br/>
+                                 <button class="btn btn-warning" onclick="openNotificationsModal(@DR["BillID"])">Message</button>
+                            </td> 
+                        </tr>
+                    }
+                    else
+                    {
+                        <tr>
+                            <td><h5>@DR["BatchID"]</h5></td>
+                            <td><h5>@DR["InvoiceNo"]</h5></td>
+                            <td>@DR["PolicyNo"]</td>
+                            <td>@DR["Currency"]</td>
+                            <td>@DR["Amount"]</td>
+                            <td class="text-end"> 
+                                @DR["Paid"] 
+                            </td>
+                        </tr>
+                    }                   
+                }
+            </tbody>
+        </table>
+    }    
+</div>
+<form method="post">
+    <div class="modal fade" id="PaymentModal" tabindex="-1" aria-labelledby="PaymentModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-light">
+                    <h5 class="modal-title" id="PaymentModalLabel">Make Payment</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <h2></h2>
+                    <input type="hidden" asp-for="ReturnUrl" />
+                    <input type="hidden" id="billid" asp-for="@Model.PremiumHeader.BillingID" />
+                    <input type="hidden" id="currencyid" asp-for="@Model.PremiumLine.CurrencyID" />
+                    <input type="hidden" id="currencyName" asp-for="@Model.Currency" />
+                    <input type="hidden" id="searchTerm" asp-for="@Model.SearchTerm" />
+                    <input type="hidden" id="policyid" asp-for="@Model.PolicyID" />
+                    @if (TempData["PostbackSuccess"] != null && (bool)TempData["PostbackSuccess"])
+                    {
+                        <script>
+                            closeModal();
+                        </script>
+                    }
+                    <div class="row mb-3">
+                        <div class="form-group">
+                            <label asp-for="@Model.Currency" class="control-label" ><b>Currency: </b></label>
+                           <label id="currencyLbl"></label>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <label asp-for="@Model.PremiumHeader.DatePaymentReceived" class="control-label"><b>Date Receieved</b></label>
+                            <input type="date" asp-for="@Model.PremiumHeader.DatePaymentReceived" required class="form-control" />
+                            <span asp-validation-for="@Model.PremiumHeader.DatePaymentReceived" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-4">
+                            <label asp-for="@Model.PaymentType" class="control-label"><b>Payment Type</b></label>
+                            <select asp-for="@Model.PaymentType" required asp-items="@(new SelectList(Model.PaymentTypes, "ID", "TypeName"))" class="form-control">
+                                <option value="">Select Payment Type</option>
+                            </select>
+                            <span asp-validation-for="@Model.PaymentType" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label asp-for="@Model.PaymentSource"><b>Source</b></label>
+                                <input asp-for="@Model.PaymentSource" required class="form-control" />
+                                <span asp-validation-for="@Model.PaymentSource" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label asp-for="@Model.PremiumHeader.TotalAmount"><b>Amount</b></label>
+                                <input asp-for="@Model.PremiumHeader.TotalAmount" min="0" required  class="form-control" />
+                                <span asp-validation-for="@Model.PremiumHeader.TotalAmount" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label asp-for="@Model.PremiumLine.Reference"><b>Reference</b></label>
+                                <input asp-for="@Model.PremiumLine.Reference" class="form-control" />
+                                <span asp-validation-for="@Model.PremiumLine.Reference" class="text-danger"></span>
+                            </div>
+                        </div>
+                       
+                       
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <input type="submit" value="Save Changes" class="btn btn-primary" />
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+<form method="post">
+    <div class="modal fade" id="NotificationsModal" tabindex="-1" aria-labelledby="NotificationsModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-light">
+                    <h5 class="modal-title" id="NotificationsModalLabel">Message</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <h2></h2>
+                    <input type="hidden" id="billingid" asp-for="@Model.BillID" />
+                    @if (TempData["PostbackSuccess"] != null && (bool)TempData["PostbackSuccess"])
+                    {
+                        <script>
+                            closeModal();
+                        </script>
+                    }
+                    <div class="row mb-3">
+                        <div class="form-group">
+                            <label asp-for="@Model.StatusID" class="control-label"><b>Status</b></label>
+                            <select asp-for="@Model.StatusID" class="form-control" aria-required="true">
+                                <option value="">Select Option</option>
+                                <option value=1050>Billing Failure</option> 
+                            </select>
+                            <span asp-validation-for="@Model.StatusID" class="text-danger"></span>
+                        </div>
+                    </div>
+                     <div class="row mb-3">
+                        <div class="form-group">
+                            <label asp-for="@Model.StatusReason" class="control-label"><b>Status Reason</b></label>
+                            <select asp-for="@Model.StatusReason" class="form-control" aria-required="true" onchange="toggleDiv()">
+                                <option value="">Select Option</option>
+                                <option value=1050>Insufficient Funds</option>
+                                <option value=1051>Missing Details</option>
+                                <option value=1052>Unknown Reason</option>
+                            </select>
+                            <span asp-validation-for="@Model.StatusReason" class="text-danger"></span>
+                        </div>
+                    </div> 
+                    <div class="row mb-3">
+                        <div class="form-group">
+                            <label asp-for="@Model.StatusComment"><b>Comment</b></label>
+                            <textarea asp-for="@Model.StatusComment" class="form-control" id="commentTextarea" rows="5" cols="50" required></textarea>
+                            <span asp-validation-for="@Model.StatusComment" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <input type="submit" value="Submit" asp-page-handler="SendBillingMessage" class="btn btn-primary" />
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+@section scripts 
+{
+    <script>
+        function openPaymentModal(id,currency,currencyid,policyid) { 
+            // Set the ID in the hidden field
+            document.getElementById('billid').value = id;
+            document.getElementById('currencyLbl').textContent = currency;
+            document.getElementById('currencyid').value = currencyid;
+            document.getElementById('policyid').value = policyid;
+            // Open the modal
+            $('#PaymentModal').modal('show');
+        }
+    </script>
+     <script>
+        function openNotificationsModal(billid) { 
+            console.log(billid);
+            // Set the ID in the hidden field
+            document.getElementById('billingid').value = billid; 
+            // Open the modal
+            $('#NotificationsModal').modal('show');
+        }
+    </script>
+}

@@ -1,0 +1,158 @@
+﻿@page
+@using System.Data
+@model LAIMS.Areas.Claims.Pages.PUSellModel
+@{
+}
+@{
+    Layout = "/Pages/Shared/_LayoutProducts.cshtml";
+}
+<h2>Sell Units</h2>
+<div class="nav-wizards-container">
+    <nav class="nav nav-wizards-1 mb-2">
+        <div class="nav-item col">
+            <a class="nav-link active" href="#">
+                <div class="nav-no">1</div>
+                <div class="nav-text">Create Claim</div>
+            </a>
+        </div>
+        <div class="nav-item col">
+            <a class="nav-link disabled" href="#">
+                <div class="nav-no">2</div>
+                <div class="nav-text">Add Documents</div>
+            </a>
+        </div>
+        <div class="nav-item col">
+            <a class="nav-link disabled" href="#">
+                <div class="nav-no">3</div>
+                <div class="nav-text">Payment Details</div>
+            </a>
+        </div>
+        <div class="nav-item col">
+            <a class="nav-link disabled" href="#">
+                <div class="nav-no">4</div>
+                <div class="nav-text">Service Breakdown</div>
+            </a>
+        </div>
+        <div class="nav-item col">
+            <a class="nav-link disabled" href="#">
+                <div class="nav-no">5</div>
+                <div class="nav-text">Documents</div>
+            </a>
+        </div>
+        <div class="nav-item col">
+            <a class="nav-link disabled" href="#">
+                <div class="nav-no">6</div>
+                <div class="nav-text">Submission</div>
+            </a>
+        </div>
+    </nav>
+</div> 
+<hr />
+<h1>Units Sales</h1> 
+<hr /> 
+<div class="row mb-3">
+    @if (Model.PoliciesDT != null)
+    {
+        @foreach (DataRow DR in Model.PoliciesDT.Rows)
+        {
+            <h3>Client: @DR["MemberName"].ToString()</h3>
+            <hr />
+            <table class="table table-hover">
+                <tr>
+                    <th>Entry</th>
+                    <th>Commencement</th>
+                    <th>Policy No</th>
+                    <th>Policy</th>
+                    <th>Investment Content</th>
+                </tr>
+                <tr>
+                    <td>@DR["EntryNo"]</td>
+                    <td>@DR["CommencementDate"]</td>
+                    <td>@DR["PolicyNo"]</td>
+                    <td>@DR["PolicyTypeName"]</td>
+                    <td>@DR["InvestmentContentBalance"]</td>
+                </tr>
+            </table>
+        }
+    }
+</div>
+<form method="post"> 
+    <input type="hidden" asp-for="@Model.PolicyNo" />
+    <input type="hidden" asp-for="@Model.ProposerID" />
+    <input type="hidden" asp-for="@Model.RequestID" />
+    <div class="row mb-3">
+        @if ((Model.UnitTrustBalancesDT != null) && (Model.UnitTrustBalancesDT.Rows.Count > 0))
+        {
+            <h3>Fund Balances</h3>
+            <hr />
+            @foreach (DataRow DR in Model.UnitTrustBalancesDT.Rows)
+            {
+                <table class="table table-hover">
+                    <tr>
+                        <th>Fund</th>
+                        <th>Balance (Units)</th>
+                        <th>Bid Price</th>
+                        <th>To Sell (Units)</th>
+                        <th>Value(@DR["Currency"])</th>
+                    </tr>
+
+                    <tr>
+                        <td>@DR["UnitTrust"]</td>
+                        <td>@DR["UnitsBalance"]</td>
+                        <td>@DR["BidPrice"]</td>
+                        <td>
+                            <input type="hidden" name="UnitTrustIDS" value="@DR["UnitTrustID"]" />
+                             @DR["UnitsToBuy"] 
+                        </td>
+                        <td class="price">@DR["Value"]</td>
+                    </tr>
+                </table>
+            }
+            @if(!Model.PurchaseMade)
+            {
+                <div class="row mb-3">
+                    <div class="col-md-11"></div>
+                    <div class="col-md-1">
+                        <input type="submit" value="Sell" class="btn btn-primary" />
+                    </div>
+                </div>
+            }
+            else{
+                <div class="row mb-3">
+                    <div class="col-md-11"></div>
+                    <div class="col-md-1">
+                        <a class="btn btn-success" asp-page="PUPayments" asp-route-id="@Model.ProposerID" asp-route-reqid="@Model.RequestID">Next</a>
+                    </div>
+                </div>
+            }
+           
+        }
+    </div>
+</form>
+<div class="row mb-3">
+    @if ((Model.TransactionHistoryDT != null) && (Model.TransactionHistoryDT.Rows.Count > 0))
+    {
+        <h3>Sales Transaction History</h3>
+        <hr />
+
+        <table class="table table-hover">
+            <tr>
+                <th>Fund</th>
+                <th>Units</th>
+                <th>Bid Price</th>
+                <th>Value</th>
+                <th>Date</th>
+            </tr>
+            @foreach (DataRow DR in Model.TransactionHistoryDT.Rows)
+            {
+                <tr>
+                    <td>@DR["UnitTrust"]</td>
+                    <td>@DR["Units"]</td>
+                    <td>@DR["BidPrice"]</td>
+                    <td>@DR["Value"]</td>
+                    <td>@DR["AddedOn"]</td>
+                </tr>
+            }
+        </table>
+    }
+</div> 

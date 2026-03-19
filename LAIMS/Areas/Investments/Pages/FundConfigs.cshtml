@@ -1,0 +1,124 @@
+﻿@page
+@using System.Data
+@model LAIMS.Areas.Investments.Pages.FundConfigsModel
+@{
+}
+@{
+    Layout = "/Pages/Shared/_LayoutProducts.cshtml";
+}
+<h2>Fund Configuration</h2>
+@if (!string.IsNullOrEmpty(ViewData["ErrorMessage"]?.ToString()))
+{
+    <p class="text-danger">@ViewData["ErrorMessage"]</p>
+}
+<hr />
+<div class="row mb-3">
+    <form method="post">
+        <input type="hidden" asp-for="ReturnUrl" />
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label asp-for="UnitTrustID" class="control-label"><b>Fund</b></label>
+                <select asp-for="UnitTrustID" class="form-control" asp-items="Model.UnitTrusts" onchange="PassSelectedValue(this)">
+                    <option value="">Select Option</option>
+                </select>
+                <span asp-validation-for="UnitTrustID" class="text-danger"></span>
+            </div>
+            <div class="col-md-5">
+                <label asp-for="UnitTrustsLine.EffectiveDate" class="control-label"><b>Effective Date</b></label>
+                <input asp-for="UnitTrustsLine.EffectiveDate" type="date" required class="form-control" />
+                <span asp-validation-for="UnitTrustsLine.EffectiveDate" class="text-danger"></span>
+            </div>
+
+        </div>
+        <div class="row mb-3">
+            <div class="col-md-2">
+                <label asp-for="UnitTrustsLine.CurrencyID" class="control-label"><b>Currency</b></label>
+                <select asp-for="UnitTrustsLine.CurrencyID" required class="form-control" asp-items="Model.Currencies">
+                    <option value="">Select Currency</option>
+                </select>
+                <span asp-validation-for="UnitTrustsLine.CurrencyID" class="text-danger"></span>
+            </div>
+            <div class="col-md-4">
+                <label asp-for="UnitTrustsLine.ValueMode" class="control-label"><b>Value Mode</b></label>
+                <select asp-for="UnitTrustsLine.ValueMode" required class="form-control">
+                    <option value="">Select Option</option>
+                    <option value=1>Units</option>
+                    <option value=2>Money</option>
+                </select>
+                <span asp-validation-for="UnitTrustsLine.CurrencyID" class="text-danger"></span>
+            </div>
+            <div class="col-md-5">
+                <label asp-for="UnitTrustsLine.ResidualValueIsPercentage" class="control-label"><b>Residual Value Type</b></label>
+                <select asp-for="UnitTrustsLine.ResidualValueIsPercentage" required class="form-control">
+                    <option value="">Select Option</option>
+                    <option value=0>Quantity</option>
+                    <option value=1>Percentage</option>
+                </select>
+                <span asp-validation-for="UnitTrustsLine.ResidualValueIsPercentage" class="text-danger"></span>
+            </div>           
+        </div>
+        <div class="row mb-3">               
+            <div class="col-md-3">
+                <label asp-for="UnitTrustsLine.MinimumCashWithdrawal" class="control-label"><b>Min Cash Withdrawal</b></label>
+                <input asp-for="UnitTrustsLine.MinimumCashWithdrawal" min="0" required class="form-control" />
+                <span asp-validation-for="UnitTrustsLine.MinimumCashWithdrawal" class="text-danger"></span>
+            </div>
+            <div class="col-md-3">
+                <label asp-for="UnitTrustsLine.MinimumSurrenderValue" class="control-label"><b>Min Surrender Value</b></label>
+                <input asp-for="UnitTrustsLine.MinimumSurrenderValue" min="0" required class="form-control" />
+                <span asp-validation-for="UnitTrustsLine.MinimumSurrenderValue" class="text-danger"></span>
+            </div>
+             <div class="col-md-3">
+                <label asp-for="UnitTrustsLine.ResidualValue" class="control-label"><b>Residual Value</b></label>
+                <input asp-for="UnitTrustsLine.ResidualValue" min="0" required class="form-control" />
+                <span asp-validation-for="UnitTrustsLine.ResidualValue" class="text-danger"></span>
+            </div>
+            <div class="col-md-2 justify-content-end">
+                <br />
+                <input type="submit" value="Add" class="btn btn-primary" />
+            </div>
+            <div class="col-md-1"></div>
+           
+        </div>
+
+    </form>
+</div>
+<hr />
+<div class="row">
+    <form method="post">
+        <input type="hidden" asp-for="ReturnUrl" />
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="row mb-3">
+            <h4>Entries</h4>
+            <table class="table table-striped">
+                <tr>
+                    <th>ID</th>
+                    <th>Currency</th>
+                    <th>Value Mode</th>
+                    <th>Residual Value</th>
+                    <th>RV Type</th>                        
+                    <th>Min Withdrawal Value</th>
+                    <th>Min Surrender Value</th>
+                    <th>Effective Date</th>
+                </tr>
+                @if (Model.ComponentsDT.Rows.Count > 0)
+                {
+                    @foreach (DataRow DR in Model.ComponentsDT.Rows)
+                    {
+                        <tr>
+                            <td>@DR["ID"]</td>
+                            <td>@DR["Currency"]</td>
+                            <td>@DR["ValueMode"]</td>
+                            <td>@DR["ResidualValue"]</td>
+                            <td>@DR["ResidualValueIsPercentage"]</td>                           
+                            <td>@DR["MinimumCashWithdrawal"]</td>
+                            <td>@DR["MinimumSurrenderValue"]</td>
+                            <td>@DR["EffectiveDate"]</td>
+                        </tr>
+                    }
+                }
+            </table>
+        </div>
+    </form>
+</div>

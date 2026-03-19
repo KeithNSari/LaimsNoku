@@ -1,0 +1,95 @@
+﻿@page
+@using System.Data;
+@model LAIMS.Areas.PolicySetUps.Pages.PolicyTypes.ProductsModel
+@{
+}
+@{
+    Layout = "/Pages/Shared/_LayoutProducts.cshtml";
+}
+<h2>Policy Products</h2>
+@if (!string.IsNullOrEmpty(ViewData["ErrorMessage"]?.ToString()))
+{
+    <p class="text-danger">@ViewData["ErrorMessage"]</p>
+}
+<hr />
+<div class="bg-light">
+    <h4>Policy Name: @Html.DisplayFor(model => model.MyPolicyType.Name)</h4>
+</div>
+<hr />
+<div class="row">
+    <div class="col-md-5">
+        <form method="post">
+            <input type="hidden" asp-for="ReturnUrl" />
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="row mb-3">
+                <label asp-for="MyPolicyTypeLines.ProductID" class="control-label"><b>Product</b></label>
+                <select asp-for="MyPolicyTypeLines.ProductID" class="form-control" asp-items="Model.MyProducts"></select>
+                <span asp-validation-for="MyPolicyTypeLines.ProductID" class="text-danger"></span>
+            </div>
+            <div class="row mb-3">
+                <label asp-for="MyPolicyTypeLines.Optional" class="control-label"><b>Optional/ Required?</b></label>
+                <select asp-for="MyPolicyTypeLines.Optional" class="form-control" aria-required="true">
+                    <option value="">Select Option</option>
+                    <option value=0>Required</option>
+                    <option value=1>Optional</option>
+                </select>
+                <span asp-validation-for="MyPolicyTypeLines.Optional" class="text-danger"></span>
+            </div>
+            <div class="row mb-3">
+                <label asp-for="MyPolicyTypeLines.Main" class="control-label"><b>Main/ Rider?</b></label>
+                <select asp-for="MyPolicyTypeLines.Main" class="form-control" aria-required="true">
+                    <option value="">Select Option</option>
+                    <option value=0>Rider</option>
+                    <option value=1>Main</option>
+                </select>
+                <span asp-validation-for="MyPolicyTypeLines.Main" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Add" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+    <div class="col-md-7">
+        <h4>Policy Products</h4>
+        <div class="card">
+            <div class="card-body">
+                <form method="post">
+                    <input type="hidden" asp-for="ReturnUrl" />
+                    <div class="small text-inverse text-opacity-50 mb-3">
+                        <table class="table">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>Product</th>
+                                    <th>Category</th>
+                                    <th>Constraint</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.ProductsDT != null)
+                                {
+                                    @foreach (DataRow DR in Model.ProductsDT.Rows)
+                                    {
+                                        <tr>
+                                            <td>@DR["Product"]</td>
+                                            <td>@DR["MainDesc"]</td>
+                                            <td>@DR["OptionalDesc"]</td>
+                                            <td class="text-end">
+                                                <button type="submit" asp-route-id="@DR["PTLID"]" asp-route-productId="@DR["ProductID"]" asp-page-handler="Remove" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to remove this item?');">Archive</button>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+} 

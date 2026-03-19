@@ -1,0 +1,77 @@
+﻿@page
+@using System.Data
+@model LAIMS.Areas.UTools.Pages.Commissions.PolicyDefinitionsModel
+@{
+}
+@{
+    Layout = "/Pages/Shared/_LayoutProducts.cshtml";
+}
+<h3>Commissions Definition</h3>
+@if (!string.IsNullOrEmpty(ViewData["ErrorMessage"]?.ToString()))
+{
+    <p class="text-danger">@ViewData["ErrorMessage"]</p>
+}
+<div class="row mb-3">
+    <div class="container mt-4  bg-white rounded">
+        <h3>Instructions</h3>
+
+        <ul class="list-unstyled">
+            <li class="ms-4">1. Upload an Excel Template with the following columns: Policy, Product,Intermediary, Commission(%),Calculation,Function,CPP Starts,CPP Ends</li>
+            <li class="ms-4">2. Column names must be spelt exactly as in 1</li> 
+        </ul>
+    </div>
+</div>
+<h3>Upload File</h3>
+<form method="post" enctype="multipart/form-data">
+    <div class="row mb-3">
+        <div class="col-md-10">
+            <input class="form-control" multiple="multiple" type="file" asp-for="Upload" />
+        </div>
+        <div class="col-md-2">
+            <input class="btn btn-primary" type="submit" value="Upload File" />
+        </div>
+    </div>
+</form>
+<div class="row mb-3">
+    @if (Model.DT != null)
+    {
+        <form method="post">
+            <table class="table table-hover">
+                <tr>
+                    @foreach (DataColumn DC in Model.DT.Columns)
+                    {
+                        <th>@DC.ColumnName</th>
+                    }
+                </tr>
+                @for(int i=0;i<Model.DT.Rows.Count;i++)
+                {
+                    <tr>
+                        @for(int j=0;j<Model.DT.Columns.Count;j++)
+                        {
+                            <td>
+                                @if(i==0)
+                                {
+                                    @Model.DT.Rows[i][j]
+                                }
+                                else 
+                                {
+                                    if((j==0)||(j==1))
+                                    {
+                                        @if (!((@Model.DT.Rows[i - 1][j].ToString()) == (@Model.DT.Rows[i][j]).ToString()))
+                                        {
+                                            @Model.DT.Rows[i][j]
+                                        }
+                                    }
+                                    else
+                                    {
+                                        @Model.DT.Rows[i][j]
+                                    }
+                                }                                
+                            </td>
+                        }
+                    </tr>
+                }
+            </table>
+        </form>
+    }
+</div>

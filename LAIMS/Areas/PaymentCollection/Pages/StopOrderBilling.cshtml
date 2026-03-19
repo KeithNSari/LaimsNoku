@@ -1,0 +1,95 @@
+﻿@page
+@using System.Data
+@model LAIMS.Areas.PaymentCollection.Pages.StopOrderBillingModel
+@{
+}
+@{
+    Layout = "/Pages/Shared/_LayoutProducts.cshtml";
+}
+<h1>Adhoc Stop Order</h1>
+<p>To generate a stop order, select a provider and code then click "Generate".</p>
+<hr />
+ <form method="post">
+    <div class="row mb-3">
+        <div class="col-md-4">
+            <label asp-for="@Model.PaymentProviderID" class="control-label"><b>Stop Order Provider</b></label>
+            <select asp-for="@Model.PaymentProviderID" required asp-items="Model.StopOrderProviderList" id="paymentProviderDropdown" class="form-control" aria-required="true">
+                <option value="">Select Option</option>
+            </select>
+            <span asp-validation-for="@Model.PaymentProviderID" class="text-danger"></span>
+        </div>
+        <div class="col-md-4"> 
+                <label asp-for="PCCID" class="control-label"><b>Stop Order</b></label>
+                <select asp-for="PCCID" required id="stopOrderDropdown" class="form-control" style="width: 100%;"></select> 
+        </div>
+        <div class="col-md-2">
+            <label asp-for="@Model.CollectionDate" class="control-label"><b>Collection Due</b></label>
+            <input type="date" class="form-control" asp-for="@Model.CollectionDate" required />
+        </div>
+        <div class="col-md-2">
+            <br/>
+            <button type="submit" class="btn btn-primary float-end">Generate</button>
+        </div>
+    </div>
+ </form>
+<div class="row mb-3">
+    <table class="table table-hover" >
+        <tr>
+            <th class="col-md-2">Added</th>
+            <th class="col-md-2">Due</th>
+            <th class="col-md-3">Stop Order</th>
+            <th class="col-md-3">Batch</th>
+            <th class="col-md-1">Entries</th>
+            <th class="col-md-1"></th>
+            <th class="col-md-1"></th>
+        </tr>
+        @if (Model.BatchesDT != null)
+        {
+            @foreach (DataRow DR in Model.BatchesDT.Rows)
+            {
+                <tr>
+                    <td>@DR["DateAdded"]</td>
+                    <td>@DR["DueDate"]</td>
+                    <td>@DR["Stop Order"]</td>
+                    <td>@DR["BatchID"]</td>
+                    <td>@DR["Entries"]</td>
+                    <td>
+                        @if (Convert.ToDecimal(DR["Entries"]) > 0)
+                        {
+                          <a href="/PaymentCollection/StopOrderBilling?handler=DownloadCsv&PCCID=@DR["PCCID"]" class="btn btn-primary">Download</a>
+                        }
+                    </td>                   
+                    <td>
+                        @if (Convert.ToDecimal(DR["Entries"]) > 0)
+                        {
+                            @if (Convert.ToDecimal(DR["PaidTotalAmount"]) == 0)
+                            {
+                                <a asp-page="ProcessBillingFile" asp-route-pid="@DR["PaymentProviderID"]" asp-route-pccid="@DR["PCCID"]" asp-route-batchid="@DR["BatchID"]" class="btn btn-danger">Process</a>
+                            }
+                            else
+                            {
+                                <a asp-page="BatchSupenseIndex" asp-route-batchid="@DR["BatchID"]" class="btn btn-success">View</a>
+                            }
+                        }
+                    </td>
+                </tr>
+            }
+        }
+    </table>
+</div>
+@section scripts {
+    <script>
+        $(function () {
+            $("#paymentProviderDropdown").on("change", function () {                
+                var providerId = $(this).val(); 
+                $("#stopOrderDropdown").empty();
+                $("#stopOrderDropdown").append("<option value='0'>Select Option</option>");
+                $.getJSON(`?handler=StopOrdersByProvider&paymentproviderid=${providerId}`, (data) => {
+                    $.each(data, function (i, stopOrder) {
+                        $("#stopOrderDropdown").append(`<option value="${stopOrder.pccid}">${stopOrder.stopOrderName}</option>`);
+                    });
+                });
+            });
+        });
+    </script>
+    }

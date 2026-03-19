@@ -1,0 +1,63 @@
+﻿@page
+@model LAIMS.Areas.NewBusiness.Pages.policies.PolicyQuestionnairesResponsesModel
+@{
+}
+@using System.Data
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - LCS</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/LAIMS.styles.css" asp-append-version="true" />
+</head>
+<body>
+    <h2>@Model.QuestionnaireTitle</h2>
+    @if (!string.IsNullOrEmpty(ViewData["ErrorMessage"]?.ToString()))
+    {
+        <p class="text-danger">@ViewData["ErrorMessage"]</p>
+    } 
+    <div class="row mb-3 p-3">
+        <h3>Previous Responses</h3>
+        @if (Model.PreviousResponsesDT.Rows.Count > 0)
+        {
+            <b>Added:</b> @Model.PreviousResponseDate
+            <table class="table table-striped">
+                <tr>
+                    <th class="col-md-1"></th>
+                    <th class="col-md-4">Question</th>
+                    <th class="col-md-7">Response</th>
+                </tr>
+                @{
+                    int position = 1;
+                    @for (int i = 0; i < Model.PreviousResponsesDT.Rows.Count; i++)
+                    {
+                        DataRow DR = Model.PreviousResponsesDT.Rows[i];
+                        <tr>
+                            <td>
+                                @if ((i > 0) && (Convert.ToInt32(Model.PreviousResponsesDT.Rows[i - 1]["QuestionNo"]) != Convert.ToInt32(DR["QuestionNo"])))
+                                {
+                                    position += 1;
+                                }
+                                @position@DR["QuestionLabel"]
+                            </td>
+                            <td>@DR["Question"]</td>
+                            <td>@DR["Responses"]</td>
+                        </tr>
+                    }
+                }
+            </table>
+        }
+        else
+        {
+            <p>No responses submitted as yet.</p>
+        }
+    </div> 
+</body>
+</html>

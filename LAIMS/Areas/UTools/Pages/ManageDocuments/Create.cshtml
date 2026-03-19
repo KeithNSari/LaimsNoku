@@ -1,0 +1,70 @@
+﻿@page
+@using System.Data;
+@using Microsoft.AspNetCore.Http.Extensions;
+@model LAIMS.Areas.UTools.Pages.ManageDocuments.CreateModel
+@{
+}
+@{
+    Layout = "/Pages/Shared/_LayoutProducts.cshtml";
+}
+<h2>Add Document Types</h2>
+@if (!string.IsNullOrEmpty(ViewData["ErrorMessage"]?.ToString()))
+{
+    <p class="text-danger">@ViewData["ErrorMessage"]</p>
+}
+<hr />
+<div class="row">
+    <div class="col-md-5">
+        <form method="post">
+            <input type="hidden" asp-for="ReturnUrl" />
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="mb-3">
+                <label asp-for="Document.DocumentName" class="control-label"><b>Type</b></label>
+                <input asp-for="Document.DocumentName" class="form-control" maxlength="200" />
+                <span asp-validation-for="Document.DocumentName" class="text-danger"></span>
+            </div> 
+            <input type="submit" value="Create" class="btn btn-primary" />
+        </form>
+    </div>
+    <div class="col-md-7">
+        <div class="card">
+            <div class="card-body">
+                <form method="post">
+                    <input type="hidden" asp-for="ReturnUrl" />
+                    <div class="small text-inverse text-opacity-50 mb-3">
+                        <table class="table">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th scope="col">Document</th> 
+                                    <th scope="col">Added</th>
+                                    <th scope="col"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.DocumentsDT != null)
+                                {
+                                    @foreach (DataRow DR in Model.DocumentsDT.Rows)
+                                    {
+                                        <tr>
+                                            <td>@DR["Document"]</td> 
+                                            <td>@DR["AddedOn"]</td>
+                                            <td class="text-end">
+                                                <a asp-page="Edit" asp-route-id="@DR["ID"]" class="btn btn-outline-primary btn-sm">Edit</a>
+                                                <button type="submit" asp-route-id="@DR["ID"]" asp-page-handler="Remove" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to archive this item?');">Archive</button>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+} 

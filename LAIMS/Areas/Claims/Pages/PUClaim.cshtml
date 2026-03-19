@@ -1,0 +1,280 @@
+﻿@page
+@using System.Data
+@model LAIMS.Areas.Claims.Pages.PUClaimModel
+@{
+}
+@{
+    Layout = "/Pages/Shared/_LayoutSearch.cshtml";
+}
+<h2>Create Claim</h2>
+<div class="nav-wizards-container">
+    <nav class="nav nav-wizards-1 mb-2">
+        <div class="nav-item col">
+            <a class="nav-link active" href="#">
+                <div class="nav-no">1</div>
+                <div class="nav-text">Create Claim</div>
+            </a>
+        </div>
+        <div class="nav-item col">
+            <a class="nav-link disabled" href="#">
+                <div class="nav-no">2</div>
+                <div class="nav-text">Add Documents</div>
+            </a>
+        </div>
+        <div class="nav-item col">
+            <a class="nav-link disabled" href="#">
+                <div class="nav-no">3</div>
+                <div class="nav-text">Payment Details</div>
+            </a>
+        </div>
+        <div class="nav-item col">
+            <a class="nav-link disabled" href="#">
+                <div class="nav-no">4</div>
+                <div class="nav-text">Submission</div>
+            </a>
+        </div>
+        <div class="nav-item col">
+            <a class="nav-link disabled" href="#">
+                <div class="nav-no">5</div>
+                <div class="nav-text">Approvals</div>
+            </a>
+        </div>        
+    </nav>
+</div>
+<h1>Investment/ Hybrid Policy Details</h1>
+<p>Search for a policy to get started. N.B: Policy must have an investment product!</p>
+<hr />
+@if (Model.SearchTerm != null)
+{
+    <div class="row mb-3">
+        @if (@Model.ResultsCount == 0)
+        {
+            <h5>0 valid policies found for search "@Model.SearchTerm"! Please note that the policy be correct and have an investment product!</h5>
+            <hr />
+        }
+    </div>
+}
+<div class="row mb-3">
+    @if (Model.PoliciesDT != null)
+    {
+        @foreach (DataRow DR in Model.PoliciesDT.Rows)
+        {
+            <h3>Client: @DR["MemberName"].ToString()</h3>
+            <hr />
+            <table class="table table-hover">
+                <tr>
+                    <th>Entry</th>
+                    <th>Commencement</th>
+                    <th>Policy No</th>
+                    <th>Policy</th>
+                    <th>Investment Content</th>
+                </tr>
+                <tr>
+                    <td>@DR["EntryNo"]</td>
+                    <td>@DR["CommencementDate"]</td>
+                    <td>@DR["PolicyNo"]</td>
+                    <td>@DR["PolicyTypeName"]</td>
+                    <td>@DR["InvestmentContentBalance"]</td>
+                </tr>
+            </table>
+        }
+    }
+</div>
+@if ((Model.CoverDT != null) &&(Model.CoverDT.Rows.Count>0))
+{
+    <h3>Supplementary Cover Details</h3>
+    <div class="row mb-3">
+        <div class="row mb-3">
+            <table class="table table-striped">
+                <tr>
+                    <th class="col-md-3">Product</th>
+                    <th class="col-md-3">Commencement</th>
+                    <th class="col-md-3">Premium</th>
+                    <th class="col-md-3">Cover</th> 
+                </tr>
+                @foreach (DataRow DR in Model.CoverDT.Rows)
+                {
+                    <tr>
+                        <td>@DR["Product"]</td>
+                        <td>@DR["Commencement"]</td>
+                        <td>@DR["Premium"]</td>
+                        <td>@DR["Cover"]</td> 
+                    </tr>
+                }
+            </table>
+        </div>
+    </div>
+}
+<form method="post">
+    <input type="hidden" asp-for="@Model.SearchTerm" /> 
+    <div class="row mb-3">
+        @if ((Model.UnitTrustBalancesDT != null) && (@Model.ResultsCount > 0))
+        {
+            <h3>Calculator</h3>
+            <hr />
+            <table class="table table-hover">
+                <tr>
+                    <th>Fund</th>
+                    <th>Units</th>
+                    <th>Bid Price</th>
+                    <th>Full Value</th>
+                    <th>Sales Quantity</th>
+                    <th>Total</th>
+                </tr>
+                @foreach (DataRow DR in Model.UnitTrustBalancesDT.Rows)
+                {
+                    <tr>
+                        <td>@DR["UnitTrust"]</td>
+                        <td>@DR["TotalUnits"]</td>
+                        <td class="price">
+                            @DR["BidPrice"]
+                            <input type="hidden" name="BidPrices" value="@DR["BidPrice"]" />
+                        </td>
+                        <td>@DR["FullValue"]</td>
+                        <td>
+                            <input type="hidden" name="UnitTrustIDS" value="@DR["UnitTrustID"]" />
+                            <input type="number" name="PurchaseQuantities" value="0" min="0" step="any" required class="quantity" oninput="updateRowTotal(this)" />
+                        </td>
+                        <td>
+                            <input type="number" name="PurchaseValues" value="0" min="0" step="any" required class="total" oninput="updateQuantity(this)" />
+                        </td>
+                    </tr>
+                }
+                <tfoot>
+                    <tr>
+                        <td colspan="4"><b>Total Amount</b></td>
+                        <td id="grandTotal">0.00</td>
+                    </tr>
+                </tfoot>
+            </table>
+ <h3>Claim Details</h3>
+     <hr />
+            <div class="row mb-3">              
+                <div class="col-md-3">
+                    <label asp-for="ClaimTypeID"><b>Select Claim Type</b></label>
+                    <select asp-for="ClaimTypeID" class="form-control" required aria-required="true">
+                        <option value="">Select Option</option>
+                        <option value=2>Maturity</option>
+                        <option value=3>Surrender</option>
+                        <option value=4>Partial Cash Withdrawal</option>                        
+                        <option value=7>Death</option>
+                    </select>
+                    <span asp-validation-for="ClaimTypeID" class="text-danger"></span>
+                </div>
+                <div class="col-md-2">
+                    <label asp-for="ValueMode"><b>Value Mode</b></label>
+                    <select asp-for="ValueMode" class="form-control" required aria-required="true">
+                        <option value="">Select</option>
+                        <option value=1>Units</option>
+                        <option value=2>Monetary</option> 
+                    </select>
+                    <span asp-validation-for="ValueMode" class="text-danger"></span>
+                </div> 
+                <div class="col-md-2">
+                    <label><b>Create Claim</b></label>
+                    <input type="submit" value="Create" class="btn btn-primary" />
+                </div>
+            </div>             
+        }
+    </div>
+</form>
+<div class="row mb-3">
+    @if ((Model.UnitTransactionsHistoryDT != null) && (Model.UnitTransactionsHistoryDT.Rows.Count > 0))
+    {
+        <h3>Transaction History</h3>
+        <hr />
+
+        <table class="table table-hover">
+            <tr>
+                <th>Fund</th>
+                <th>Transaction</th>
+                <th>Currency</th>
+                <th>Units</th>
+                <th>Bid Price</th>
+                <th>Offer Price</th>
+                <th>Amount</th>
+                <th>Date</th>
+            </tr>
+            @foreach (DataRow DR in Model.UnitTransactionsHistoryDT.Rows)
+            {
+                <tr>
+                    <td>@DR["Fund"]</td>
+                    <td>@DR["Transaction"]</td>
+                    <td>@DR["Currency"]</td>
+                    <td>@DR["Units"]</td>
+                    <td>@DR["BidPrice"]</td>
+                    <td>@DR["OfferPrice"]</td>
+                    <td>@DR["Amount"]</td>
+                    <td>@DR["AddedOn"]</td>
+                </tr>
+            }
+        </table>
+    }
+</div>
+@section Scripts {
+    <script>
+        function updateRowTotal(input) {
+            var row = $(input).closest('tr');
+            var price = parseFloat(row.find('input[name="BidPrices"]').val());
+            console.log("Price: ", price);
+            var quantityInput = row.find('input[name="PurchaseQuantities"]');
+            var totalInput = row.find('input[name="PurchaseValues"]');
+
+            var quantity = parseFloat(quantityInput.val());
+            console.log("Quantity: ", quantity);
+            var total = parseFloat(totalInput.val());
+
+            if (!isNaN(price) && !isNaN(quantity)) {
+                totalInput.val((price * quantity).toFixed(2));
+                updateGrandTotal();
+            } else if (!isNaN(price) && !isNaN(total)) {
+                quantityInput.val((total / price).toFixed(2));
+                updateGrandTotal();
+            }
+        }
+
+        function updateQuantity(input) {
+            var row = $(input).closest('tr');
+            var price = parseFloat(row.find('input[name="BidPrices"]').val());
+            console.log("Price: ", price);
+            var quantityInput = row.find('input[name="PurchaseQuantities"]');
+            var totalInput = row.find('input[name="PurchaseValues"]');
+
+            var total = parseFloat(totalInput.val());
+            console.log("Total: ", total);
+
+            if (!isNaN(price) && !isNaN(total)) {
+                quantityInput.val((total / price).toFixed(2));
+                updateGrandTotal();
+            }
+        }
+
+        function updateGrandTotal() {
+            var grandTotal = 0;
+            $('input[name="PurchaseValues"]').each(function () {
+                var total = parseFloat($(this).val());
+                if (!isNaN(total)) {
+                    grandTotal += total;
+                }
+            });
+            $('#grandTotal').text(grandTotal.toFixed(2));
+        }
+
+    </script>
+    <script>
+        function toggleDiv() {
+            var dropdown = document.getElementById('ClaimTypeID');
+            var myDiv = document.getElementById('qtyDiv'); 
+            var selectedType = dropdown.options[dropdown.selectedIndex].value;
+            Console.Log(selectedType)
+            if (selectedType === 3) 
+            {              
+                myDiv.style.display = 'block';
+            } 
+            else 
+            {
+                myDiv.style.display = 'none';
+            } 
+        }
+    </script> 
+}

@@ -1,0 +1,42 @@
+﻿@page
+@using System.Data
+@model LAIMS.Areas.PaymentCollection.Pages.BillingIndexModel
+@{
+}
+@{
+    Layout = "/Pages/Shared/_LayoutSearch.cshtml";
+}
+<h1>Billing Batches</h1>
+<hr />
+<div class="row mb-3">
+    @if (Model.BatchesDT != null)
+    {
+        <table class="table table-striped">
+            <tr>
+                <th>Batch</th>
+                <th>Provider</th>
+                <th>Method</th>
+                <th>Entries</th>
+                <th>Currency</th>
+                <th>Amount</th>
+                <th>Added</th>
+                <th></th>
+            </tr>
+            @foreach (DataRow DR in Model.BatchesDT.Rows)
+            {
+                <tr>
+                    <td>@DR["BatchID"]</td>
+                    <td>@DR["Provider"]</td>
+                    <td>@DR["PaymentMethod"]</td>
+                    <td>@DR["Entries"]</td>
+                    <td>@DR["Currency"]</td>
+                    <td>@DR["BatchTotalAmount"]</td>
+                    <td>@DR["AddedOn"]</td>
+                    <td>
+                        <a asp-page="ProcessBillingFile" asp-route-pid="@DR["PaymentProviderID"]" asp-route-pccid="@DR["PCCID"]" asp-route-batchid="@DR["BatchID"]" class="btn btn-danger btn-sm">Process</a>
+                    </td>
+                </tr>
+            }
+        </table>
+    }
+</div> 

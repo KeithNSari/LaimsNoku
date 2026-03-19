@@ -1,0 +1,53 @@
+﻿@page
+@using System.Data
+@model LAIMS.Areas.Claims.Pages.PolicySearchModel
+@{
+}
+@{
+    Layout = "/Pages/Shared/_LayoutSearch.cshtml";
+}
+<h1>Risk Policy Search</h1>
+<p>Search for a risk policy to get started.</p>
+<hr />
+@if (Model.SearchTerm != null)
+{
+    @if (Model.PoliciesDT != null)
+    {
+        <div class="row mb-3">
+            <h5>@Model.ResultsCount results found for search "@Model.SearchTerm"!</h5>
+        </div>
+    }
+    <hr />
+}
+<div class="row mb-3">
+    <form method="post">
+        <table class="table table-hover">
+            <tr>
+                <th>Entry </th>
+                <th>Commencement</th>
+                <th>Policy No</th>
+                <th>Policy</th>
+                <th>Status</th>
+                <th>Status Date</th>
+                <th></th>
+            </tr>
+            @if (Model.PoliciesDT != null)
+            {
+                @foreach (DataRow DR in Model.PoliciesDT.Rows)
+                {
+                    <tr>
+                        <td>@DR["EntryNo"]</td>
+                        <td>@DR["CommencementDate"]</td>
+                        <td>@DR["PolicyNo"]</td>
+                        <td>@DR["PolicyTypeName"]</td>
+                        <td>@DR["Status"]</td>
+                        <td>@DR["PolicyStatusDate"]</td>
+                        <td class="text-end">
+                            <a asp-route-id="@DR["UID"]" asp-route-policyTypeid="@DR["PolicyType"]" asp-route-policyid="@DR["ID"]" asp-page="PolicyDetails" class="btn btn-info btn-sm">Review</a>
+                        </td>
+                    </tr>
+                }
+            }
+        </table>
+    </form>
+</div>

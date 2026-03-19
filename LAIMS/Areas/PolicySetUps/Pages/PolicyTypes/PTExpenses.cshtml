@@ -1,0 +1,180 @@
+﻿@page
+@using System.Data;
+@model LAIMS.Areas.PolicySetUps.Pages.PolicyTypes.PTExpensesModel
+@{
+}
+@{
+    Layout = "/Pages/Shared/_LayoutProducts.cshtml";
+}
+<h2>Policy Costs Components</h2>
+@if (!string.IsNullOrEmpty(ViewData["ErrorMessage"]?.ToString()))
+{
+    <p class="text-danger">@ViewData["ErrorMessage"]</p>
+}
+<hr />
+<div class="row mb-3">
+    <form method="post">
+        <input type="hidden" asp-for="ReturnUrl" />
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="row mb-3">
+            <label asp-for="PolicyTypeID" class="control-label"><b>Policy</b></label>
+            <select asp-for="PolicyTypeID" class="form-control" asp-items="Model.PolicyTypesList" onchange="PassSelectedValue(this)">
+                <option value="">Select Option</option> 
+            </select>
+            <span asp-validation-for="PolicyTypeID" class="text-danger"></span>
+        </div>
+        <div class="row mb-3">
+          <div class="col-md-3">
+                <label asp-for="PolicyTypesExpense.PaymentFrequencyID" class="control-label"><b>Payment Frequency</b></label>
+                <select asp-for="PolicyTypesExpense.PaymentFrequencyID" required class="form-control" aria-required="true">
+                    <option value="">Select Option</option>
+                    <option value=0>All</option>
+                    <option value=1>Monthly</option>
+                    <option value=2>Quarterly</option>
+                    <option value=3>Half Yearly</option>
+                    <option value=4>Annually</option>
+                    <option value=5>Single Injections</option>
+                </select>
+                <span asp-validation-for="PolicyTypesExpense.PaymentFrequencyID" class="text-danger"></span>
+          </div>
+           <div class="col-md-3">
+                <label asp-for="PolicyTypesExpense.ExpenseTypeID" class="control-label"><b>Cost Component</b></label>
+                <select asp-for="PolicyTypesExpense.ExpenseTypeID" class="form-control" asp-items="Model.ExpenseTypesList">
+                    <option value="">Select Option</option>
+                </select>
+                <span asp-validation-for="PolicyTypesExpense.ExpenseTypeID" class="text-danger"></span>
+          </div>
+            <div class="col-md-2">
+                <label asp-for="PolicyTypesExpense.Ispercentage" class="control-label"><b>% Or Amount?</b></label>
+                <select asp-for="PolicyTypesExpense.Ispercentage" class="form-control" aria-required="true">
+                    <option value="">Select Option</option>
+                    <option value=0>Amount</option>
+                    <option value=1>Percentage</option> 
+                </select>
+                <span asp-validation-for="PolicyTypesExpense.Ispercentage" class="text-danger"></span>
+            </div>           
+            <div class="col-md-2">
+                <label asp-for="PolicyTypesExpense.CurrencyID" class="control-label"><b>Currency</b></label>
+                <select asp-for="PolicyTypesExpense.CurrencyID" class="form-control" asp-items="Model.Currencies">
+                    <option value=0>N/A</option>
+                </select>
+                <span asp-validation-for="PolicyTypesExpense.CurrencyID" class="text-danger"></span>
+            </div>
+            <div class="col-md-2">
+                <label asp-for="PolicyTypesExpense.Amount" class="control-label"><b>Quantity/Amount</b></label>
+                <input asp-for="PolicyTypesExpense.Amount" min="0" required class="form-control" />
+                <span asp-validation-for="PolicyTypesExpense.Amount" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="row mb-3">
+             <div class="col-md-2">
+                <label asp-for="PolicyTypesExpense.IntermediaryTypeID" class="control-label"><b>Intermediary Type</b></label>
+                <select asp-for="PolicyTypesExpense.IntermediaryTypeID" class="form-control">
+                    <option value=0>All</option>
+                    <option value=1>Independent Agent</option>
+                    <option value=2>Tied Agent</option> 
+                </select>
+                <span asp-validation-for="PolicyTypesExpense.IntermediaryTypeID" class="text-danger"></span>
+            </div>
+            <div class="col-md-2">
+                <label asp-for="PolicyTypesExpense.AppliesTo" class="control-label"><b>Applies To</b></label>
+                <select asp-for="PolicyTypesExpense.AppliesTo" class="form-control">
+                    <option value=0>Policy Level</option>
+                    <option value=1>Main Product Only</option>
+                    <option value=2>Riders Only</option>
+                    <option value=3>All products in policy</option>
+                </select>
+                <span asp-validation-for="PolicyTypesExpense.AppliesTo" class="text-danger"></span>
+            </div>
+            <div class="col-md-2">
+                <label asp-for="PolicyTypesExpense.StageID" class="control-label"><b>Stage</b></label>
+                <select asp-for="PolicyTypesExpense.StageID" class="form-control">
+                    <option value=1>New Business</option>
+                    <option value=2>Premium Servicing</option>
+                    <option value=3>Claims</option>
+                    <option value=4>Policy Servicing</option>
+                </select>
+                <span asp-validation-for="PolicyTypesExpense.StageID" class="text-danger"></span>
+            </div>
+            <div class="col-md-2">
+                <label asp-for="PolicyTypesExpense.StartMonth" class="control-label"><b>Start Month</b></label>
+                <input asp-for="PolicyTypesExpense.StartMonth" min="1" class="form-control" />
+                <span asp-validation-for="PolicyTypesExpense.StartMonth" class="text-danger"></span>
+            </div>
+            <div class="col-md-2">
+                <label asp-for="PolicyTypesExpense.EndMonth" class="control-label"><b>End Month</b></label>
+                <input asp-for="PolicyTypesExpense.EndMonth" class="form-control" />
+                <span asp-validation-for="PolicyTypesExpense.EndMonth" class="text-danger"></span>
+            </div>
+            <div class="col-md-2">
+                <label asp-for="PolicyTypesExpense.ApplicationTypeID" class="control-label"><b>Decision Type</b></label>
+                <select asp-for="PolicyTypesExpense.ApplicationTypeID" class="form-control">
+                    <option value=1>System</option>
+                    <option value=2>User</option> 
+                </select>
+                <span asp-validation-for="PolicyTypesExpense.ApplicationTypeID" class="text-danger"></span>
+            </div>
+        </div> 
+        <div class="row mb-3">
+            <div class="col-md-10"></div>
+            <div class="col-md-2">
+                <input type="submit" value="Add" class="btn btn-primary" />
+            </div>
+        </div>
+    </form>
+</div>
+<div class="row">
+    <form method="post">
+        <input type="hidden" asp-for="ReturnUrl" />
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="row mb-3">
+            <h4>Entries</h4>
+            <table class="table table-striped">
+                <tr>
+                    <th>ID</th>
+                    <th>Level</th>
+                    <th>Component</th>
+                    <th>Intermediary</th>
+                    <th>Frequency</th>
+                    <th>Amount</th>                    
+                    <th>Start Month</th>
+                    <th>End Month</th>
+                    <th>Stage</th>
+                    <th>Decision</th>
+                    <th></th>
+                </tr>
+                @if (Model.ComponentsDT.Rows.Count>0 )
+                {
+                    @foreach (DataRow DR in Model.ComponentsDT.Rows)
+                    {
+                        <tr>
+                            <td>@DR["ID"]</td>
+                            <td>@DR["AppliesTo"]</td>
+                            <td>@DR["ExpenseType"]</td>
+                            <td>@DR["IntermediaryType"]</td>
+                            <td>@DR["PaymentFrequency"]</td>
+                            <td>@DR["Amount"]</td>                           
+                            <td>@DR["StartMonth"]</td>
+                            <td>@DR["EndMonth"]</td>
+                            <td>@DR["Stage"]</td>
+                            <td>@DR["ApplicationType"]</td>
+                            <td class="text-end">
+                                <button type="submit" asp-route-policyid="@DR["PolicyTypeID"]" asp-route-id="@DR["ID"]" asp-page-handler="Remove" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to archive this item?');">Archive</button>
+                            </td>
+                        </tr>
+                    }
+                }
+            </table>
+        </div> 
+    </form>
+</div>
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        function PassSelectedValue(selectObject) {
+            window.location.href = "ptexpenses?policyid=" + selectObject.value;
+        }
+    </script>
+} 

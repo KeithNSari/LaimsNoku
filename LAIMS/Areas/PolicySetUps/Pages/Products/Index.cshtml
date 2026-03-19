@@ -1,0 +1,56 @@
+﻿@page
+@using System.Data;
+@using Microsoft.AspNetCore.Http.Extensions;
+@model LAIMS.Areas.PolicySetUps.Pages.Products.IndexModel
+@{
+}
+@{
+    Layout = "/Pages/Shared/_LayoutProducts.cshtml";
+}
+<h1>Full Product List</h1>
+<hr />
+@if (!string.IsNullOrEmpty(ViewData["ErrorMessage"]?.ToString()))
+{
+    <p class="text-danger">@ViewData["ErrorMessage"]</p>
+}
+<div class="row bg-white rounded">
+    <div class="card">
+        <div class="card-body">
+            <div class="small text-inverse text-opacity-50 mb-3">
+                <table class="table">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Category</th>
+                            <th>Product</th>
+                            <th>Description</th>
+                            <th>Added On</th>
+                            <th>Added By</th>
+                            <th></th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.ProductsDT != null)
+                        {
+                            @foreach (DataRow DR in Model.ProductsDT.Rows)
+                            {
+                                <tr>
+                                    <td><b>@DR["Category"]</b></td>
+                                    <td><b>@DR["Product"]</b></td>
+                                    <td>@DR["Description"]</td>
+                                    <td>@DR["AddedOn"]</td>
+                                    <td>@DR["Username"]</td>
+                                    <td class="text-end">
+                                        <a asp-page="Edit" asp-route-id="@DR["ID"]" class="btn btn-primary btn-sm">Edit</a>
+                                    </td>
+                                    <td class="text-end">
+                                        <a asp-page="Details" asp-route-id="@DR["ID"]" class="btn btn-info btn-sm">Details</a>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

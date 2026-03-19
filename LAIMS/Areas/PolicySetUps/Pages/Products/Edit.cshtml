@@ -1,0 +1,65 @@
+﻿@page
+@{
+    Layout = "/Pages/Shared/_LayoutProducts.cshtml";
+}
+@model LAIMS.Areas.PolicySetUps.Pages.Products.EditModel
+@{
+}
+<h1>Edit Product Details</h1>
+<hr />
+@if (!string.IsNullOrEmpty(ViewData["ErrorMessage"]?.ToString()))
+{
+    <p class="text-danger">@ViewData["ErrorMessage"]</p>
+}
+<div class="row">
+        <form method="post">
+        <input type="hidden" asp-for="ReturnUrl" />
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="mb-3">
+            <label asp-for="Product.CategoryID" class="control-label"><b>Category</b></label>
+            <select asp-for="Product.CategoryID" class="form-control" aria-required="true">
+                <option value="">Select Option</option>
+                <option value=1>Investment Product</option>
+                <option value=2>Risk Product</option>
+                <option value=3>Hybrid Product (Risk + Investment)</option>
+                <option value=4>Rider</option>
+            </select>
+            <div id="categoryHelp" class="form-text black-text">*Confirm category!</div>
+            <span asp-validation-for="Product.CategoryID" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="Product.TermID" class="control-label"><b>Term Type</b></label>
+            <select asp-for="Product.TermID" class="form-control" aria-required="true">
+                <option value="">Select Option</option>
+                <option value=0>N/A</option>
+                <option value=1>Term Product</option>
+                <option value=2>Whole Life</option>
+            </select>
+            <span asp-validation-for="Product.TermID" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="Product.ProductName" class="control-label"><b>Product Name</b></label>
+            <input asp-for="Product.ProductName" class="form-control" maxlength="250" />
+            <div id="productHelp" class="form-text black-text">*If you have an existing product with the same name, this submission will be ignored!</div>
+            <div class="mt-2 form-text  black-text">
+                <span id="remainingChars1">250</span> characters remaining
+            </div>
+            <span asp-validation-for="Product.ProductName" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="Product.Description" class="control-label"><b>Description</b></label>
+            <textarea asp-for="Product.Description" class="form-control" rows="4" maxlength="500"></textarea>
+            <div class="mt-2 form-text black-text">
+                <span id="remainingChars2">500</span> characters remaining
+            </div>
+            <span asp-validation-for="Product.Description" class="text-danger"></span>
+        </div> 
+        <input type="submit" value="Update" class="btn btn-primary" onclick="return confirm('Are you sure you want to edit this item?');" />
+            <a class="btn btn-success" asp-page="Index"> View Full List</a>
+        </form>
+</div>
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+} 

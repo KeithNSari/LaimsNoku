@@ -1,0 +1,63 @@
+﻿@page
+@using System.Data
+@model LAIMS.Areas.PaymentCollection.Pages.HistoryModel
+@{
+}
+@{
+    Layout = "/Pages/Shared/_LayoutSearch.cshtml";
+}
+<h1>Payment History</h1>
+<p>To search, enter one of the following: receipt no, invoice no, date paid in the format yyyy-MM-dd, surname space first name, id number, or policy number.</p>
+<hr />
+@if (Model.SearchTerm != null)
+{
+    @if (Model.PaymentsDT != null)
+    {
+        <div class="row mb-3">
+            <h5>@Model.ResultsCount results found for search "@Model.SearchTerm"!</h5>
+        </div>
+    }    
+}
+else
+{
+    <div class="row mb-3">
+        <h5>@Model.ResultsCount item/s!</h5>
+    </div>
+}
+<hr />
+<div class="row mb-3">
+    <table class="table table-hover">
+        <tr>
+            <th>Date </th>
+            @if (Model.SearchTerm == null)
+            {
+                <th>Proposer</th>
+            }           
+            <th>Invoice No</th>
+            <th>Receipt No</th>
+            <th>Policies</th>
+            <th>Reference</th>
+            <th>Currency</th>
+            <th>Amount</th>            
+        </tr>
+    @if (Model.PaymentsDT != null)
+        {
+            @foreach (DataRow DR in Model.PaymentsDT.Rows)
+            {
+                <tr>
+                    <td>@DR["DatePaymentReceived"]</td>
+                    @if (Model.SearchTerm == null)
+                    {
+                        <td>@DR["MemberName"]</td>
+                    }                   
+                    <td>@DR["InvoiceNo"]</td>
+                    <td>@DR["ReceiptNo"]</td>
+                    <td>@DR["Policies"]</td>
+                    <td>@DR["ReferenceSummary"]</td>
+                    <td>@DR["Currency"]</td>
+                    <td>@DR["TotalAmount"]</td> 
+                </tr>
+            }
+        }
+    </table>
+</div> 

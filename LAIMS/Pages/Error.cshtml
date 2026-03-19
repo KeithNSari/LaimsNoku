@@ -1,0 +1,12 @@
+﻿@page
+@model ErrorModel
+@{
+    ViewData["Title"] = "Error";
+}
+@{
+    Layout = "/Pages/Shared/_LayoutProducts.cshtml";
+}
+<h1 class="text-danger">Error.</h1>
+<h2 class="text-danger">An error occurred while processing your request.</h2>
+<p>@Model.ErrorMessage</p> 
+<p>Return to: <a href="@Model.ReturnUrl">Original Page</a></p>

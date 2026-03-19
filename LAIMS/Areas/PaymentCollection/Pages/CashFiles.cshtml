@@ -1,0 +1,47 @@
+﻿@page
+@using System.Data
+@model LAIMS.Areas.PaymentCollection.Pages.CashFilesModel
+@{
+}
+@{
+    Layout = "/Pages/Shared/_LayoutProducts.cshtml";
+}
+<h1>Direct Payments Processing</h1>
+@if (!string.IsNullOrEmpty(ViewData["ErrorMessage"]?.ToString()))
+{
+    <p class="text-danger">@ViewData["ErrorMessage"]</p>
+}
+<p>Please ensure that your file is an Excel workbook with the required columns and correct formats.</p>
+<hr />
+<form method="post" enctype="multipart/form-data"> 
+    <h3>Upload Payment File</h3>
+    <div class="row mb-3">
+        <div class="col-md-10">            
+            <input class="form-control" required multiple="multiple" type="file" asp-for="Upload" />
+        </div>
+        <div class="col-md-2"> 
+            <input class="btn btn-primary" type="submit" value="Upload File" />
+        </div>
+    </div>
+</form>
+@if ((Model.CashBatchesDT != null) && (Model.CashBatchesDT.Rows.Count>0)) 
+{
+    @* <hr /> *@
+    <div class="row mb-3">
+        <table class="table table-hover">
+            <tr>
+                <th>BatchID</th>
+                <th>Added On</th>
+                <th>Added By</th>
+            </tr>
+            @foreach (DataRow DR in Model.CashBatchesDT.Rows)
+            {
+                <tr>
+                    <td>@DR["BatchID"]</td>
+                    <td>@DR["AddedOn"]</td>
+                    <td>@DR["AddedBy"]</td>
+                </tr>
+            }
+        </table>
+    </div>
+}

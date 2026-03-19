@@ -1,0 +1,57 @@
+﻿@page
+@using System.Data;
+@model LAIMS.Pages.Adm.UploadUsersModel
+@{
+}
+@{
+    Layout = "/Pages/Shared/_LayoutAdmin.cshtml";
+}
+<h2>Upload Users</h2>
+<p>Your Excel file must have the following columns in the same order in which they are listed, starting from Excel Column A: Username, Name, Surname, Designation, Default Password.</p>
+<hr />
+<div class="row">
+    <div class="col-7">
+        <h2>Recently Created Users</h2>
+<hr/>
+<div class="row">
+    <table class="table table-striped">
+        <tr>
+            <th>Username</th>
+            <th>First Names</th>
+            <th>Surname</th> 
+            <th>Added On</th>
+            <th>Added By</th>
+        </tr>
+        @if (Model.UsersDT != null)
+        {
+            @foreach (DataRow DR in Model.UsersDT.Rows)
+            {
+                <tr>
+                    <td>@DR["UserName"]</td>
+                    <td>@DR["FirstNames"]</td>
+                    <td>@DR["Surname"]</td> 
+                    <td>@DR["AddedOn"]</td>
+                    <td>@DR["AddedBy"]</td>                    
+                </tr>
+            }
+        }
+    </table>
+</div>
+    </div>
+    <div class="col-5">
+        <form method="post" enctype="multipart/form-data">
+            <div class="form-group">
+                <div class="col-md-10">
+                    <h3>Upload User File</h3>
+                    <input class="form-control" multiple="multiple" type="file" asp-for="Upload" />
+                </div>
+            </div>
+            <br />
+            <div class="form-group">
+                <div class="col-md-10">
+                    <input class="btn btn-primary" type="submit" value="Upload File" />
+                </div>
+            </div>
+        </form>
+    </div>    
+</div>

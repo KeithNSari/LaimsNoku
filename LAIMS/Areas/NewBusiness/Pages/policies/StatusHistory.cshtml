@@ -1,0 +1,40 @@
+﻿@page
+@{
+	Layout = "/Pages/Shared/_LayoutProducts.cshtml";
+}
+@using System.Data;
+@model LAIMS.Areas.NewBusiness.Pages.policies.StatusHistoryModel
+@{
+}
+<h1>Client Status History</h1>
+<hr />
+<div class="row mb-3">
+    <h3>Checks</h3>
+    <table class="table table-hover">
+        <tr>
+            <th>No</th>
+            <th class="col-md-3">Rule</th>
+            <th class="col-md-2">Status</th>
+            <th class="col-md-2">Comment</th>
+            <th class="col-md-2">Date</th>
+            <th class="col-md-2">Added By</th>
+        </tr>
+        @if (Model.StatiiHistoryDT != null)
+        {
+            @foreach (DataRow DR in Model.StatiiHistoryDT.Rows)
+            {
+                <tr>
+                    <td>@DR["row_number"]</td>
+                    <td>@DR["RuleName"]</td>
+                    <td>@DR["Status"]</td>
+                    <td>@DR["PolicyStatusComment"]</td>
+                    <td>@DR["PolicyStatusDate"]</td>
+                    <td>@DR["UserName"]</td>
+                </tr>
+            }
+        }
+    </table>
+</div>
+<div class="d-flex justify-content-end">
+    <a asp-route-id="@Model.ProposerID" asp-route-policyTypeid="@Model.PolicyTypeID" asp-route-policyid="@Model.PolicyID" asp-page="AddDetails" class="btn btn-info btn-sm">Next>></a>
+</div>

@@ -1,0 +1,90 @@
+﻿@page
+@using System.Data
+@model LAIMS.Areas.PolicySetUps.Pages.BusinessRules.PolicyRulesModel
+@{
+}
+@{
+    Layout = "/Pages/Shared/_LayoutProducts.cshtml";
+}
+<h2>Policy Business Rules</h2>
+@if (!string.IsNullOrEmpty(ViewData["ErrorMessage"]?.ToString()))
+{
+    <p class="text-danger">@ViewData["ErrorMessage"]</p>
+}
+<hr />
+<div class="row mb-3">
+    <form method="post"> 
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div> 
+        <div class="row mb-3">
+            <label asp-for="PolicyTypeID" class="control-label"><b>Policy</b></label>
+            <select asp-for="PolicyTypeID" class="form-control" asp-items="Model.PolicyTypesList" onchange="PassSelectedValue(this)">
+                <option value="">Select Option</option>
+            </select>
+            <span asp-validation-for="PolicyTypeID" class="text-danger"></span>
+        </div>
+        <div class="row md-3">
+            <div class="col-md-5">
+                <label asp-for="@Model.ObjectRule.Filter" class="control-label"><b>Validation Group</b></label>
+                <select asp-for="@Model.ObjectRule.Filter" class="form-control" aria-required="true">
+                    <option value="">Select Option</option>
+                    <option value="Proposer">Proposer</option>
+                    <option value="Beneficiaries">Tested</option>
+                    <option value="Premiums">All</option>
+                    <option value="Documents">All</option>
+                    <option value="Payment Details">All</option>
+                    <option value="Submission">All</option>
+                </select>
+                <span asp-validation-for="@Model.ObjectRule.Filter" class="text-danger"></span>
+            </div>
+            <div class="col-md-6">
+                <label asp-for="@Model.ObjectRule.RuleID" class="control-label"><b>Rule</b></label>
+                <select asp-for="@Model.ObjectRule.RuleID" required class="form-control" asp-items="Model.BusinessRuleList" onchange="PassSelectedValue(this)">
+                    <option value="">Select Rule</option>
+                </select>
+                <span asp-validation-for="@Model.ObjectRule.RuleID" class="text-danger"></span>
+            </div>
+            <div class="col-md-1">
+                <br />
+                <input type="submit" value="Add" class="btn btn-primary" />
+            </div>
+        </div>
+    </form>
+</div>
+<div class="row">
+    <form method="post"> 
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="row mb-3">
+            <h4>Entries</h4>
+            <table class="table table-striped">
+                <tr>
+                    <th>Validation Group</th>
+                    <th>Rule</th>
+                    <th></th>
+                </tr>
+                @if (Model.PolicyRulesDT.Rows.Count > 0)
+                {
+                    @foreach (DataRow DR in Model.PolicyRulesDT.Rows)
+                    {
+                        <tr>
+                            <td>@DR["Filter"]</td>
+                            <td>@DR["RuleName"]</td>
+                            <td class="text-end">
+                                <button type="submit" asp-route-id="@DR["ID"]" asp-page-handler="Remove" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to archive this item?');">Archive</button>
+                            </td>
+                        </tr>
+                    }
+                }
+            </table>
+        </div>
+    </form>
+</div>
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        function PassSelectedValue(selectObject) {
+            window.location.href = "policyrules?policyid=" + selectObject.value;
+        }
+    </script>
+} 

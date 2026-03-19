@@ -1,0 +1,150 @@
+﻿@page
+@model LAIMS.Areas.NewBusiness.Pages.Membership.DetailsModel
+@{
+}
+}
+@{
+    Layout = "/Pages/Shared/_LayoutProducts.cshtml";
+}
+<h1>Member Details</h1> 
+<hr />
+<div>  
+    <div class="row">
+        <div class="col-md-6">
+            <table class="table table-hover"> 
+                <tr>
+                    <td>
+                        First Name
+                    </td>
+                    <td>
+                        @Model.Member.Name1
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Middle Name
+                    </td>
+                    <td>
+                        @Model.Member.Name2
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Surname
+                    </td>
+                    <td>
+                        @Model.Member.Name3
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Gender
+                    </td>
+                    <td>
+                        @Model.Member.Gender
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Title
+                    </td>
+                    <td>
+                        @Model.Member.Title
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Marital Status
+                    </td>
+                    <td>
+                        @Model.Member.MaritalStatus
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                       D.O.B
+                    </td>
+                    <td>
+                        @Model.Member.DOB
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Birth Country
+                    </td>
+                    <td>
+                        @Model.Member.BirthCountry
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Place Of Birth
+                    </td>
+                    <td>
+                        @Model.Member.PlaceOfBirth
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Citizenship
+                    </td>
+                    <td>
+                        @Model.Member.Country
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Member No:
+                    </td>
+                    <td>
+                        @Model.Member.MemberNo
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        National ID
+                    </td>
+                    <td>
+                        @Model.Member.NationalID
+                    </td>
+                </tr>
+                  <tr>
+                    <td>
+                        Passport
+                    </td>
+                    <td>
+                        @Model.Member.Passport
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Birth Certificate
+                    </td>
+                    <td>
+                        @Model.Member.BirthCertificate
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Added By
+                    </td>
+                    <td>
+                        @Model.Member.AddedBy
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Added On
+                    </td>
+                    <td>
+                        @* @Model.Member.AddedOn *@
+                    </td>
+                </tr>
+            </table>
+        </div>       
+    </div>
+</div> 
+
+<div>
+    <a asp-page="./Index">Back to List</a>
+</div>

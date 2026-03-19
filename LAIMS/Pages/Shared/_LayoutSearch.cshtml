@@ -1,0 +1,800 @@
+﻿@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>LAIMS</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="description" content="">
+	<meta name="author" content="">
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+	<!-- ================== BEGIN core-css ================== -->
+	<link href="~/assets/css/vendor.min.css" rel="stylesheet">
+	<link href="~/assets/css/app.min.css" rel="stylesheet">
+	<!-- ================== END core-css ================== -->
+    <link rel="stylesheet" href="~/css/tab.css" asp-append-version="true" />
+	<style> 
+		.black-text {
+			color: black; /* Change the color to your desired value */
+		}
+	</style>
+	<style>
+		.fixed-width-btn {
+			width: 200px;
+		}
+	</style>
+</head>
+<body>
+	<!-- BEGIN #app -->
+	<div id="app" class="app">
+		<!-- BEGIN #header -->
+		<div id="header" class="app-header">
+			<!-- BEGIN mobile-toggler -->
+			<div class="mobile-toggler">
+				<button type="button" class="menu-toggler" data-toggle="sidebar-mobile">
+					<span class="bar"></span>
+					<span class="bar"></span>
+				</button>
+			</div>
+			<!-- END mobile-toggler -->
+			<!-- BEGIN brand -->
+			<div class="brand">
+				<div class="desktop-toggler">
+					<button type="button" class="menu-toggler" data-toggle="sidebar-minify">
+						<span class="bar"></span>
+						<span class="bar"></span>
+					</button>
+				</div>
+
+				<h2>LAIMS</h2>
+			</div>
+			<!-- END brand -->
+			<!-- BEGIN menu -->
+			<div class="menu">
+				<form class="menu-search" name="header_search_form">
+					<div class="menu-search-icon"><i class="fa fa-search"></i></div>
+					<div class="menu-search-input">
+						<input type="text" name="searchValue" id="searchValue" class="form-control" placeholder="Search menu...">
+					</div>
+				</form> 
+				<div class="menu-item dropdown">
+					<a href="#" data-bs-toggle="dropdown" data-display="static" class="menu-link">						 
+						<div class="menu-text"> 
+								 @User.Identity?.Name 
+						</div>
+					</a>
+					<div class="dropdown-menu dropdown-menu-end me-lg-3"> 
+						<a class="dropdown-item d-flex align-items-center" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="~/Index">Log Out <i class="fa fa-toggle-off fa-fw ms-auto text-body text-opacity-50"></i></a>
+					</div>
+				</div>
+			</div>
+			<!-- END menu -->
+		</div>
+		<!-- END #header -->
+		<!-- BEGIN #sidebar -->
+		<div id="sidebar" class="app-sidebar">
+			<!-- BEGIN scrollbar -->
+			<div class="app-sidebar-content" data-scrollbar="true" data-height="100%">
+				<!-- BEGIN menu -->
+				<div class="menu">
+					<div class="menu-header">Quick View</div>					
+					<div class="menu-item">
+						<a asp-page="/Index" class="menu-link">
+							<span class="menu-icon"><i class="fa fa-laptop"></i></span>
+							<span class="menu-text">Dashboard</span>
+						</a>
+					</div>					 
+					<div class="menu-divider"></div>
+					<div class="menu-header">Administration</div>
+					@if (HttpContextAccessor.HttpContext.User.IsInRole("Admin"))
+					{
+						<div class="menu-item">
+							<a asp-page="/adm/CreateSingleUser" class="menu-link">
+								<span class="menu-icon"><i class="fa fa-user-circle"></i></span>
+								<span class="menu-text">User Admin</span>
+							</a>
+						</div>
+					}
+					<div class="menu-item">
+						<a asp-area="policies" asp-page="/policyindex" class="menu-link">
+							<span class="menu-icon"><i class="fa fa-qrcode"></i></span>
+							<span class="menu-text">Policies</span>
+						</a>
+					</div>
+					<div class="menu-item has-sub">
+						<a href="#" class="menu-link">
+							<span class="menu-icon"><i class="fa fa-file-alt"></i></span>
+							<span class="menu-text">Claims</span>
+							<span class="menu-caret"><b class="caret"></b></span>
+						</a>
+						<div class="menu-submenu">
+							<div class="menu-item">
+								<a asp-area="Claims" asp-page="/PUClaim" class="menu-link">
+									<span class="menu-text">Investments/ Hybrid</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a asp-area="Claims" asp-page="/PolicySearch" class="menu-link">
+									<span class="menu-text">Risk</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a asp-area="Claims" asp-page="/MyReviews" class="menu-link">
+									<span class="menu-text">My Reviews</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a asp-area="Claims" asp-page="/Approve" class="menu-link">
+									<span class="menu-text">Approve</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a asp-area="Claims" asp-page="/InvestmentsIndex" class="menu-link">
+									<span class="menu-text">Approved IC</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a asp-area="Claims" asp-page="/DeceasedIndex" class="menu-link">
+									<span class="menu-text">Deceased Index</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a asp-area="Claims" asp-page="/Settlements" class="menu-link">
+									<span class="menu-text">Settlements</span>
+								</a>
+							</div>
+						</div>
+					</div>
+					<div class="menu-item has-sub">
+						<a href="#" class="menu-link">
+							<span class="menu-icon"><i class="fa fa-file-alt"></i></span>
+							<span class="menu-text">New Business</span>
+							<span class="menu-caret"><b class="caret"></b></span>
+						</a>
+						<div class="menu-submenu">
+							<div class="menu-item">
+								<a asp-area="NewBusiness" asp-page="/Membership/Create" class="menu-link">
+									<span class="menu-text">Create Member</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a asp-area="NewBusiness" asp-page="/Membership/SearchMembers" class="menu-link">
+									<span class="menu-text">Search Members</span>
+								</a>
+							</div>
+							@if (HttpContextAccessor.HttpContext.User.IsInRole("New Business Approver"))
+							{
+								<div class="menu-item">
+									<a asp-area="NewBusiness" asp-page="/Policies/Approve" class="menu-link">
+										<span class="menu-text">Approve</span>
+									</a>
+								</div>
+								<div class="menu-item">
+									<a asp-area="NewBusiness" asp-page="/Policies/MyReviews" class="menu-link">
+										<span class="menu-text">My Reviews</span>
+									</a>
+								</div>
+								<div class="menu-item">
+									<a asp-area="UTools" asp-page="/Rates/ExchangeRatesIndex" class="menu-link">
+										<span class="menu-text">Exchange Rates</span>
+									</a>
+								</div>
+							}
+							@if (HttpContextAccessor.HttpContext.User.IsInRole("New Business Initiator"))
+							{
+								<div class="menu-item">
+									<a asp-area="NewBusiness" asp-page="/Policies/PendingIndex" class="menu-link">
+										<span class="menu-text">Job Queue</span>
+									</a>
+								</div>
+								<div class="menu-item">
+									<a asp-area="NewBusiness" asp-page="/Policies/MySubmissions" class="menu-link">
+										<span class="menu-text">Submissions</span>
+									</a>
+								</div>
+							}
+							@* 	<div class="menu-item">
+								<a asp-area="NewBusiness" asp-page="/Policies/StatusOverride" class="menu-link">
+									<span class="menu-text">Supervisor Override</span>
+								</a>
+							</div> *@
+						</div>
+					</div>
+					<div class="menu-item has-sub">
+						<a href="#" class="menu-link">
+							<span class="menu-icon"><i class="fa fa-wallet"></i></span>
+							<span class="menu-text">Cash Payments</span>
+							<span class="menu-caret"><b class="caret"></b></span>
+						</a>
+						<div class="menu-submenu">
+							<div class="menu-item">
+								<a asp-area="PaymentCollection" asp-page="/CashBillingIndex" class="menu-link">
+								 	<span class="menu-text">Cash Billing</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a asp-area="PaymentCollection" asp-page="/CashFiles" class="menu-link">
+								 	<span class="menu-text">Cash Files</span>
+								</a>
+							</div>
+						</div>
+					</div>
+					<div class="menu-item has-sub">
+						<a href="#" class="menu-link">
+							<span class="menu-icon"><i class="fa fa-wallet"></i></span>
+							<span class="menu-text">Stop Orders</span>
+							<span class="menu-caret"><b class="caret"></b></span>
+						</a>
+						<div class="menu-submenu">
+							<div class="menu-item">
+								<a asp-area="PaymentCollection" asp-page="/BillingIndex" class="menu-link">
+									<span class="menu-text">Index</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a asp-area="PaymentCollection" asp-page="/StopOrderBilling" class="menu-link">
+									<span class="menu-text">Ad Hoc</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a asp-area="UTools" asp-page="/PaymentProviders/create" class="menu-link">
+									<span class="menu-text">Providers</span>
+								</a>
+							</div>
+						</div>
+					</div>
+					<div class="menu-item has-sub">
+						<a href="#" class="menu-link">
+							<span class="menu-icon"><i class="fa fa-wallet"></i></span>
+							<span class="menu-text">Debit Orders</span>
+							<span class="menu-caret"><b class="caret"></b></span>
+						</a>
+						<div class="menu-submenu">
+							<div class="menu-item">
+								<a asp-area="UTools" asp-page="/PaymentProviders/Orders/DebitOrderDetails" class="menu-link">
+									<span class="menu-text">Payment</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a asp-area="PaymentCollection" asp-page="/DebitOrdersIndex" class="menu-link">
+									<span class="menu-text">Ad Hoc</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a asp-area="UTools" asp-page="/PaymentProviders/Index" class="menu-link">
+									<span class="menu-text">Providers</span>
+								</a>
+							</div>
+						</div>
+					</div>
+					<div class="menu-item has-sub">
+						<a href="#" class="menu-link">
+							<span class="menu-icon"><i class="fa fa-wallet"></i></span>
+							<span class="menu-text">Commissions</span>
+							<span class="menu-caret"><b class="caret"></b></span>
+						</a>
+						<div class="menu-submenu">
+							<div class="menu-item">
+								<a asp-area="SalesCommission" asp-page="/Index" class="menu-link">
+									<span class="menu-text">Commissions Index</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a asp-area="SalesCommission" asp-page="/PaymentsHistory" class="menu-link">
+									<span class="menu-text">Commissions Payments</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a asp-area="UTools" asp-page="/Commissions/PolicyDefinitions" class="menu-link">
+									<span class="menu-text">Definition</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a asp-area="PolicySetUps" asp-page="/PolicyTypes/PTExpenses" class="menu-link"> 
+									<span class="menu-text">Policy Expenses</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a asp-area="UTools" asp-page="/Intermediaries/Create" class="menu-link">
+									<span class="menu-text">Intermediaries</span>
+								</a>
+							</div>
+						</div>
+					</div>
+					<div class="menu-item has-sub">
+						<a href="#" class="menu-link">
+							<span class="menu-icon"><i class="fa fa-wallet"></i></span>
+							<span class="menu-text">Suspense Ac/s</span>
+							<span class="menu-caret"><b class="caret"></b></span>
+						</a>
+						<div class="menu-submenu">
+							@* <div class="menu-item">
+							<a asp-area="PaymentCollection" asp-page="/StopOrderBilling" class="menu-link">
+							<span class="menu-text">Adhoc Stop Order</span>
+							</a>
+							</div> *@
+							<div class="menu-item">
+								<a asp-area="PaymentCollection" asp-page="/AllocationSuspense" class="menu-link">
+									<span class="menu-text">Allocation Suspense</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a asp-area="PaymentCollection" asp-page="/PolicySuspense" class="menu-link">
+									<span class="menu-text">Policy Suspense</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a asp-area="PaymentCollection" asp-page="/SystemSuspense" class="menu-link">
+									<span class="menu-text">System Suspense</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a asp-area="PaymentCollection" asp-page="/ReversalHistory" class="menu-link">
+									<span class="menu-text">Reversals</span>
+								</a>
+							</div> 
+						</div>
+					</div>
+					<div class="menu-item has-sub">
+						<a href="#" class="menu-link">
+							<span class="menu-icon"><i class="fa fa-question-circle"></i></span>
+							<span class="menu-text">Billing</span>
+							<span class="menu-caret"><b class="caret"></b></span>
+						</a>
+						<div class="menu-submenu">
+							<div class="menu-item">
+								<a asp-area="PaymentCollection" asp-page="/CreateBill" class="menu-link">
+									<span class="menu-text">Adhoc Billing</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a asp-area="PaymentCollection" asp-page="/BillingHistory" class="menu-link">
+									<span class="menu-text">History</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a asp-area="PaymentCollection" asp-page="/pmupdates" class="menu-link">
+									<span class="menu-text">Payment Methods</span>
+								</a>
+							</div>
+							@* <div class="menu-item">
+								<a asp-area="UTools" asp-page="/Holidays/index" class="menu-link">
+									<span class="menu-text">Billing Holidays</span>
+								</a>
+							</div> *@
+						</div>
+					</div>
+					<div class="menu-item has-sub">
+						<a href="#" class="menu-link">
+							<span class="menu-icon"><i class="fa fa-table"></i></span>
+							<span class="menu-text">Policy Servicing</span>
+							<span class="menu-caret"><b class="caret"></b></span>
+						</a>
+						<div class="menu-submenu">
+							<div class="menu-item">
+								<a asp-area="PolicyServicing" asp-page="/People/Index" class="menu-link">
+									<span class="menu-text">People Search</span>
+								</a>
+							</div> 
+							<div class="menu-item">
+								<a asp-area="PolicyServicing" asp-page="/People/Reviews" class="menu-link">
+									<span class="menu-text">People Reviews</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a asp-area="PolicyServicing" asp-page="/People/Index" class="menu-link">
+									<span class="menu-text">Contacts</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a asp-area="PaymentCollection" asp-page="/PMUpdates" class="menu-link">
+									<span class="menu-text">Payment Details</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a asp-area="PolicyServicing" asp-page="/Policies/PolicySearch" class="menu-link">
+									<span class="menu-text">Policies</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a asp-area="PolicyServicing" asp-page="/Policies/Reviews" class="menu-link">
+									<span class="menu-text">Policy Reviews</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a asp-area="PolicyServicing" asp-page="/Policies/PPReviews" class="menu-link">
+									<span class="menu-text">Additional Components Reviews</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a asp-area="PolicyServicing" asp-page="/Communication/Index" class="menu-link">
+									<span class="menu-text">Messages</span>
+								</a>
+							</div>
+						</div>
+					</div>
+					<div class="menu-item has-sub">
+						<a href="#" class="menu-link">
+							<span class="menu-icon"><i class="fa fa-table"></i></span>
+							<span class="menu-text">Policy Definitions</span>
+							<span class="menu-caret"><b class="caret"></b></span>
+						</a>
+						<div class="menu-submenu">
+							<div class="menu-item">
+								<a asp-area="PolicySetUps" asp-page="/PolicyTypes/Create" class="menu-link">
+									<span class="menu-text">Create</span>
+								</a>
+							</div>
+							@* <div class="menu-item">
+							<a asp-area="PolicySetUps" asp-page="/PolicyTypes/PTQuestionnaires" class="menu-link">
+							<span class="menu-text">Questionnaires</span>
+							</a>
+							</div> *@
+							<div class="menu-item">
+								<a asp-area="PolicySetUps" asp-page="/PolicyTypes/Index" class="menu-link">
+									<span class="menu-text">List</span>
+								</a>
+							</div>
+						</div>
+					</div>
+					@* 	<div class="menu-item has-sub">
+					<a href="javascript:;" class="menu-link">
+					<div class="menu-icon">
+					<i class="fa fa-wallet"></i>
+					</div>
+					<div class="menu-text d-flex align-items-center">POS System</div>
+					<span class="menu-caret"><b class="caret"></b></span>
+					</a>
+					<div class="menu-submenu">
+					<div class="menu-item">
+					<a href="pos_customer_order.html" target="_blank" class="menu-link">
+					<div class="menu-text">Customer Order</div>
+					</a>
+					</div>
+					<div class="menu-item">
+					<a href="pos_kitchen_order.html" target="_blank" class="menu-link">
+					<div class="menu-text">Kitchen Order</div>
+					</a>
+					</div>
+					<div class="menu-item">
+					<a href="pos_counter_checkout.html" target="_blank" class="menu-link">
+					<div class="menu-text">Counter Checkout</div>
+					</a>
+					</div>
+					<div class="menu-item">
+					<a href="pos_table_booking.html" target="_blank" class="menu-link">
+					<div class="menu-text">Table Booking</div>
+					</a>
+					</div>
+					<div class="menu-item">
+					<a href="pos_menu_stock.html" target="_blank" class="menu-link">
+					<div class="menu-text">Menu Stock</div>
+					</a>
+					</div>
+					</div>
+					</div> *@
+					<div class="menu-item has-sub">
+						<a href="#" class="menu-link">
+							<span class="menu-icon"><i class="fa fa-file-alt"></i></span>
+							<span class="menu-text">Products</span>
+							<span class="menu-caret"><b class="caret"></b></span>
+						</a>
+						<div class="menu-submenu">
+							<div class="menu-item">
+								<a asp-area="PolicySetUps" asp-page="/Products/Create" class="menu-link">
+									<span class="menu-text">Create</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a asp-area="PolicySetUps" asp-page="/Products/Index" class="menu-link">
+									<span class="menu-text">List</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a asp-area="PolicySetUps" asp-page="/Products/ManageProducts" class="menu-link">
+									<span class="menu-text">Manage</span>
+								</a>
+							</div>
+						</div>
+					</div>
+					<div class="menu-item">
+						<a asp-area="PolicySetUps" asp-page="/PolicyTypes/PTExpenses" class="menu-link">
+							<span class="menu-icon"><i class="fa fa-wallet"></i></span>
+							<span class="menu-text">Policy Expenses</span>
+						</a>
+					</div>
+					<div class="menu-item">
+						<a asp-area="PolicySetUps" asp-page="/Questionnaires/Create" class="menu-link">
+							<span class="menu-icon"><i class="fa fa-question-circle"></i></span>
+							<span class="menu-text">Questionnaires</span>
+						</a>
+					</div>
+					<div class="menu-item has-sub">
+						<a href="#" class="menu-link">
+							<span class="menu-icon"><i class="fa fa-heart"></i></span>
+							<span class="menu-text">Utilities</span>
+							<span class="menu-caret"><b class="caret"></b></span>
+						</a>
+						<div class="menu-submenu">								
+							<div class="menu-item">
+								<a asp-area="UTools" asp-page="/Rates/AllocationIndex" class="menu-link">
+									<span class="menu-text">Allocation Rates</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a asp-area="UTools" asp-page="/Rates/CoverRatesIndex" class="menu-link">
+									<span class="menu-text">Cover Rates</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a asp-area="PaymentCollection" asp-page="/PRateFiles" class="menu-link">
+									<span class="menu-text">Premium Rates</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a asp-area="Investments" asp-page="/FundConfigs" class="menu-link">
+									<span class="menu-text">Fund Configuration</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a asp-area="Investments" asp-page="/UnitsPL" class="menu-link">
+									<span class="menu-text">Units Price List</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a asp-area="UTools" asp-page="/ManageCurrencies/Create" class="menu-link">
+									<span class="menu-text">Currencies</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a asp-area="UTools" asp-page="/ManageDocuments/Create" class="menu-link">
+									<span class="menu-text">Documents</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a asp-area="PolicySetUps" asp-page="/BusinessRules/Create" class="menu-link">
+									<span class="menu-text">Create Rules</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a asp-area="PolicySetUps" asp-page="/BusinessRules/PolicyBR" class="menu-link">
+									<span class="menu-text">Policy Business Rules</span>
+								</a>
+							</div>
+						</div>
+					</div>
+				@* 	<div class="menu-item has-sub">
+						<a href="#" class="menu-link">
+							<span class="menu-icon"><i class="fa fa-chart-bar"></i></span>
+							<span class="menu-text">Reports</span>
+							<span class="menu-caret"><b class="caret"></b></span>
+						</a>
+						<div class="menu-submenu">
+							<div class="menu-item">
+								<a href="#" class="menu-link">
+									<span class="menu-text">Commissions</span>
+								</a>
+							</div>
+							<div class="menu-item">
+								<a href="#" class="menu-link">
+									<span class="menu-text">Premiums</span>
+								</a>
+							</div>
+						</div>
+					</div> *@
+					@* 	<div class="menu-item">
+					<a href="map.html" class="menu-link">
+					<span class="menu-icon"><i class="fa fa-map-marker-alt"></i></span>
+					<span class="menu-text">Map</span>
+					</a>
+					</div>
+					<div class="menu-item has-sub">
+					<a href="#" class="menu-link">
+					<span class="menu-icon"><i class="fa fa-code-branch"></i></span>
+					<span class="menu-text">Layout</span>
+					<span class="menu-caret"><b class="caret"></b></span>
+					</a>
+					<div class="menu-submenu">
+					<div class="menu-item">
+					<a href="layout_starter.html" class="menu-link">
+					<span class="menu-text">Starter Page</span>
+					</a>
+					</div>
+					<div class="menu-item">
+					<a href="layout_fixed_footer.html" class="menu-link">
+					<span class="menu-text">Fixed Footer</span>
+					</a>
+					</div>
+					<div class="menu-item">
+					<a href="layout_full_height.html" class="menu-link">
+					<span class="menu-text">Full Height</span>
+					</a>
+					</div>
+					<div class="menu-item">
+					<a href="layout_full_width.html" class="menu-link">
+					<span class="menu-text">Full Width</span>
+					</a>
+					</div>
+					<div class="menu-item">
+					<a href="layout_boxed_layout.html" class="menu-link">
+					<span class="menu-text">Boxed Layout</span>
+					</a>
+					</div>
+					<div class="menu-item">
+					<a href="layout_minified_sidebar.html" class="menu-link">
+					<span class="menu-text">Minified Sidebar</span>
+					</a>
+					</div>
+					<div class="menu-item">
+					<a href="layout_top_nav.html" class="menu-link">
+					<span class="menu-text">Top Nav</span>
+					</a>
+					</div>
+					<div class="menu-item">
+					<a href="layout_mixed_nav.html" class="menu-link">
+					<span class="menu-text">Mixed Nav</span>
+					</a>
+					</div>
+					<div class="menu-item">
+					<a href="layout_mixed_nav_boxed_layout.html" class="menu-link">
+					<span class="menu-text">Mixed Nav Boxed Layout</span>
+					</a>
+					</div>
+					</div>
+					</div>
+					<div class="menu-item has-sub">
+					<a href="#" class="menu-link">
+					<span class="menu-icon"><i class="fa fa-globe"></i></span>
+					<span class="menu-text">Pages</span>
+					<span class="menu-caret"><b class="caret"></b></span>
+					</a>
+					<div class="menu-submenu">
+					<div class="menu-item">
+					<a href="page_scrum_board.html" class="menu-link">
+					<span class="menu-text">Scrum Board</span>
+					</a>
+					</div>
+					<div class="menu-item">
+					<a href="page_products.html" class="menu-link">
+					<span class="menu-text">Products</span>
+					</a>
+					</div>
+					<div class="menu-item">
+					<a href="page_product_details.html" class="menu-link">
+					<span class="menu-text">Product Details</span>
+					</a>
+					</div>
+					<div class="menu-item">
+					<a href="page_orders.html" class="menu-link">
+					<span class="menu-text">Orders</span>
+					</a>
+					</div>
+					<div class="menu-item">
+					<a href="page_order_details.html" class="menu-link">
+					<span class="menu-text">Order Details</span>
+					</a>
+					</div>
+					<div class="menu-item">
+					<a href="page_gallery.html" class="menu-link">
+					<span class="menu-text">Gallery</span>
+					</a>
+					</div>
+					<div class="menu-item">
+					<a href="page_search_results.html" class="menu-link">
+					<span class="menu-text">Search Results</span>
+					</a>
+					</div>
+					<div class="menu-item">
+					<a href="page_coming_soon.html" class="menu-link">
+					<span class="menu-text">Coming Soon Page</span>
+					</a>
+					</div>
+					<div class="menu-item">
+					<a href="page_404_error.html" class="menu-link">
+					<span class="menu-text">404 Error Page</span>
+					</a>
+					</div>
+					<div class="menu-item">
+					<a href="page_login.html" class="menu-link">
+					<span class="menu-text">Login</span>
+					</a>
+					</div>
+					<div class="menu-item">
+					<a href="page_register.html" class="menu-link">
+					<span class="menu-text">Register</span>
+					</a>
+					</div>
+					<div class="menu-item">
+					<a href="page_messenger.html" class="menu-link">
+					<span class="menu-text">Messenger</span>
+					</a>
+					</div>
+					<div class="menu-item">
+					<a href="page_data_management.html" class="menu-link">
+					<span class="menu-text">Data Management</span>
+					</a>
+					</div>
+					<div class="menu-item">
+					<a href="page_file_manager.html" class="menu-link">
+					<span class="menu-text">File Manager</span>
+					</a>
+					</div>
+					<div class="menu-item">
+					<a href="page_pricing.html" class="menu-link">
+					<span class="menu-text">Pricing Page</span>
+					</a>
+					</div>
+					</div>
+					</div> *@
+					<div class="menu-divider"></div>
+					<div class="menu-header">Users</div>
+					<div class="menu-item">
+						<a href="/identity/Account/myprofile" class="menu-link">
+							<span class="menu-icon"><i class="fa fa-user-circle"></i></span>
+							<span class="menu-text">Profile</span>
+						</a>
+					</div>					 
+				</div>
+				<!-- END menu -->
+			</div>
+			<!-- END scrollbar -->
+			<!-- BEGIN mobile-sidebar-backdrop -->
+			<button class="app-sidebar-mobile-backdrop" data-dismiss="sidebar-mobile"></button>
+			<!-- END mobile-sidebar-backdrop -->
+		</div>
+		<!-- END #sidebar -->
+		<!-- BEGIN #content -->
+		<div id="content" class="app-content">
+			<!-- BEGIN container -->
+			<div class="container">
+				<!-- BEGIN row -->
+				@* <main role="main" class="pb-3"> *@
+					@RenderBody()
+				@* </main> *@
+
+				<!-- END row -->
+			</div>
+			<!-- END container -->
+		</div>
+		<!-- END #content -->
+		<!-- BEGIN btn-scroll-top -->
+		<a href="#" data-click="scroll-top" class="btn-scroll-top fade"><i class="fa fa-arrow-up"></i></a>
+		<!-- END btn-scroll-top --> 
+	</div>
+	<!-- END #app -->
+	<!-- ================== BEGIN core-js ================== -->
+	<script src="~/assets/js/vendor.min.js"></script>
+	<script src="~/assets/js/app.min.js"></script>
+	<!-- ================== END core-js ================== -->
+	<!-- ================== BEGIN page-js ================== -->
+	<script src="~/assets/plugins/highlightjs/cdn-assets/highlight.min.js"></script>
+	<script src="~/assets/js/demo/highlightjs.demo.js"></script>
+	<script src="~/assets/js/demo/sidebar-scrollspy.demo.js"></script>
+
+	<script src="~/assets/plugins/apexcharts/dist/apexcharts.min.js"></script>
+	<script src="~/assets/js/demo/dashboard.demo.js"></script>
+	<!-- ================== END page-js ================== -->
+	<script>
+		// Add JavaScript function to handle Enter key press
+		function handleEnterKey(event) {
+			if (event.key === "Enter") {
+				event.preventDefault(); // Prevent the default form submission
+
+				// Get the value from the search input
+				var searchTerm = document.getElementById("searchValue").value;
+
+				// Construct the URL for the search page with the search term
+				var searchUrl = "@Model.SearchPageUrl" + "?handler=search&search=" + encodeURIComponent(searchTerm);
+
+				// Redirect to the search page
+				window.location.href = searchUrl;
+			}
+		}
+
+		// Attach the function to the keydown event of the search input
+		document.getElementById("searchValue").addEventListener("keydown", handleEnterKey);
+	</script>
+</body>
+</html>
+@await RenderSectionAsync("Scripts", required: false) 

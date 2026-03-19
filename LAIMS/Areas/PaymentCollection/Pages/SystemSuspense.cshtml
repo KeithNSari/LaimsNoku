@@ -1,0 +1,232 @@
+﻿@page
+@using System.Data
+@model LAIMS.Areas.PaymentCollection.Pages.SystemSuspenseModel
+@{
+} 
+@{
+    Layout = "/Pages/Shared/_LayoutSearch.cshtml";
+}
+<h1>System Suspense</h1>
+<p>To search, enter one of the following: receipt no, invoice no, date paid in the format yyyy-MM-dd, surname space first name, id number, or policy number.</p>
+<hr />
+@if (Model.SearchTerm != null)
+{
+    <div class="row mb-3">
+        <h5>@Model.ResultsCount result/s found for search "@Model.SearchTerm"!</h5> 
+    </div>
+}
+else
+{
+    <div class="row mb-3">
+        <h5>@Model.ResultsCount item/s!</h5>
+    </div>
+}
+<hr />
+<div class="row mb-3">
+    @if ((Model.PaymentsDT != null) && (Model.PaymentsDT.Rows.Count>0))
+    {
+        <table class="table table-hover">
+            <tr>
+                <th>Paid</th>
+                <th>Method</th>
+                <th>Reference</th>
+                <th>Currency</th>
+                <th>Balance</th> 
+                <th></th>
+            </tr>
+            @foreach (DataRow DR in Model.PaymentsDT.Rows)
+            {
+                <tr>
+                    <td>
+                        @DR["PaymentDate"]
+                        <input type="hidden" class="rowId" value="@DR["PaymentID"]">
+                    </td>
+                    <td>@DR["Method"]</td>
+                    <td>@DR["Reference"]</td>
+                    <td>@DR["Currency"]</td>
+                    <td>@DR["Balance"]</td>
+                    <td class="text-end">
+                        @if(DR["Method"].ToString()=="Direct Payment")
+                        {
+                            <button class="btn btn-success btn-show-modal">Details</button>
+                        }
+                        @if (Convert.ToDecimal(@DR["Balance"]) > 0)
+                        {
+                            <button class="btn btn-primary" onclick="openProcessModal(@DR["SuspenseHeaderID"],@DR["BatchID"],@DR["CurrencyID"],@DR["Balance"])">Process</button>
+                        }
+                     </td>
+                </tr>
+            }
+        </table>
+    }
+</div>
+
+<form method="post">
+    <div class="modal fade" id="ProcessModal" tabindex="-1" aria-labelledby="ProcessModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-light">
+                    <h5 class="modal-title" id="ProcessModalLabel">Process Payment</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <h2></h2>
+                    <input type="hidden" id="suspenseHeaderid" asp-for="SuspenseHeader.ID" />
+                    <input type="hidden" id="currencyid" asp-for="SuspenseHeader.CurrencyID" />
+                    <input type="hidden" id="balance" asp-for="SuspenseHeader.Balance" />
+                    <input type="hidden" id="batchid" asp-for="SuspenseHeader.BatchID" />
+                    @if (TempData["PostbackSuccess"] != null && (bool)TempData["PostbackSuccess"])
+                    {
+                        <script>
+                            closeModal();
+                        </script>
+                    }
+                    <div class="row mb-3">
+                        <div class="form-group">
+                            <label asp-for="@Model.ProcessAction" class="control-label"><b>Action</b></label>
+                            <select asp-for="@Model.ProcessAction" class="form-control" aria-required="true" onchange="toggleDiv()">
+                                <option value="">Select Option</option>
+                                <option value=1000>Allocate to Policy</option>
+                                <option value=1001>Refund</option>
+                            </select>
+                            <span asp-validation-for="@Model.ProcessAction" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="form-group">
+                            <label asp-for="@Model.AmountToAllocate"><b>Amount</b></label>
+                            <input asp-for="@Model.AmountToAllocate" class="form-control" autocomplete="off" />
+                            <span asp-validation-for="@Model.AmountToAllocate" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="row mb-3" id="correctPolicyDiv" style="display:none">
+                        <div class="form-group">
+                            <label asp-for="@Model.PolicyNo"><b>Policy No</b></label>
+                            <input asp-for="@Model.PolicyNo" class="form-control" autocomplete="off" />
+                            <span asp-validation-for="@Model.PolicyNo" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="form-group">
+                            <label asp-for="@Model.ActionComment"><b>Comment</b></label>
+                            <textarea asp-for="@Model.ActionComment" class="form-control" id="commentTextarea" rows="5" cols="50" required></textarea>
+                            <span asp-validation-for="@Model.ActionComment" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <input type="submit" value="Submit" class="btn btn-primary" />
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+<!-- Payment Details modal -->
+<div class="modal fade" id="detailsModal" tabindex="-1" aria-labelledby="detailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="myModalLabel">Payment Details</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Details</th>
+                            <th>Field 1</th>
+                            <th>Field 2</th>
+                            <th>Field 3</th>
+                            <th>Field 4</th>
+                            <th>Field 5</th>
+                            <th>Field 6</th>
+                            <th>Field 7</th>
+                            <th>Field 8</th>
+                            <th>Field 9</th>
+                            <th>Field 10</th> 
+                        </tr>
+                    </thead>
+                    <tbody id="modalTableBody">
+                        <!-- Table rows will be dynamically added here -->
+                    </tbody>
+                </table>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts
+{
+    <script>
+        function openProcessModal(suspenseHeaderid, batchid, currencyid, balance) {
+            document.getElementById('suspenseHeaderid').value = suspenseHeaderid;
+            document.getElementById('balance').value = balance;
+            document.getElementById('batchid').value = batchid;
+            document.getElementById('currencyid').value = currencyid;
+            // Open the modal
+            $('#ProcessModal').modal('show');
+        }
+    </script>
+    <script>
+        function toggleDiv() {
+            var ActionDl = document.getElementById("ProcessAction");
+            var correctPolicyDiv = document.getElementById("correctPolicyDiv");
+            if (ActionDl.selectedIndex === 1) {
+                correctPolicyDiv.style.display = "block";
+            }
+            else {
+                correctPolicyDiv.style.display = "none";
+            }
+        }
+    </script>
+    <script>
+        $(document).ready(function () {
+            // Function to open the modal and fetch data
+            function openModalAndFetchData(rowId) {
+                // Make AJAX request to fetch data based on the row ID
+                $.ajax({
+                    url: '/PaymentCollection/SystemSuspense?handler=LoadDetails',
+                    type: 'GET',
+                    data: { id: rowId },
+                    success: function (data) {
+                        // Clear existing content in the table body
+                        $('#modalTableBody').empty();
+
+                        // Display the fetched data in the modal
+                        if (data && data.length > 0) {
+                            data.forEach(function (row) {
+                                var newRow = '<tr><td>' + (row.details || '') + '</td><td>' + (row.field1 || '') + '</td><td>' + (row.field2 || '') + '</td><td>' + (row.field3 || '') + '</td><td>' + (row.field4 || '') + '</td><td>' + (row.field5 || '') + '</td><td>' + (row.field6 || '') + '</td><td>' + (row.field7 || '') + '</td><td>' + (row.field8 || '') + '</td><td>' + (row.field9 || '') + '</td><td>' + (row.field10 || '') + '</td></tr>';
+                                $('#modalTableBody').append(newRow);
+                            });
+
+                            // Show the modal
+                            $('#detailsModal').modal('show');
+                        } else {
+                            console.log('No data received or data is empty.');
+                        }
+                    },
+                    error: function () {
+                        // Handle error
+                        alert('Failed to fetch data from the server.');
+                    }
+                });
+            }
+
+            // Attach the function to the button click event for each row
+            $(document).on('click', '.btn-show-modal', function () {
+                var row = $(this).closest('tr');
+                var rowId = row.find('.rowId').val();
+
+                // Call the function to open the modal and fetch data
+                openModalAndFetchData(rowId);
+            });
+        });
+    </script>
+}

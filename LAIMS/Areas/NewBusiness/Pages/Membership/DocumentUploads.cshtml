@@ -1,0 +1,29 @@
+﻿@page
+@model LAIMS.Areas.NewBusiness.Pages.Membership.DocumentUploadsModel
+@{
+}
+@{
+    ViewData["Title"] = "Upload Documents";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<form method="post" enctype="multipart/form-data">
+    <div class="form-group">
+        <label for="memberId">Member ID:</label>
+        <input type="text" class="form-control" id="memberId" name="memberId" required>
+    </div>
+    <div class="form-group">
+        <label for="filingNo">Filing No:</label>
+        <input type="text" class="form-control" id="filingNo" name="filingNo">
+    </div>
+    <div class="form-group">
+        <label for="documentNo">Document No:</label>
+        <input type="text" class="form-control" id="documentNo" name="documentNo">
+    </div>
+    <div class="form-group">
+        <label for="file">Select Document:</label>
+        <input type="file" class="form-control-file" id="file" name="file" required>
+    </div>
+    <button type="submit" class="btn btn-primary">Upload</button>
+</form>

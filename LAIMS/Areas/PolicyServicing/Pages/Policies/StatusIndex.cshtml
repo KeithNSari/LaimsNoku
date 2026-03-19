@@ -1,0 +1,86 @@
+﻿@page
+@using System.Data;
+@model LAIMS.Areas.PolicyServicing.Pages.Policies.StatusIndexModel
+@{
+}
+@{
+    Layout = "/Pages/Shared/_LayoutProducts.cshtml";
+}
+<h1>Policy Status Index</h1>
+<hr />
+<div class="row">
+    <div class="col-md-6">
+        <h3>Policy Owner: @Model.Member.Name3 @Model.Member.Name1</h3>
+    </div>
+    <div class="col-md-6">
+        <h3>National ID: @Model.Member.NationalID</h3>
+    </div>
+</div>
+<hr />
+<div class="row">
+    <div class="col-md-6">
+        <h4>Policy: @Model.Policy.PolicyName</h4>
+    </div>
+    <div class="col-md-6">
+        <h4>Policy No: @Model.Policy.PolicyNo</h4>
+    </div>
+</div>
+<hr />
+<div class="row">
+    <div class="col-md-5">
+        <h4>Currency: @Model.Policy.CurrencyName</h4>
+    </div>
+</div>
+<hr />
+@if ((Model.ProposedStatusDT!=null)&&(Model.ProposedStatusDT.Rows.Count > 0))
+{
+
+    <div class="row mb-3">
+        <h3>Proposed Status</h3>
+        <table class="table table-hover">
+            <tr class="bg-white">
+                <th class="col-md-3">Status</th>
+                <th class="col-md-4">Comment</th>
+                <th class="col-md-2">Date</th>
+                <th class="col-md-3">Added By</th>
+            </tr>
+            @if (Model.ProposedStatusDT != null)
+            {
+                @foreach (DataRow DR in Model.ProposedStatusDT.Rows)
+                {
+                    <tr class="bg-white">
+                        <td class="text-danger">@DR["Status"]</td>
+                        <td class="text-danger">@DR["PolicyStatusComment"]</td>
+                        <td class="text-danger">@DR["PolicyStatusDate"]</td>
+                        <td class="text-danger">@DR["UserName"]</td>
+                    </tr>
+                }
+            }
+        </table>
+    </div>
+}
+<div class="row mb-3">
+    <h3>Status History</h3>
+    <table class="table table-hover">
+        <tr>
+            <th>No</th>
+            <th class="col-md-3">Status</th>
+            <th class="col-md-4">Comment</th>
+            <th class="col-md-2">Date</th>
+            <th class="col-md-3">Added By</th>
+        </tr>
+        @if (Model.StatiiHistoryDT != null)
+        {
+            @foreach (DataRow DR in Model.StatiiHistoryDT.Rows)
+            {
+                <tr>
+                    <td>@DR["row_number"]</td>
+                    <td>@DR["Status"]</td>
+                    <td>@DR["PolicyStatusComment"]</td>
+                    <td>@DR["PolicyStatusDate"]</td>
+                    <td>@DR["UserName"]</td>
+                </tr>
+            }
+        }
+    </table>
+</div>

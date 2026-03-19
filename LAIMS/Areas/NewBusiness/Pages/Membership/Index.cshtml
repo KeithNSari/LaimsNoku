@@ -1,0 +1,124 @@
+﻿@page
+@model LAIMS.Areas.NewBusiness.Pages.Membership.IndexModel
+@{
+}
+@{
+    Layout = "/Pages/Shared/_Layout.cshtml";
+}
+<h2>Members</h2>
+
+<p>
+    <a asp-page="Create">Create New</a>
+</p>
+
+<table class="table table-hover"> 
+        <tr>
+            <th>
+                ID
+            </th>
+            <th>
+                Is Organisation
+            </th>
+            <th>
+                Name1
+            </th>
+            <th>
+                Name2
+            </th>
+            <th>
+                Name3
+            </th>
+            <th>
+                Gender
+            </th>
+            <th>
+                Title
+            </th>
+            <th>
+                Marital Status
+            </th>
+            <th>
+                Country
+            </th>
+            <th>
+                Date of Birth
+            </th>
+            <th>
+                Place of Birth
+            </th>
+            <th>
+                National ID
+            </th>
+            <th>
+                Birth Certificate
+            </th>
+            <th>
+                Passport
+            </th>
+            <th>
+                Added On
+            </th>
+            <th>
+                Added By
+            </th>
+            <th></th>
+        </tr>  
+        @foreach (var member in Model.Members)
+        {
+            <tr>
+                <td>
+                    @member.ID
+                </td>
+                <td>
+                    @member.IsOrganisation
+                </td>
+                <td>
+                    @member.Name1
+                </td>
+                <td>
+                    @member.Name2
+                </td>
+                <td>
+                    @member.Name3
+                </td>
+                <td>
+                    @member.GenderID
+                </td>
+                <td>
+                    @member.TitleID
+                </td>
+                <td>
+                    @member.MaritalStatusID
+                </td>
+                <td>
+                    @member.CountryID
+                </td>
+                <td>
+                    @member.DOB
+                </td>
+                <td>
+                    @member.PlaceOfBirth
+                </td>
+                <td>
+                    @member.NationalID
+                </td>
+                <td>
+                    @member.BirthCertificate
+                </td>
+                <td>
+                    @member.Passport
+                </td>
+                <td>
+                    @member.AddedOn
+                </td>
+                <td>
+                    @member.AddedBy
+                </td>
+                <td>
+                    <a asp-page="./Details" asp-route-id="@member.ID">Details</a> |
+                    <a asp-page="./Edit" asp-route-id="@member.ID">Edit</a> |
+                    <a asp-page="./Delete" asp-route-id="@member.ID">Delete</a>
+                </td>
+            </tr>
+        } 
+</table>

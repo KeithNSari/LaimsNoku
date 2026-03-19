@@ -1,0 +1,39 @@
+﻿@page
+@using System.Data
+@model LAIMS.Areas.PaymentCollection.Pages.BillingNotificationsModel
+@{
+}
+@{
+    Layout = "/Pages/Shared/_LayoutSearch.cshtml";
+}
+<h1>Billing Notifications</h1>
+<p>Latest notifications.</p>
+<hr />
+<div class="row mb-3">
+    <table class="table table-hover">
+        <tr>
+            <th>ID</th>
+            <th>Invoice</th>  
+            <th>Policies</th>
+            <th>Status</th>
+            <th>Reason</th>
+            <th>Message</th>
+            <th>Date</th> 
+        </tr>
+        @if (Model.MessagesDT != null)
+        {
+            @foreach (DataRow DR in Model.MessagesDT.Rows)
+            {
+                <tr>
+                    <td>@DR["ID"]</td>
+                    <td>@DR["InvoiceNo"]</td>
+                    <td>@DR["Policies"]</td>
+                    <td>@DR["Status"]</td>
+                    <td>@DR["StatusReason"]</td>
+                    <td>@DR["Message"]</td>
+                    <td>@DR["AddedOn"]</td>  
+                </tr>
+            }
+        }
+    </table>
+</div>

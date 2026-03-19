@@ -1,0 +1,91 @@
+﻿@page
+@using System.Data;
+@model LAIMS.Pages.Adm.RolesEditModel
+@{
+}
+@{
+    Layout = "/Pages/Shared/_LayoutAdmin.cshtml";
+}
+
+<h2>Update User Roles</h2>
+<form method="post" class="mb-3">
+    <div class="row">
+        <div class="col-md-8">
+            <table class="table table-striped">
+                <tr>
+                    <th>Role</th>
+                    <th></th>
+                </tr>
+                @if (Model.RolesDT != null)
+                {
+                    @foreach (DataRow DR in Model.RolesDT.Rows)
+                    {
+                        <tr>
+                            <td>@DR["RoleName"]</td>
+                            <td>
+                                <input type="checkbox"
+                                       name="roleIDS"
+                                       value="@DR["RoleID"]"
+                                       class="large-checkbox"
+                                @(Convert.ToBoolean(DR["RoleExists"]) ? "checked" : "") />
+                            </td>
+                        </tr>
+                    }
+                }                
+            </table>
+        </div>
+        <div class="col-md-4">
+                  
+            @if (Model.UserFound)
+            {            
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="form-outline">
+                    <label asp-for="@Model.Designation.ID"><b>Designation</b></label>
+                    <select asp-for="@Model.Designation.ID" class="form-control form-control-lg" asp-items="Model.Designations">
+                        <option value="">Select Designation</option>
+                    </select>
+                </div>
+                <div class="form-outline">
+                    <label asp-for="userDetails.Username" class="form-label"><b>Username</b></label>
+                    <input asp-for="userDetails.Username" readonly class="form-control form-control-lg" aria-required="true" />                   
+                    <span asp-validation-for="userDetails.Username" class="text-danger"></span>
+                </div>
+                <div class="form-outline">
+                    <label asp-for="userDetails.FirstNames" class="form-label"><b>First Names</b></label>
+                    <input type="hidden" asp-for="userDetails.UserID" />
+                    <input asp-for="userDetails.FirstNames" readonly class="form-control form-control-lg" aria-required="true" />                
+                </div>
+                <div class="form-outline mb-3">
+                    <label asp-for="userDetails.Surname" class="form-label"><b>Surname</b></label>
+                    <input asp-for="userDetails.Surname" readonly class="form-control form-control-lg" aria-required="true" />                 
+                </div>
+                <div class="form-outline mb-3">
+                  <button id="Submit" type="submit" asp-page-handler="UpdateUser" class="w-100 btn btn-lg btn-primary">Update</button>
+                </div>
+                <div class="form-outline mb-3">
+                  <button id="Submit" type="submit" asp-page-handler="ClearRoles" class="w-100 btn btn-lg btn-danger">Clear All Roles</button>
+                </div>
+            }
+        else
+        { 
+                <div class="form-outline mb-3"> 
+                    <input asp-for="userDetails.Username" class="form-control form-control-lg" aria-required="true" />
+                    <label asp-for="userDetails.Username" class="form-label"></label>
+                    <span asp-validation-for="userDetails.Username" class="text-danger"></span>
+                </div>
+                <button id="Submit" type="submit" class="w-100 btn btn-lg btn-primary">Load User</button>           
+        }            
+        </div> 
+    </div>
+    </form>
+
+<style>
+    .large-checkbox {
+        width: 20px;
+        height: 20px;
+    }
+
+    .bold {
+        font-weight: bold;
+    }
+</style>

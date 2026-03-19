@@ -1,0 +1,35 @@
+﻿@page
+@using System.Data
+@model LAIMS.Areas.UTools.Pages.PaymentProviders.Orders.IndexModel
+@{
+}
+@{
+    Layout = "/Pages/Shared/_LayoutProducts.cshtml";
+}
+<h3>Stop/ Debit Orders</h3>
+<div class="row mb-3">
+    <form method="post">
+        <table class="table table-hover">
+            <tr>
+                <th>Client</th>
+                <th>File</th>
+                <th>AddedOn</th> 
+                <th></th>
+            </tr>
+            @if (Model.OrdersDT != null)
+            {
+                @foreach (DataRow DR in Model.OrdersDT.Rows)
+                {
+                    <tr>
+                        <td>@DR["Name1"]</td>
+                        <td>@DR["FileName"]</td>
+                        <td>@DR["AddedOn"]</td> 
+                        <td class="text-end">
+                            <button type="submit" asp-route-Id="@DR["FileID"]" class="btn btn-info btn-sm">Download</button>
+                        </td>
+                    </tr>
+                }
+            }
+        </table>
+    </form>
+</div>

@@ -1,0 +1,56 @@
+﻿@page
+@using System.Data
+@model LAIMS.Areas.PaymentCollection.Pages.CashBillingIndexModel
+@{
+}
+@{
+    Layout = "/Pages/Shared/_LayoutProducts.cshtml";
+}
+<h1>Cash Billing Index</h1>
+<p>To bill clients who are due to pay at a selected date: select the due date then click "Generate".</p>
+<hr />
+<form method="post">
+    <div class="row mb-3">
+        <div class="col-md-4">
+            <label asp-for="CurrencyID" class="control-label"><b>Currency</b></label>
+            <select asp-for="CurrencyID" class="form-control" asp-items="Model.Currencies">
+                <option>Select Currency</option>
+            </select>
+            <span asp-validation-for="CurrencyID" class="text-danger"></span>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="@Model.CollectionDate" class="control-label"><b>Collection Due</b></label>
+            <input type="date" class="form-control" asp-for="@Model.CollectionDate" required />
+        </div>
+        <div class="col-md-2">
+            <br />
+            <button type="submit" class="btn btn-primary float-end">Generate</button>
+        </div>
+    </div>
+</form>
+<div class="row mb-3">
+    <table class="table table-hover">
+        <tr>
+            <th class="col-md-2">Date</th>
+            <th class="col-md-3">Batch</th>
+            <th class="col-md-2">Currency</th>
+            <th class="col-md-3">Amount</th>
+            <th class="col-md-1">Entries</th>
+            <th class="col-md-1"></th> 
+        </tr>
+        @if (Model.BatchesDT != null)
+        {
+            @foreach (DataRow DR in Model.BatchesDT.Rows)
+            {
+                <tr>
+                    <td>@DR["AddedOn"]</td>
+                    <td>@DR["BatchID"]</td>
+                    <td>@DR["Currency"]</td>
+                    <td>@DR["BatchTotalAmount"]</td>
+                    <td>@DR["Entries"]</td>
+                    <td><a href="/PaymentCollection/CashBillingIndex?handler=DownloadCsv&BatchID=@DR["BatchID"]" class="btn btn-primary">Download</a></td>            
+                </tr>
+            }
+        }
+    </table>
+</div> 

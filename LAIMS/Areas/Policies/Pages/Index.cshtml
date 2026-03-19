@@ -1,0 +1,45 @@
+﻿@page
+@using System.Data
+@model LAIMS.Areas.Policies.Pages.IndexModel 
+@{
+    Layout = "/Pages/Shared/_LayoutSearch.cshtml";
+}
+<h1>Policies</h1>
+<hr /> 
+@if ((Model.PoliciesDT != null) && (Model.PoliciesDT.Rows.Count > 0))
+{
+    <div class="row mb-3">
+        <h5>@Model.ResultsCount entries!</h5>
+    </div>
+}
+<hr />
+<div class="row mb-3">
+    <form method="post">
+        <table class="table table-hover">
+            <tr>
+                <th>Entry </th>
+                <th>Commencement</th>
+                <th>Policy Holder</th>
+                <th>Policy No</th>
+                <th>Policy</th>
+                <th>Status</th>
+                <th>Status Date</th> 
+            </tr>
+            @if (Model.PoliciesDT != null)
+            {
+                @foreach (DataRow DR in Model.PoliciesDT.Rows)
+                {
+                    <tr>
+                        <td>@DR["EntryNo"]</td>
+                        <td>@DR["CommencementDate"]</td>
+                        <td>@DR["PolicyHolder"]</td>
+                        <td>@DR["PolicyNo"]</td>
+                        <td>@DR["PolicyTypeName"]</td>
+                        <td>@DR["Status"]</td>
+                        <td>@DR["PolicyStatusDate"]</td> 
+                    </tr>
+                }
+            }
+        </table>
+    </form>
+</div>

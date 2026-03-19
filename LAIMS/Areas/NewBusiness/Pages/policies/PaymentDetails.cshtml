@@ -1,0 +1,111 @@
+﻿@page
+@using System.Data;
+@model LAIMS.Areas.NewBusiness.Pages.policies.PaymentDetailsModel
+@{
+}
+@{
+    Layout = "/Pages/Shared/_LayoutProducts.cshtml";
+}
+<h1>Application: Add Payment Details</h1>
+<div class="bg-light">
+    <hr />
+    <h3>Policy: @Model.PolicyName</h3>
+    <div class="nav-wizards-container">
+        <nav class="nav nav-wizards-1 mb-2">
+            <div class="nav-item col">
+                <a class="nav-link completed" asp-page="SelectPolicy" asp-route-id="@Model.ProposerID">
+                    <div class="nav-no">1</div>
+                    <div class="nav-text">Select Policy</div>
+                </a>
+            </div>
+            <div class="nav-item col">
+                <a class="nav-link active" asp-page="Applicants" asp-route-id="@Model.ProposerID" asp-route-policyid="@Model.PolicyID" asp-route-policyTypeId="@Model.PolicyTypeID">
+                    <div class="nav-no">2</div>
+                    <div class="nav-text">Add Details</div>
+                </a>
+            </div>
+            <div class="nav-item col">
+                <a class="nav-link completed" href="#">
+                    <div class="nav-no">3</div>
+                    <div class="nav-text">Add Documents</div>
+                </a>
+            </div>
+            <div class="nav-item col">
+                <a class="nav-link completed" href="#">
+                    <div class="nav-no">4</div>
+                    <div class="nav-text">Questionnaires</div>
+                </a>
+            </div>
+            <div class="nav-item col">
+                <a class="nav-link active" href="#">
+                    <div class="nav-no">5</div>
+                    <div class="nav-text">Payment Details</div>
+                </a>
+            </div>
+            <div class="nav-item col">
+                <a class="nav-link disabled" href="#">
+                    <div class="nav-no">6</div>
+                    <div class="nav-text">Submission</div>
+                </a>
+            </div>
+        </nav>
+    </div>
+    <hr />
+</div>
+<h3>Proposer</h3>
+<table class="table table-hover">
+    <tr>
+        <th class="col-md-2"></th>
+        <th class="col-md-2"></th>
+        <th class="col-md-2"></th>
+        <th class="col-md-2"></th>
+        <th class="col-md-2"></th>
+        <th class="col-md-2"></th>
+        <th class="col-md-2"></th>
+    </tr>
+    <tr>
+        <td><b>First Name:</b></td>
+        <td>@Model.PremiumPayer.Name1</td>
+        <td><b>Middle Name:</b></td>
+        <td>@Model.PremiumPayer.Name2</td>
+        <td><b>Surname:</b></td>
+        <td>@Model.PremiumPayer.Name3</td>
+    </tr>
+    <tr>
+        <td><b>Gender:</b></td>
+        <td>@Model.PremiumPayer.Gender</td>
+        <td><b>Title:</b></td>
+        <td>@Model.PremiumPayer.Title</td>
+        <td><b>Marital Status:</b></td>
+        <td>@Model.PremiumPayer.MaritalStatus</td>
+    </tr>
+    <tr>
+        <td><b>D.O.B:</b></td>
+        <td>@Model.PremiumPayer.DOB</td>
+        <td><b>Birth Country:</b></td>
+        <td>@Model.PremiumPayer.BirthCountry</td>
+        <td><b>Place Of Birth:</b></td>
+        <td>@Model.PremiumPayer.PlaceOfBirth</td>
+    </tr>
+    <tr>
+        <td><b>Citizenship:</b></td>
+        <td>@Model.PremiumPayer.Country</td>
+        <td><b>Member No:</b></td>
+        <td>@Model.PremiumPayer.MemberNo</td>
+        <td><b>National ID:</b></td>
+        <td>@Model.PremiumPayer.NationalID</td>
+    </tr>
+    <tr>
+        <td><b>Passport:</b></td>
+        <td>@Model.PremiumPayer.Passport</td>
+        <td><b>Birth Certificate:</b></td>
+        <td>@Model.PremiumPayer.BirthCertificate</td>
+        <td></td>
+        <td></td>
+    </tr>
+</table>
+<button type="button" class="btn btn-success float-end fixed-width-btn" data-bs-toggle="modal" data-bs-target="#rolesModal">
+    Add Roles
+</button>
+<br />
+<hr />  

@@ -1,0 +1,99 @@
+﻿@page 
+@{
+	Layout = "/Pages/Shared/_LayoutProducts.cshtml";
+}
+@using System.Data;
+@model LAIMS.Areas.NewBusiness.Pages.policies.SelectPolicyModel
+@{
+}
+<h1>Policies</h1>
+<h5>Select your target policy below.</h5>
+<hr />
+<div id="wizardLayout1" class="mb-5">
+	<h4>Application Process</h4>
+	<p>To complete the application process for a policy, you must go through the following stages.</p>
+	<div class="card">
+		<div class="card-body">
+            <div class="nav-wizards-container">
+                <nav class="nav nav-wizards-1 mb-2">
+                    <div class="nav-item col">
+                        <a class="nav-link active" href="#">
+                            <div class="nav-no">1</div>
+                            <div class="nav-text">Select Policy</div>
+                        </a>
+                    </div>
+                    <div class="nav-item col">
+                        <a class="nav-link disabled" href="#">                       
+                            <div class="nav-no">2</div>
+                            <div class="nav-text">Add Details</div>
+                        </a>
+                    </div>
+                    <div class="nav-item col">
+                        <a class="nav-link disabled" href="#">
+                            <div class="nav-no">3</div>
+                            <div class="nav-text">Split</div>
+                        </a>
+                    </div>
+                    <div class="nav-item col">
+                        <a class="nav-link disabled" href="#">
+                            <div class="nav-no">4</div>
+                            <div class="nav-text">Documents</div>
+                        </a>
+                    </div>
+                    <div class="nav-item col">
+                        <a class="nav-link disabled" href="#">
+                            <div class="nav-no">5</div>
+                            <div class="nav-text">Questionnaires</div>
+                        </a>
+                    </div>
+                    <div class="nav-item col">
+                        <a class="nav-link disabled" href="#">
+                            <div class="nav-no">6</div>
+                            <div class="nav-text">Submission</div>
+                        </a>
+                    </div>
+                </nav>
+            </div>
+			<div class="card">
+				<div class="card-body">
+					You are currently on step 1. Please select your policy!
+				</div>
+			</div>
+		</div>
+		<div class="hljs-container rounded-bottom">
+			<pre><code class="xml" data-url="assets/data/form-wizards/code-1.json"></code></pre>
+		</div>
+	</div>
+</div>
+<!-- END #wizardLayout1 -->
+@if (!string.IsNullOrEmpty(ViewData["ErrorMessage"]?.ToString()))
+{
+    <h4 class="text-danger">@ViewData["ErrorMessage"]</h4>
+}
+<form method="post">
+    <table class="table table-hover">
+        <tr>
+            <th>Name</th>
+            <th>Open</th>
+            <th>Currency</th>
+            <th>Added On</th>
+            <th></th>
+        </tr>
+        @if (Model.PolicyTypesDT != null)
+        {
+            @foreach (DataRow DR in Model.PolicyTypesDT.Rows)
+            {
+                <tr>
+                    <td>@DR["Name"]</td>
+                    <td>@DR["OpenForNewBusiness"]</td>
+                    <td>@DR["Currency"]</td>
+                    <td>@DR["AddedOn"]</td>
+                    <td class="text-end">
+                        <input type="submit" value="Propose" asp-route-id="@Model.ApplicantID" asp-route-policyTypeid="@DR["ID"]" class="btn btn-info btn-sm" />
+                        @* <a asp-page="Applicants" asp-route-id="@Model.ApplicantID" asp-route-policyid="@DR["ID"]" class="btn btn-info btn-sm">Submit</a>  *@
+                    </td>
+                </tr>
+            }
+        }
+    </table>
+</form>

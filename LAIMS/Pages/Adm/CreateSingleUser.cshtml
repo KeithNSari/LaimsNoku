@@ -1,0 +1,109 @@
+﻿@page
+@using System.Data;
+@model LAIMS.Pages.Adm.CreateSingleUserModel
+@{
+    Layout = "/Pages/Shared/_LayoutAdmin.cshtml";
+}
+@{
+    ViewData["Title"] = "Create Single User";
+}
+<h1>@ViewData["Title"]</h1>
+<form id="registerForm" method="post" class="mb-3">
+<div class="row">
+    <div class="col-md-8">
+        <table class="table table-striped">
+            <tr>
+                <th>Role</th>
+                <th></th> 
+            </tr>
+            @foreach (DataRow DR in Model.RolesDT.Rows)
+            {
+                <tr>
+                    <td>@DR["Name"]</td> 
+                    <td>
+                        <input type="checkbox" name="roleIDS" value="@DR["Name"]" class="large-checkbox" />
+                    </td> 
+                </tr>
+            }
+        </table>
+    </div>
+    <div class="col-md-4">        
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+             <div class="form-outline">
+                <label asp-for="@Model.Designation.ID"><b>Designation</b></label>
+                <select asp-for="@Model.Designation.ID" class="form-control form-control-lg" required asp-items="Model.Designations">
+                    <option value="">Select Designation</option>
+                </select>
+             </div> 
+             <div class="form-outline">
+                <label asp-for="Input.FirstNames" class="form-label"><b>First Names</b></label>
+                <input asp-for="Input.FirstNames" class="form-control form-control-lg"/>                
+                <span asp-validation-for="Input.FirstNames" class="text-danger"></span>
+            </div>
+            <div class="form-outline mb-3">
+                <label asp-for="Input.Surname" class="form-label"><b>Surname</b></label>
+                <input asp-for="Input.Surname" class="form-control form-control-lg"/>               
+                <span asp-validation-for="Input.Surname" class="text-danger"></span>
+            </div>
+            <div class="form-outline mb-3">
+                <label asp-for="Input.Username" class="form-label"><b>Username</b></label>
+                <input asp-for="Input.Username" class="form-control form-control-lg" aria-required="true" />                
+                <span asp-validation-for="Input.Username" class="text-danger"></span>
+            </div> 
+            <div class="form-outline mb-3">
+                <label asp-for="Input.Password" class="form-label"><b>Password</b></label>
+                <input asp-for="Input.Password" class="form-control form-control-lg" aria-required="true" />               
+                <span asp-validation-for="Input.Password" class="text-danger"></span>
+            </div>
+            <div class="form-outline mb-3">
+                <label asp-for="Input.ConfirmPassword" class="form-label"><b>ConfirmPassword</b></label>
+                <input asp-for="Input.ConfirmPassword" class="form-control form-control-lg" aria-required="true" />                
+                <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
+            </div>
+            <button id="registerSubmit" type="submit" class="w-100 btn btn-lg btn-primary">Register</button>       
+    </div>
+ @*    <div class="col-md-6 col-md-offset-2">
+    </div> *@
+</div>
+</form>
+<h2>Recently Created Users</h2>
+<hr/>
+<div class="row">
+    <table class="table table-striped">
+        <tr>
+            <th>Username</th>
+            <th>First Names</th>
+            <th>Surname</th>
+            <th>Roles</th>
+            <th>Added On</th>
+            <th>Added By</th>
+        </tr>
+        @if (Model.UsersDT != null)
+        {
+            @foreach (DataRow DR in Model.UsersDT.Rows)
+            {
+                <tr>
+                    <td>@DR["UserName"]</td>
+                    <td>@DR["FirstNames"]</td>
+                    <td>@DR["Surname"]</td>
+                    <td>@DR["Roles"]</td>
+                    <td>@DR["AddedOn"]</td>
+                    <td>@DR["AddedBy"]</td>                    
+                </tr>
+            }
+        }
+    </table>
+</div>
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
+<style>
+    .large-checkbox {
+        width: 20px;
+        height: 20px;
+    }
+
+    .bold {
+        font-weight: bold;
+    }
+</style>

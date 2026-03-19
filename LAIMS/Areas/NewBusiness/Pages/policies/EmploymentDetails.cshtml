@@ -1,0 +1,160 @@
+﻿@page
+@model LAIMS.Areas.NewBusiness.Pages.policies.EmploymentDetailsModel
+@{
+}
+@{
+    Layout = "/Pages/Shared/_LayoutSearchNewBusiness.cshtml";
+}
+<h2>@ViewData["Title"]</h2>
+<div class="row mb-3">
+    <div class="bg-light">
+        <hr />
+        <h3>Add Premium Payer Employment Details</h3>
+        <div class="nav-wizards-container">
+            <nav class="nav nav-wizards-1 mb-2">
+                <div class="nav-item col">
+                    <a class="nav-link completed" href="#">
+                        <div class="nav-no">1</div>
+                        <div class="nav-text">Select Policy</div>
+                    </a>
+                </div>
+                <div class="nav-item col">
+                    <a class="nav-link completed" asp-page="Applicants" asp-route-id="@Model.ID" asp-route-policyid="@Model.PolicyID" asp-route-policyTypeId="@Model.PolicyTypeID">
+                        <div class="nav-no">2</div>
+                        <div class="nav-text">Add Details</div>
+                    </a>
+                </div>
+                <div class="nav-item col">
+                    <a class="nav-link completed" asp-page="ivshares" asp-route-id="@Model.ID" asp-route-policyid="@Model.PolicyID" asp-route-policyTypeId="@Model.PolicyTypeID">
+                        <div class="nav-no">3</div>
+                        <div class="nav-text">Split</div>
+                    </a>
+                </div>
+                <div class="nav-item col">
+                    <a class="nav-link completed" asp-page="documents" asp-route-id="@Model.ID" asp-route-policyid="@Model.PolicyID" asp-route-policyTypeId="@Model.PolicyTypeID">
+                        <div class="nav-no">4</div>
+                        <div class="nav-text">Documents</div>
+                    </a>
+                </div>
+                <div class="nav-item col">
+                    <a class="nav-link completed" asp-page="pbquestionnaires" asp-route-id="@Model.ID" asp-route-policyid="@Model.PolicyID" asp-route-policyTypeId="@Model.PolicyTypeID">
+                        <div class="nav-no">5</div>
+                        <div class="nav-text">Questionnaires</div>
+                    </a>
+                </div>
+                <div class="nav-item col">
+                    <a class="nav-link completed" asp-page="ppdetails" asp-route-id="@Model.ID" asp-route-policyid="@Model.PolicyID" asp-route-policyTypeId="@Model.PolicyTypeID">
+                        <div class="nav-no">6</div>
+                        <div class="nav-text">Payments</div>
+                    </a>
+                </div>
+                <div class="nav-item col">
+                    <a class="nav-link active" href="#">
+                        <div class="nav-no">7</div>
+                        <div class="nav-text">Employment</div>
+                    </a>
+                </div>
+                <div class="nav-item col">
+                    <a class="nav-link disabled" href="#">
+                        <div class="nav-no">8</div>
+                        <div class="nav-text">Submission</div>
+                    </a>
+                </div>
+            </nav>
+        </div>
+        <hr />
+    </div> 
+    <div class="container mt-4  bg-white rounded">
+        <h3>Instructions</h3>
+
+        <ul class="list-unstyled"> 
+            <li class="ms-4">1. To find an employer type a single keyword in the search box above.</li>
+            <li class="ms-4">2. Try as much as possible to reuse existing entries, so that reporting is not distorted.</li>
+            <li class="ms-4">3. Only enter a new employer if you can't find them!</li>
+        </ul>
+    </div>
+</div>
+@if (Model.SearchTerm != null)
+{
+    <form method="post">
+        <input type="hidden" asp-for="@Model.ID" />
+        <input type="hidden" asp-for="@Model.PolicyID" />
+        <input type="hidden" asp-for="@Model.PolicyTypeID " />
+        <input type="hidden" asp-for="@Model.OrganisationFound"/>
+        @if (Model.OrganisationFound)
+        {
+            <h3>@Model.ResultsCount Organisation/s Found:</h3>
+            <div class="row mb-3">
+                <select asp-for="@Model.Employment.EmployerID" class="form-control" required asp-items="Model.OrganisationsList">
+                    <option value="">Select Employer</option>
+                </select>
+                <span asp-validation-for="@Model.Employment.EmployerID" class="text-danger"></span>
+            </div>
+        }
+        else if (Model.ShowAddSection)
+        {
+            <h3>Employer Not Found</h3>
+            <div class="form-group">
+                <label asp-for="Employment.Employer"><b>Employer Name</b></label>
+                <input type="text" asp-for="Employment.Employer" required class="form-control" />
+            </div>
+        }
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label asp-for="@Model.Employment.CategoryID"><b>Category</b></label>
+                    <select asp-for="@Model.Employment.CategoryID" class="form-control" required asp-items="Model.CategoriesList">
+                        <option value="">Select Category</option>
+                    </select>
+                    <span asp-validation-for="@Model.Employment.CategoryID" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label asp-for="@Model.Employment.JobTitle"><b>Job Title</b></label>
+                    <input asp-for="@Model.Employment.JobTitle" class="form-control" autocomplete="off" />
+                    <span asp-validation-for="@Model.Employment.JobTitle" class="text-danger"></span>
+                </div>
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label asp-for="@Model.Employment.EmploymentNo"><b>Employment No</b></label>
+                    <input asp-for="@Model.Employment.EmploymentNo" class="form-control" autocomplete="off" />
+                    <span asp-validation-for="@Model.Employment.EmploymentNo" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <label asp-for="@Model.Employment.SalaryCurrencyID" class="control-label"><b>Currency</b></label>
+                <select asp-for="@Model.Employment.SalaryCurrencyID" required class="form-control" asp-items="Model.Currencies"></select>
+                <span asp-validation-for="@Model.Employment.SalaryCurrencyID" class="text-danger"></span>
+            </div>
+             <div class="col-md-2">
+                <div class="form-group">
+                    <label asp-for="@Model.Employment.GrossSalary"><b>Gross Salary</b></label>
+                    <input asp-for="@Model.Employment.GrossSalary" class="form-control" autocomplete="off" />
+                    <span asp-validation-for="@Model.Employment.GrossSalary" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="form-group">
+                    <label asp-for="@Model.Employment.NetSalary"><b>Net Salary</b></label>
+                    <input asp-for="@Model.Employment.NetSalary" class="form-control" autocomplete="off" />
+                    <span asp-validation-for="@Model.Employment.NetSalary" class="text-danger"></span>
+                </div>
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="form-group">
+                <br />
+                <button type="submit" class="btn btn-primary fixed-width-btn float-end">Submit</button>
+            </div>
+        </div> 
+    </form>
+}
+<div class="row mb-3">
+    <form method="post">
+        <button type="Next" asp-route-policyid="@Model.PolicyID" asp-route-id="@Model.ID" asp-route-policytypeid="@Model.PolicyTypeID" asp-page-handler="Next" class="btn btn-info fixed-width-btn float-end">Next>></button>
+    </form>
+</div>

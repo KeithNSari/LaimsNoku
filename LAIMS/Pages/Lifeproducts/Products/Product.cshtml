@@ -1,0 +1,54 @@
+﻿@page
+@using System.Data  
+@model ProductModel
+@{
+}
+<h2>Create Product</h2>
+<hr />
+<div class="row">
+    <div class="col-md-6">
+        <form method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="mb-3">
+                <label asp-for="Product.ProductName" class="control-label">Product Name</label>
+                <input asp-for="Product.ProductName" class="form-control" />
+                <div id="productHelp" class="form-text">*If you have saved the same product before, this submission will be ignored!</div>
+                <span asp-validation-for="Product.ProductName" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Product.Description" class="control-label"></label>
+                <input asp-for="Product.Description" class="form-control" />
+                <span asp-validation-for="Product.Description" class="text-danger"></span>
+            </div> 
+                <input type="submit" value="Create" class="btn btn-primary" />
+            <a class="btn btn-success" asp-page="ProductList"> View Full List</a>
+        </form>
+    </div>
+    <div class="col-md-6">
+        <table class="table table-hover">
+            <tr>
+                <th>Product</th>
+                <th ></th>
+            </tr>
+            @if (Model.ProductsDT != null)
+            {
+                @foreach (DataRow DR in Model.ProductsDT.Rows)
+                {
+                    <tr>
+                        <td>@DR["Product"]</td>
+                        <td  class="text-end">
+                            <a asp-page="Edit" asp-route-id="@DR["ID"]" class="btn btn-outline-primary btn-sm">Edit</a> 
+                            <a asp-page="Details" asp-route-id="@DR["ID"]" class="btn btn-info btn-sm">Details</a> 
+                            <a asp-page="Delete" asp-route-id="@DR["ID"]" class="btn btn-danger btn-sm">Delete</a>
+                        </td>
+                    </tr>
+                }
+            }
+        </table>
+    </div>
+</div>
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+} 

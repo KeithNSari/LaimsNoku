@@ -1,0 +1,332 @@
+﻿@page
+@using System.Data
+@model LAIMS.Areas.Claims.Pages.PUFinalApprovalModel
+@{
+}
+@{
+    Layout = "/Pages/Shared/_LayoutProducts.cshtml";
+}
+<h1>Approve Claim</h1>
+<div class="nav-wizards-container">
+    <nav class="nav nav-wizards-1 mb-2">
+        <div class="nav-item col">
+            <a class="nav-link disabled" href="#">
+                <div class="nav-no">1</div>
+                <div class="nav-text">Create Claim</div>
+            </a>
+        </div>
+        <div class="nav-item col">
+            <a class="nav-link disabled" href="#">
+                <div class="nav-no">2</div>
+                <div class="nav-text">Add Documents</div>
+            </a>
+        </div>
+        <div class="nav-item col">
+            <a class="nav-link disabled" href="#">
+                <div class="nav-no">3</div>
+                <div class="nav-text">Payment Details</div>
+            </a>
+        </div>
+        <div class="nav-item col">
+            <a class="nav-link disabled" href="#">
+                <div class="nav-no">4</div>
+                <div class="nav-text">Service Breakdown</div>
+            </a>
+        </div>
+        <div class="nav-item col">
+            <a class="nav-link disabled" href="#">
+                <div class="nav-no">5</div>
+                <div class="nav-text">Documents</div>
+            </a>
+        </div>
+        <div class="nav-item col">
+            <a class="nav-link disabled" href="#">
+                <div class="nav-no">6</div>
+                <div class="nav-text">Submission</div>
+            </a>
+        </div>
+        <div class="nav-item col">
+            <a class="nav-link active" href="#">
+                <div class="nav-no">7</div>
+                <div class="nav-text">Approve</div>
+            </a>
+        </div>
+    </nav>
+</div>
+<h3>Investment Claim Details</h3>
+<p>Scroll through details, then apply your decision!</p>
+<hr />
+<div class="row mb-3">
+    @if (Model.PoliciesDT != null)
+    {
+        @foreach (DataRow DR in Model.PoliciesDT.Rows)
+        {
+            <h3>Client: @DR["MemberName"].ToString()</h3>
+            <hr />
+            <table class="table table-hover">
+                <tr>
+                    <th>Entry</th>
+                    <th>Commencement</th>
+                    <th>Policy No</th>
+                    <th>Policy</th>
+                    <th>Investment Content</th>
+                </tr>
+                <tr>
+                    <td>@DR["EntryNo"]</td>
+                    <td>@DR["CommencementDate"]</td>
+                    <td>@DR["PolicyNo"]</td>
+                    <td>@DR["PolicyTypeName"]</td>
+                    <td>@DR["InvestmentContentBalance"]</td>
+                </tr>
+            </table>
+        }
+    }
+</div>
+<div class="row mb-3">
+    @if ((Model.UnitTrustBalancesDT != null) && (Model.UnitTrustBalancesDT.Rows.Count > 0))
+    {
+        <h3>Proposed Sell</h3>
+        <hr />
+        <table class="table table-hover">
+            <tr>
+                <th>Fund</th>
+                <th>Available Units</th>
+                <th>Bid Price</th>
+                <th>ProposedUnits</th>
+                <th>Value</th>
+            </tr>
+            @foreach (DataRow DR in Model.UnitTrustBalancesDT.Rows)
+            {
+                <tr>
+                    <td>@DR["UnitTrust"]</td>
+                    <td>@DR["AvailableUnits"]</td>
+                    <td>@DR["BidPrice"]</td>
+                    <td>@DR["ProposedUnits"]</td>
+                    <td>@DR["Value"]</td>
+                </tr>
+            }
+        </table>
+    }
+</div>
+<div class="row mb-3">
+    @if (Model.ExpensesDT != null)
+    {
+        <h3>Policy Claim Expenses</h3>
+        <hr />
+        <table class="table table-hover">
+            <tr>
+                <th>Entry</th>
+                <th>Expense</th>
+                <th>Currency</th>
+                <th>Amount</th>
+            </tr>
+            @foreach (DataRow DR in Model.ExpensesDT.Rows)
+            {
+                <tr>
+                    <td>@DR["ID"]</td>
+                    <td>@DR["Expense"]</td>
+                    <td class="text-right">@DR["Currency"]</td>
+                    <td class="text-right">@DR["Amount"]</td>
+                </tr>
+            }
+            <tr>
+                <td></td>
+                <td></td>
+                <td class="text-right"><strong>Total:</strong></td>
+                <td class="text-right">@Model.ExpensesTotal.ToString("F2")</td>
+            </tr>
+        </table>
+    }
+</div>
+<h2>Uploaded Documents</h2>
+<div class="row">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Document Name</th>
+                <th>Filing No</th>
+                <th> Added</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (int i = 0; i < Model.FileUploadModelList.Count; i++)
+            {
+                <tr>
+                    <td>@Model.FileUploadModelList[i].DocumentName</td>
+                    <td>@Model.FileUploadModelList[i].FilingNo</td>
+                    <td>@Model.FileUploadModelList[i].AddedOn</td>
+                    <td>
+                        @if (Model.FileUploadModelList[i].Uploaded)
+                        {
+                            <button type="button" data-bs-toggle="modal" data-bs-target="#pdfModal" data-url="ClaimDocuments?handler=DownloadPdfFromDatabase&docId=@Model.FileUploadModelList[i].MediaUploadID" class="btn btn-success">View</button>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+<h3>Claim Rule Checks</h3>
+<hr />
+<div class="row mb-3">
+    <table class="table table-hover">
+        <tr>
+            <th>No</th>
+            <th class="col-md-3">Rule</th>
+            <th class="col-md-2">Status</th>
+            <th class="col-md-2">Comment</th>
+            <th class="col-md-2">Date</th>
+            <th class="col-md-2">Added By</th>
+        </tr>
+        @if (Model.StatiiHistoryDT != null)
+        {
+            @foreach (DataRow DR in Model.StatiiHistoryDT.Rows)
+            {
+                <tr>
+                    <td>@DR["row_number"]</td>
+                    <td>@DR["RuleName"]</td>
+                    <td>@DR["Status"]</td>
+                    <td>@DR["StatusComment"]</td>
+                    <td>@DR["StatusDate"]</td>
+                    <td>@DR["UserName"]</td>
+                </tr>
+            }
+        }
+    </table>
+</div>
+@if ((Model.SubmittedByDT != null) && (Model.SubmittedByDT.Rows.Count > 0))
+{
+    <hr />
+    <h3>Submitted By</h3>
+    <div class="row mb-3">
+        <table class="table table-striped">
+            <tr>
+                <th class="col-md-6">Member Name</th>
+                <th class="col-md-3">National ID</th>
+                <th class="col-md-3">Added On</th>
+            </tr>
+            @foreach (DataRow DR in Model.SubmittedByDT.Rows)
+            {
+                <tr>
+                    <td>@DR["MemberName"]</td>
+                    <td>@DR["NationalID"]</td>
+                    <td>@DR["AddedOn"]</td>
+                </tr>
+            }
+        </table>
+    </div>
+}
+<hr />
+<h3> System Decision: @Model.SystemDecision</h3>
+<hr />
+<div class="row">
+    <b>Signed On: @Model.SignedOn</b>
+</div>
+<hr />
+
+<!-- Modal -->
+<div class="modal fade" id="pdfModal" tabindex="-1" role="dialog" aria-labelledby="pdfModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="pdfModalLabel">PDF Viewer</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Add an iframe for displaying the PDF -->
+                <iframe id="pdfIframe" width="100%" height="400px" frameborder="0"></iframe>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<h3>Supervisor Decision: Exgratia Requested</h3>
+<hr />
+<hr />
+<h3>Requested Amount: @Model.DisbursementAmount</h3>
+<hr />
+<form method="post"> 
+    <input type="hidden" asp-for="@Model.ProposerID" />
+    <input type="hidden" asp-for="@Model.RequestID" />
+    <div class="row mb-3">
+        <div class="col-sm-3">
+            <div class="form-group">
+                <label asp-for="@Model.StatusID"><b>Decision</b></label>
+                <select asp-for="@Model.StatusID" class="form-control" required onchange="toggleExgratia()">
+                    <option value="">Select Decision</option>
+                    <option value=3150>Request More Information</option>
+                    <option value=3200>Claim Rejected</option>
+                    <option value=3350>Claim Approved</option>
+                </select>
+                <span asp-validation-for="@Model.StatusID" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="col-sm-9">
+            <div class="form-group">
+                <label asp-for="@Model.StatusComment"><b>Comment</b></label>
+                <textarea asp-for="@Model.StatusComment" class="form-control"></textarea>
+                <span asp-validation-for="@Model.StatusComment" class="text-danger"></span>
+            </div>
+        </div>
+    </div>
+    <div class="row mb-3">
+        <div class="col-sm-10">
+        </div>
+        <div class="col-sm-2">
+            <button type="submit" class="btn btn-info float-end">Submit</button>
+        </div>
+    </div>
+</form>
+@section scripts {
+    <script>
+        $(document).ready(function () {
+            $('#pdfModal').on('show.bs.modal', function (event) {
+                var button = $(event.relatedTarget);
+                var url = button.data('url');
+                openPdfModal(url);
+            });
+        });
+        function openPdfModal(pdfSource) {
+            // Make a Fetch API request to fetch PDF data from the server
+            fetch(pdfSource, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/pdf', // Adjust the content type as needed
+                },
+                responseType: 'blob', // Specify that you want the response as a Blob
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.blob(); // Get the response as a Blob
+                })
+                .then(blobData => {
+                    try {
+                        console.log('Blob created:', blobData);
+
+                        // Create a data URL from the Blob
+                        var pdfUrl = URL.createObjectURL(blobData);
+                        console.log('PDF URL created:', pdfUrl);
+
+                        // Update the iframe source with the PDF data URL
+                        $('#pdfIframe').attr('src', pdfUrl);
+                        console.log('IFrame src:', pdfUrl);
+
+                        // Show the modal
+                        $('#pdfModal').modal('show');
+                    } catch (error) {
+                        console.error('Error processing PDF data:', error);
+                    }
+                })
+                .catch(error => {
+                    console.error('Fetch error:', error);
+                });
+        }
+    </script>
+}

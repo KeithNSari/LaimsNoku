@@ -1,0 +1,177 @@
+﻿@page
+@using System.Data
+@model LAIMS.Areas.Investments.Pages.PolicyUnitsIndexModel
+@{
+}
+@{
+    Layout = "/Pages/Shared/_LayoutSearch.cshtml";
+}
+<h1>Policy Units Index</h1>
+<p>Search for a policy to get started. N.B: Policy must have an investment product!</p>
+<hr />
+@if (Model.SearchTerm != null)
+{
+    @if (Model.PoliciesDT != null)
+    {
+        <div class="row mb-3">
+            @if (@Model.ResultsCount == 0)
+            {
+                <h5>0 valid policies found for search "@Model.SearchTerm"! Please note that the policy must have an investment product!</h5>
+                <hr />
+            } 
+        </div>
+    }
+   
+}
+<div class="row mb-3">
+    @if (Model.PoliciesDT != null)
+    {
+        @foreach (DataRow DR in Model.PoliciesDT.Rows)
+        {
+            <h3>Client: @DR["MemberName"].ToString()</h3>
+            <hr />           
+                <table class="table table-hover">
+                    <tr>
+                        <th>Entry</th>
+                        <th>Commencement</th>
+                        <th>Policy No</th>
+                        <th>Policy</th>
+                        <th>Investment Content</th> 
+                    </tr>
+                    <tr>
+                        <td>@DR["EntryNo"]</td>
+                        <td>@DR["CommencementDate"]</td>
+                        <td>@DR["PolicyNo"]</td>
+                        <td>@DR["PolicyTypeName"]</td>
+                        <td>@DR["InvestmentContentBalance"]</td> 
+                    </tr>
+                </table>            
+        }
+    }
+</div>
+<div class="row mb-3">
+    @if ((Model.UnitTrustBalancesDT != null) &&(Model.UnitTrustBalancesDT.Rows.Count>0))
+    {
+        <h3>Fund Balances</h3>
+        <hr />
+        <table class="table table-hover">
+            <tr>
+                <th>Fund</th>
+                <th>Units</th>
+                <th>Last Updated</th>
+            </tr>
+            @foreach (DataRow DR in Model.UnitTrustBalancesDT.Rows)
+            {
+                <tr>
+                    <td>@DR["UnitTrust"]</td>
+                    <td>@DR["TotalUnits"]</td>
+                    <td>@DR["LastUpdated"]</td>
+                </tr>
+            }
+        </table>
+    }
+</div>
+@* @if(Model.AvailableBalance>0){ *@
+<form method="post">
+    <input type="hidden" asp-for="@Model.SearchTerm" />
+    <div class="row mb-3">
+        <h5>Units Sales</h5>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th class="col-md-3">Fund</th>
+                    <th class="col-md-3">Price</th>
+                    <th class="col-md-3">Amount</th>
+                    <th class="col-md-3">Quantity</th>
+                </tr>
+            </thead>
+            <tbody id="cartItems">
+                @foreach (var item in Model.UnitPrices)
+                {
+                    <tr>
+                        <td>@item.UnitTrust</td>
+                        <td>@item.OfferPrice</td>
+                        <td>
+                            <input type="hidden" name="UnitTrustIDS" value="@item.UnitTrustID" />
+                            <input type="number" name="PurchaseAmounts" class="form-control amount-input" value="@item.Amount" data-price="@item.OfferPrice" />
+                        </td>
+                        <td class="total-quantity">@item.TotalQuantity</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <h5>Total Amount Spent: $<span id="totalAmountSpent">0.00</span></h5>
+    </div>
+    <div class="row mb-3">
+        <div class="col-md-11"></div>
+        <div class="col-md-1">
+            <input type="submit" value="Add" class="btn btn-primary" />
+        </div>
+    </div>
+</form>
+<div class="row mb-3">
+    @if ((Model.TransactionHistoryDT != null) && (Model.TransactionHistoryDT.Rows.Count > 0))
+    {
+        <h3>Purchase Transaction History</h3>
+        <hr />
+
+        <table class="table table-hover">
+            <tr>
+                <th>Fund</th>
+                <th>Units</th>
+                <th>Unit Price</th>
+                <th>Date</th>
+            </tr>
+            @foreach (DataRow DR in Model.TransactionHistoryDT.Rows)
+            {
+                <tr>
+                    <td>@DR["UnitTrust"]</td>
+                    <td>@DR["Units"]</td>
+                    <td>@DR["OfferPrice"]</td>
+                    <td>@DR["AddedOn"]</td>
+                </tr>
+            }
+        </table>
+    }
+</div>
+@* } *@
+    @section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const amountInputs = document.querySelectorAll('.amount-input');
+            const totalAmountSpentElement = document.getElementById('totalAmountSpent');
+
+            function updateRowTotal(input) {
+                const amount = parseFloat(input.value) || 0;
+                const price = parseFloat(input.dataset.price);
+                const totalQuantityCell = input.closest('tr').querySelector('.total-quantity');
+                const totalQuantity = amount / price;
+                totalQuantityCell.textContent = totalQuantity.toFixed(7); // Format to 7 decimal places
+
+                updateTotalAmountSpent();
+            }
+
+            function updateTotalAmountSpent() {
+                let totalAmountSpent = 0;
+
+                amountInputs.forEach(input => {
+                    const amount = parseFloat(input.value) || 0;
+                    totalAmountSpent += amount;
+                });
+
+                totalAmountSpentElement.textContent = totalAmountSpent.toFixed(7); // Format to 7 decimal places
+            }
+
+            amountInputs.forEach(input => {
+                input.addEventListener('input', function () {
+                    updateRowTotal(this);
+                });
+            });
+
+            // Initialize totals on page load
+            amountInputs.forEach(input => {
+                updateRowTotal(input);
+            });
+        });
+    </script>
+    }

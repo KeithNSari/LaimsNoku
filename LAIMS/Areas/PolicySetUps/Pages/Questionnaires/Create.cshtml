@@ -1,0 +1,311 @@
+﻿@page
+@using System.Data;
+@model LAIMS.Areas.PolicySetUps.Pages.Questionnaires.CreateModel
+@{
+}
+@{
+    Layout = "/Pages/Shared/_LayoutProducts.cshtml";
+}
+<h1>Manage Questionnaires</h1> 
+@if (!string.IsNullOrEmpty(ViewData["ErrorMessage"]?.ToString()))
+{
+    <p class="text-danger">@ViewData["ErrorMessage"]</p>
+}
+<div id="tabs-container mb-3 border border-primary">
+    <div class="row">
+        <div class="tab col-sm-3 bg-light" onclick="openTab('tab1')"><b>Questions</b></div>
+        <div class="tab col-sm-3 bg-light" onclick="openTab('tab2')"><b>Responses</b></div>
+        <div class="tab col-sm-3 bg-light" onclick="openTab('tab3')"><b>Questionnaires</b></div>
+        <div class="tab col-sm-3 bg-light" onclick="openTab('tab4')"><b>Questionnaire Entries</b></div>
+    </div>
+    <!-- Add more tabs as needed -->
+    <div class="row">
+        <div id="tab1" class="tab-content show active border-0">
+            <div>
+                <h3 class="text-end">Questions</h3>
+                <form method="post">
+                    <input type="hidden" asp-for="ReturnUrl" />
+                    <div class="form-group mb-3">
+                        <div class="row">
+                            <div class="col-md-1">
+                                <label asp-for="Question.QuestionNo"><b>No</b></label>
+                                <input asp-for="Question.QuestionNo" class="form-control" />
+                                <span asp-validation-for="Question.QuestionNo" class="text-danger"></span>
+                            </div>
+                          <div class="col-md-2">
+                                <label asp-for="Question.QuestionLabel"><b>Label</b></label>
+                                <input asp-for="Question.QuestionLabel" class="form-control" />
+                                <span asp-validation-for="Question.QuestionLabel" class="text-danger"></span>
+                          </div>
+                          <div class="col-md-9">
+                                <label asp-for="Question.QuestionText"><b>Question</b></label>
+                                <input asp-for="Question.QuestionText" class="form-control" />
+                                <span asp-validation-for="Question.QuestionText" class="text-danger"></span>
+                          </div>
+                        </div>                       
+                    </div>
+                    <div class="form-group mb-3">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <label asp-for="Question.QuestionTypeID"><b>Type</b></label>
+                                <select asp-for="Question.QuestionTypeID" class="form-control">
+                                    <option value="">Select Type</option>
+                                    <option value=1>Single Selection</option>
+                                    <option value=2>Multiple Selection</option>
+                                    <option value=3>Open</option>
+                                </select>
+                                <span asp-validation-for="Question.QuestionTypeID" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-3">
+                                <label asp-for="Question.Weight"><b>Weight</b></label>
+                                <input asp-for="Question.Weight" class="form-control" />
+                                <span asp-validation-for="Question.Weight" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-3">
+                                <br/>
+                                <button type="submit" class="btn btn-primary" asp-page-handler="CreateQuestions">Create</button>
+                            </div>
+                        </div>                       
+                    </div>                       
+                </form>
+                <h4>Questions</h4>
+                <form method="post">
+                    <input type="hidden" asp-for="ReturnUrl" />
+                    <table class="table table-striped">
+                        <tr>
+                            <th>Index</th> 
+                            <th>No</th>
+                            <th>Label</th>
+                            <th>Question</th>
+                            <th>Type</th>
+                            <th></th>
+                        </tr>
+                        @if (Model.QuestionsDT != null)
+                        {
+                            @foreach (DataRow DR in Model.QuestionsDT.Rows)
+                            {
+                                <tr>
+                                    <td>@DR["Index"]</td>
+                                    <td>@DR["QuestionNo"]</td>
+                                    <td>@DR["QuestionLabel"]</td>
+                                    <td>@DR["Question"]</td>
+                                    <td>@DR["QuestionType"]</td>
+                                    <td class="text-end">
+                                        <button type="submit" asp-route-id="@DR["ID"]" asp-page-handler="Remove" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to remove this item?');">Archive</button>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </table>
+                </form>
+            </div>
+        </div>
+        <div id="tab2" class="tab-content border-0">
+            <h3 class="text-end">Responses</h3>
+            <form method="post">
+                <input type="hidden" asp-for="ReturnUrl" />
+                <div class="form-group mb-3">
+                    <label asp-for="QuestionExpectedResponse.QuestionID" class="control-label"><b>Question</b></label>
+                    <select asp-for="QuestionExpectedResponse.QuestionID" asp-items="@(new SelectList(Model.Questions, "ID", "QuestionText"))" class="form-control" id="QsnsDropdown">
+                        <option value="">Select Question</option>
+                    </select>
+                </div> 
+                <div class="row mb-3">                
+                    <div class="col-md-2">
+                        <label asp-for="QuestionExpectedResponse.Label"><b>Label</b></label>
+                        <input asp-for="QuestionExpectedResponse.Label" class="form-control" />
+                        <span asp-validation-for="QuestionExpectedResponse.Label" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-8">
+                        <label asp-for="QuestionExpectedResponse.ExpectedResponse"><b>Response</b></label>
+                        <input asp-for="QuestionExpectedResponse.ExpectedResponse" class="form-control" />
+                        <span asp-validation-for="QuestionExpectedResponse.ExpectedResponse" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-2">
+                        <label asp-for="QuestionExpectedResponse.Weight"><b>Weight</b></label>
+                        <input asp-for="QuestionExpectedResponse.Weight" class="form-control" />
+                        <span asp-validation-for="QuestionExpectedResponse.Weight" class="text-danger"></span>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary" asp-page-handler="AddResponses">Create</button>
+            </form>
+            <h4>Responses</h4>
+            <form method="post">
+                <input type="hidden" asp-for="ReturnUrl" />
+                <table class="table table-striped">
+                    <tr> 
+                        <th>No</th> 
+                        <th>Question</th>
+                        <th>Responses</th>
+                        <th></th>
+                    </tr>
+                    @if (Model.QuestionsDT != null)
+                    {
+                        @foreach (DataRow DR in Model.ResponsesDT.Rows)
+                        {
+                            <tr> 
+                                <td>@DR["QuestionNo"]</td> 
+                                <td>@DR["Question"]</td>
+                                <td>@DR["Responses"]</td>
+                                <td class="text-end">
+                                    <button type="submit" asp-route-id="@DR["QuestionID"]" asp-page-handler="RemoveResponses" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to remove this item?');">Archive</button>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </table>
+            </form>
+        </div>       
+        <!-- Add more tab content as needed -->
+        <div id="tab3" class="tab-content border-0">
+            <h3 class="text-end">Questionnaires</h3> 
+            <form method="post">
+                <input type="hidden" asp-for="ReturnUrl" />
+                <div class="form-group mb-3">
+                    <label asp-for="Questionnaire.Title"><b>Title</b></label>
+                    <input asp-for="Questionnaire.Title" class="form-control" />
+                    <span asp-validation-for="Questionnaire.Title" class="text-danger"></span>
+                </div>
+                <button type="submit" class="btn btn-primary" asp-page-handler="AddQuestionnaire">Create</button>
+            </form>
+            <h4>Questionnaires</h4>
+            <form method="post">
+                <table class="table table-striped">
+                    <tr>
+                        <th class="col-md-5">Title</th>
+                        <th class="col-md-3">Added On</th> 
+                        <th class="col-md-1"></th>
+                        <th class="col-md-1"></th>
+                    </tr>
+                    @if (Model.QuestionnairesDT!= null)
+                    {
+                        @foreach (DataRow DR in Model.QuestionnairesDT.Rows)
+                        {
+                            <tr>
+                                <td>@DR["Title"]</td>
+                                <td>@DR["AddedOn"]</td> 
+                                <td class="text-end">
+                                    <a asp-page="Preview" asp-route-id="@DR["ID"]" class="btn btn-success btn-sm">Preview</a>
+                                </td>
+                                <td class="text-end"> 
+                                    <button type="submit" asp-route-id="@DR["ID"]" asp-page-handler="RemoveQuestionnaire" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to remove this item?');">Archive</button>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </table>
+            </form>
+        </div>
+        <div id="tab4" class="tab-content border-0">
+            <h3 class="text-end">Add Questionnaire Entries</h3>
+            <form method="post" id="questionnaireEntriesForm" asp-route-tab="tab4" asp-page-handler="LoadQuestionnaireQsns">
+                <input type="hidden" asp-for="ReturnUrl" />
+                <div class="form-group mb-3">
+                    <label asp-for="QuestionnaireQsn.Questionnaire" class="control-label"><b>Questionnaire</b></label>
+                    <select asp-for="QuestionnaireQsn.Questionnaire" asp-items="@(new SelectList(Model.MyQuestionnaires, "ID", "Title"))" class="form-control" id="questionnairesDL">
+                        <option value="">Select Questionnaire</option>
+                    </select>
+                </div> 
+                <div class="form-group mb-3">
+                    <label asp-for="QuestionnaireQsn.Question" class="control-label"><b>Question</b></label>
+                    <select asp-for="QuestionnaireQsn.Question" asp-items="@(new SelectList(Model.AllQuestions, "ID", "QuestionText"))" class="form-control">
+                        <option value="">Select Question</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary" asp-page-handler="AddQuestionnaireQsn">Create</button>
+            </form>
+            <h4>Questionnaires</h4>
+            <hr />
+            <form method="post">
+                <input type="hidden" asp-for="ReturnUrl" />
+                @if (Model.QuestionnairesQsnsDT != null)
+                {
+                    @for (int i = 0; i < Model.QuestionnairesQsnsDT.Rows.Count; i++)
+                    {
+                        <div class="row mb-3">
+                            @if ((i > 0) && (Model.QuestionnairesQsnsDT.Rows[i]["Questionnaire"].ToString() != Model.QuestionnairesQsnsDT.Rows[i - 1]["Questionnaire"].ToString()))
+                            {
+                                <hr />
+                            }
+                            <div class="col-md-4">
+                                @if (i == 0)
+                                {
+                                    <b>@Model.QuestionnairesQsnsDT.Rows[i]["Questionnaire"]</b>
+                                    <br/>
+                                    <a asp-page="Preview" asp-route-id="@Model.QuestionnairesQsnsDT.Rows[i]["QuestionnaireID"]" class="btn btn-success btn-sm">Preview</a>
+                                }
+                                else
+                                {
+                                    if (Model.QuestionnairesQsnsDT.Rows[i]["Questionnaire"].ToString() != Model.QuestionnairesQsnsDT.Rows[i - 1]["Questionnaire"].ToString())
+                                    {                                       
+                                        <b>@Model.QuestionnairesQsnsDT.Rows[i]["Questionnaire"]</b>
+                                        <br />
+                                        <a asp-page="Preview" asp-route-id="@Model.QuestionnairesQsnsDT.Rows[i]["QuestionnaireID"]" class="btn btn-success btn-sm">Preview</a>
+                                    }
+                                }
+                            </div>
+                            <div class="col-md-7 bg-light">
+                                @Model.QuestionnairesQsnsDT.Rows[i]["QuestionNo"]@Model.QuestionnairesQsnsDT.Rows[i]["QuestionLabel"].   @Model.QuestionnairesQsnsDT.Rows[i]["Question"]
+                            </div>
+                            <div class="col-md-1">
+                                <button type="submit" asp-route-id="@Model.QuestionnairesQsnsDT.Rows[i]["QQID"]" asp-page-handler="RemoveQuestionnaireQsn" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to remove this item?');">Archive</button>
+                            </div>
+                        </div>
+                    }
+                }
+            </form>
+        </div>
+        <!-- Add more tab content as needed -->
+    </div>
+</div>
+@section scripts {
+    <script>
+        // function openTab(tabId) {
+        //     // Hide all tab content
+        //     var tabContents = document.getElementsByClassName('tab-content');
+        //     for (var i = 0; i < tabContents.length; i++) {
+        //         tabContents[i].classList.remove('show');
+        //     }
+
+        //     // Show the selected tab content
+        //     var selectedTab = document.getElementById(tabId);
+        //     if (selectedTab) {
+        //         selectedTab.classList.add('show');
+        //     }
+        // }
+
+        // Function to get query parameter value by name
+        function getQueryParam(name) {
+            var urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(name);
+        }
+
+        // Use the query parameter to open the specified tab on page load
+        document.addEventListener('DOMContentLoaded', function () {
+            var initialTab = getQueryParam('tab');
+            if (initialTab) {
+                openTab(initialTab);
+            }
+        });
+    </script>
+   @*  <script>
+        document.getElementById('questionnairesDL').addEventListener('change', function () {
+            document.getElementById('questionnaireEntriesForm').submit(); 
+        });
+    </script> *@ 
+    <script>
+        function openTab(tabId) {
+            // Hide all tab content
+            var tabContents = document.getElementsByClassName('tab-content');
+            for (var i = 0; i < tabContents.length; i++) {
+                tabContents[i].classList.remove('show');
+            }
+
+            // Show the selected tab content
+            var selectedTab = document.getElementById(tabId);
+            if (selectedTab) {
+                selectedTab.classList.add('show');
+            }
+        }
+    </script>
+}

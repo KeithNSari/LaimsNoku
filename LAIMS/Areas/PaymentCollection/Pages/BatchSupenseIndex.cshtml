@@ -1,0 +1,223 @@
+﻿@page
+@using System.Data
+@model LAIMS.Areas.PaymentCollection.Pages.BatchSupenseIndexModel
+@{
+}
+@{
+    Layout = "/Pages/Shared/_LayoutProducts.cshtml";
+}
+<h1>Batch Suspense Index</h1>
+<p>Allocation, Policy and System Suspense entries for the selected batch.</p> 
+<hr />
+<div class="row">
+    <div class="col-md-8">
+        <h4>@Model.BillingBatch.PaymentMethod: @Model.BillingBatch.Provider</h4>
+    </div>
+    <div class="col-md-4">
+        <h4>Billed: @Model.BillingBatch.Currency@Model.BillingBatch.BatchTotalAmount</h4>
+    </div>   
+    @* <div class="col-md-4">
+        <h4>Paid: @Model.BillingBatch.Currency@Model.BillingBatch.PaidTotalAmount </h4>
+    </div> *@
+</div>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <h4>Allocation Suspense: @Model.BillingBatch.Currency@Model.BillingBatch.AllocationSuspenseAmount</h4>
+    </div>
+    <div class="col-md-4">
+        <h4>Policy Suspense: @Model.BillingBatch.Currency@Model.BillingBatch.PolicySuspenseAmount</h4>
+    </div>
+    <div class="col-md-4">
+        <h4>System Suspense: @Model.BillingBatch.Currency@Model.BillingBatch.SystemSuspenseAmount</h4>
+    </div>
+</div>
+<hr />
+<div class="row"> 
+    <ul class="nav nav-tabs bg-white custom-nav-tab">
+        <li class="nav-item me-1"><a href="#" onclick="openTab('tab1')" class="nav-link  text-dark active" data-bs-toggle="tab">Allocation Suspense</a></li>
+        <li class="nav-item me-1"><a href="#" onclick="openTab('tab2')" class="nav-link text-dark" data-bs-toggle="tab">Policy Suspense</a></li>
+        <li class="nav-item me-1"><a href="#" onclick="openTab('tab3')" class="nav-link text-dark" data-bs-toggle="tab">System Suspense</a></li>
+        <li class="nav-item me-1"><a href="#" onclick="openTab('tab4')" class="nav-link text-dark" data-bs-toggle="tab">Unpaid</a></li>
+        <li class="nav-item me-1"><a href="#" onclick="openTab('tab5')" class="nav-link text-dark" data-bs-toggle="tab">Messages</a></li>
+    </ul>
+</div>
+<div id="tabs-container mb-3 border border-primary">    
+    <div class="row">
+        <div id="tab1" class="tab-content show active border-0">
+            <h2>Allocation Suspense</h2>
+            <p>Allocation Suspense entries for the selected batch.</p>
+            <hr />
+            <div class="row mb-3">
+                <table class="table table-hover">
+                    <tr>
+                        <th>Due Date</th> 
+                        <th>Proposer</th> 
+                        <th>Invoice No</th>
+                        <th>Receipt No</th>
+                        <th>Rec. Date</th>
+                        <th>Policy</th>
+                        <th>Reference</th>
+                        <th>Currency</th>
+                        <th>Amount</th> 
+                    </tr>
+                    @if (Model.AllocationSuspenseDT != null)
+                    {
+                        @foreach (DataRow DR in Model.AllocationSuspenseDT.Rows)
+                        {
+                            <tr>
+                                <td>@DR["DateDue"]</td> 
+                                <td>@DR["MemberName"]</td> 
+                                <td>@DR["InvoiceNo"]</td>
+                                <td>@DR["ReceiptNo"]</td>
+                                <td>@DR["DatePaymentReceived"]</td>
+                                <td>@DR["Policies"]</td>
+                                <td>@DR["ReferenceSummary"]</td>
+                                <td>@DR["Currency"]</td>
+                                <td>@DR["TotalAmount"]</td> 
+                            </tr>
+                        }
+                    }
+                </table>
+            </div>
+        </div>
+        <div id="tab2" class="tab-content border-0">
+            <h2>Policy Suspense</h2>
+            <p>Allocation Suspense entries for the selected batch.</p>
+            <hr />
+            <table class="table table-hover">
+                <tr>
+                    <th>Paid</th>
+                    <th>Policy</th> 
+                    <th>Proposer</th> 
+                    <th>National ID</th>
+                    <th>Method</th>
+                    <th>Reference</th>
+                    <th>Currency</th>
+                    <th>Balance</th> 
+                </tr>
+                @if (Model.PolicySuspenseDT != null)
+                {
+                    @foreach (DataRow DR in Model.PolicySuspenseDT.Rows)
+                    {
+                        <tr>
+                            <td>@DR["PaymentDate"]</td>
+                            <td>@DR["PolicyNo"]</td> 
+                            <td>@DR["MemberName"]</td> 
+                            <td>@DR["NationalID"]</td>
+                            <td>@DR["Method"]</td>
+                            <td>@DR["Reference"]</td>
+                            <td>@DR["Currency"]</td>
+                            <td>@DR["Balance"]</td> 
+                        </tr>
+                    }
+                }
+            </table>
+        </div>
+        <div id="tab3" class="tab-content border-0">
+            <h2>System Suspense</h2>
+            <p>System Suspense entries for the selected batch.</p>
+            <hr />
+            <table class="table table-hover">
+                <tr>
+                    <th>Paid</th>  
+                    <th>Method</th>
+                    <th>Target</th>
+                    <th>Reference</th>
+                    <th>Currency</th>
+                    <th>Balance</th> 
+                </tr>
+                @if (Model.SystemSuspenseDT != null)
+                {
+                    @foreach (DataRow DR in Model.SystemSuspenseDT.Rows)
+                    {
+                        <tr>
+                            <td>@DR["PaymentDate"]</td>  
+                            <td>@DR["Method"]</td>
+                            <td>@DR["TargetPolicyNo"]</td>
+                            <td>@DR["Reference"]</td>
+                            <td>@DR["Currency"]</td>
+                            <td>@DR["Balance"]</td> 
+                        </tr>
+                    }
+                }
+            </table>
+        </div>
+        <div id="tab4" class="tab-content border-0">
+            <h2>Unpaid</h2>
+            <p>Unpaid entries for the selected batch.</p>
+            <hr />
+            <table class="table table-hover">
+                <tr>
+                    <th>Due Date</th>
+                    <th>Policy No</th>
+                    <th>Full Name</th>
+                    <th>Invoice No</th> 
+                    <th>Currency</th>
+                    <th>Amount</th> 
+                </tr>
+                @if (Model.UnpaidDT != null)
+                {
+                    @foreach (DataRow DR in Model.UnpaidDT.Rows)
+                    {
+                        <tr>
+                            <td>@DR["DueDate"]</td>
+                            <td>@DR["PolicyNo"]</td>
+                            <td>@DR["FullName"]</td>
+                            <td>@DR["InvoiceNo"]</td>
+                            <td>@DR["Currency"]</td>
+                            <td>@DR["Amount"]</td> 
+                        </tr>
+                    }
+                }
+            </table>
+        </div>
+        <div id="tab5" class="tab-content border-0">
+            <h2>Messages</h2>
+            <p>Client messages for selected batch.</p>
+            <hr /> 
+            <div class="row mb-3">
+                <table class="table table-hover">
+                    <tr>
+                        <th>ID</th>
+                        <th>Invoice</th>
+                        <th>Policies</th>
+                        <th>Status</th> 
+                        <th>Message</th>
+                        <th>Date</th>
+                    </tr>
+                    @if (Model.MessagesDT != null)
+                    {
+                        @foreach (DataRow DR in Model.MessagesDT.Rows)
+                        {
+                            <tr>
+                                <td>@DR["ID"]</td>
+                                <td>@DR["InvoiceNo"]</td>
+                                <td>@DR["Policies"]</td>
+                                <td>@DR["Status"]</td> 
+                                <td>@DR["Message"]</td>
+                                <td>@DR["AddedOn"]</td>
+                            </tr>
+                        }
+                    }
+                </table>
+        </div>
+    </div>
+</div>
+@section scripts { 
+    <script>
+        function openTab(tabId) {
+            // Hide all tab content
+            var tabContents = document.getElementsByClassName('tab-content');
+            for (var i = 0; i < tabContents.length; i++) {
+                tabContents[i].classList.remove('show');
+            }
+
+            // Show the selected tab content
+            var selectedTab = document.getElementById(tabId);
+            if (selectedTab) {
+                selectedTab.classList.add('show');
+            }
+        }
+    </script>
+}

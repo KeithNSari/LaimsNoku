@@ -1,0 +1,181 @@
+﻿@page
+@using System.Data
+@model LAIMS.Areas.PolicyServicing.Pages.Policies.ApprovalModel
+@{
+}
+@{
+}
+@{
+    Layout = "/Pages/Shared/_LayoutProducts.cshtml";
+}
+<h1>Approval</h1>
+<hr />
+<div class="row">
+    <div class="col-md-6">
+        <h3>Policy Owner: @Model.Member.Name3 @Model.Member.Name1</h3>
+    </div>
+    <div class="col-md-6">
+        <<h3>National ID: @Model.Member.NationalID</h3>
+    </div>
+</div>
+<hr />
+<div class="row">
+    <div class="col-md-6">
+        <h4>Policy: @Model.Policy.PolicyName</h4>
+    </div>
+    <div class="col-md-6">
+        <h4>Policy No: @Model.Policy.PolicyNo</h4>
+    </div>
+</div>
+<hr />
+<div class="row">
+    <div class="col-md-5">
+        <h4>Currency: @Model.Policy.CurrencyName</h4>
+    </div>
+</div>
+<hr />
+<h3>Beneficiaries</h3>
+<h4>Proposed Record</h4>
+<div class="row mb-3">
+    <table class="table table-striped">
+        <tr>
+            <th>Full Name</th>
+            <th>R\ship</th>
+            <th>D.O.B</th>
+            <th>ID Type</th>
+            <th>ID</th>
+            <th>Archived</th>
+        </tr>
+        @if (Model.BeneficiariesDT != null)
+        {
+            @foreach (DataRow DR in Model.BeneficiariesDT.Rows)
+            {
+                <tr>
+                    <td>@DR["FullName"]</td>
+                    <td>@DR["Relationship"]</td>
+                    <td>@DR["DOB"]</td>
+                    <td>@DR["IDType"]</td>
+                    <td>@DR["IDDocument"]</td>
+                    <td>@DR["Archived"]</td>
+                </tr>
+            }
+        }
+    </table>
+</div>
+<h4>Orginal Record</h4>
+<div class="row mb-3">
+    <table class="table table-striped">
+        <tr>
+            <th>Full Name</th>
+            <th>R\ship</th>
+            <th>D.O.B</th>
+            <th>ID Type</th>
+            <th>ID</th>
+        </tr>
+        @if (Model.OriginalBeneficiariesDT != null)
+        {
+            @foreach (DataRow DR in Model.OriginalBeneficiariesDT.Rows)
+            {
+                <tr>
+                    <td>@DR["FullName"]</td>
+                    <td>@DR["Relationship"]</td>
+                    <td>@DR["DOB"]</td>
+                    <td>@DR["IDType"]</td>
+                    <td>@DR["IDDocument"]</td>
+                </tr>
+            }
+        }
+    </table>
+</div>
+@if (Model.HasInvestmentContent)
+{
+    <h3>Split Values</h3>
+    <hr />
+    @if (Model.BeneficiarySharesDT != null)
+    {
+        <h4>Proposed Record</h4>
+        <div class="row mb-3">
+            <table class="table table-striped">
+                <tr>
+                    <th>Full Name</th>
+                    <th>R\ship</th>
+                    <th>D.O.B</th>
+                    <th>ID Type</th>
+                    <th>ID</th>
+                    <th>%</th>
+                </tr>
+                @foreach (DataRow DR in Model.BeneficiarySharesDT.Rows)
+                {
+                    <tr>
+                        <td>@DR["FullName"]</td>
+                        <td>@DR["Relationship"]</td>
+                        <td>@DR["DOB"]</td>
+                        <td>@DR["IDType"]</td>
+                        <td>@DR["IDDocument"]</td>
+                        <td>@DR["SplitPercentage"]</td>
+                    </tr>
+                }
+            </table>
+        </div>
+    }
+    @if (Model.OriginalBeneficiarySharesDT != null)
+    {
+        <h4>Share Split Original Record</h4>
+        <div class="row mb-3">
+            <table class="table table-striped">
+                <tr>
+                    <th>Full Name</th>
+                    <th>R\ship</th>
+                    <th>D.O.B</th>
+                    <th>ID Type</th>
+                    <th>ID</th>
+                    <th>%</th>
+                </tr>
+                @foreach (DataRow DR in Model.OriginalBeneficiarySharesDT.Rows)
+                {
+                    <tr>
+                        <td>@DR["FullName"]</td>
+                        <td>@DR["Relationship"]</td>
+                        <td>@DR["DOB"]</td>
+                        <td>@DR["IDType"]</td>
+                        <td>@DR["IDDocument"]</td>
+                        <td>@DR["SplitPercentage"]</td>
+                    </tr>
+                }
+            </table>
+        </div>
+    }
+}
+
+<div class="row">
+    <form method="post">
+        <input type="hidden" asp-for="@Model.PolicyID" />
+        <input type="hidden" asp-for="@Model.PolicyTypeID" />
+        <input type="hidden" asp-for="@Model.MemberID" />
+        <input type="hidden" asp-for="ReturnUrl" />
+        <input type="hidden" asp-for="RequestID" />
+        <div class="row mb-3">
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <label asp-for="@Model.StatusID"><b>Decision</b></label>
+                    <select asp-for="@Model.StatusID" class="form-control" required>
+                        <option value="">Select Decision</option>
+                        <option value=8>Request More Information</option>
+                        <option value=9>Rejected</option>
+                        <option value=10>Approved</option>
+                    </select>
+                    <span asp-validation-for="@Model.StatusID" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="col-sm-9">
+                <div class="form-group">
+                    <label asp-for="@Model.StatusComment"><b>Comment</b></label>
+                    <textarea asp-for="@Model.StatusComment" class="form-control"></textarea>
+                    <span asp-validation-for="@Model.StatusComment" class="text-danger"></span>
+                </div>
+            </div>
+        </div>        <div class="d-flex justify-content-end">
+            <input type="submit" value="Submit" class="btn btn-primary" />
+        </div>
+    </form>
+</div>

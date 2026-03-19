@@ -1,0 +1,782 @@
+﻿@page
+@using System.Data
+@model LAIMS.Areas.Claims.Pages.PUSubmitClaimModel
+@{
+}
+@{
+    Layout = "/Pages/Shared/_LayoutProducts.cshtml";
+}
+<h2>Submit Claim</h2>
+<div class="nav-wizards-container">
+    <nav class="nav nav-wizards-1 mb-2">
+        <div class="nav-item col">
+            <a class="nav-link completed" href="#">
+                <div class="nav-no">1</div>
+                <div class="nav-text">Create Claim</div>
+            </a>
+        </div>
+        <div class="nav-item col">
+            <a class="nav-link completed" asp-page="PUClaimDocuments" asp-route-id="@Model.ProposerID" asp-route-reqid="@Model.RequestID">
+                <div class="nav-no">2</div>
+                <div class="nav-text">Add Documents</div>
+            </a>
+        </div>
+        <div class="nav-item col">
+            <a class="nav-link completed" asp-page="PUPayments" asp-route-id="@Model.ProposerID" asp-route-reqid="@Model.RequestID">
+                <div class="nav-no">3</div>
+                <div class="nav-text">Payment Details</div>
+            </a>
+        </div>
+        <div class="nav-item col">
+            <a class="nav-link active" href="#">
+                <div class="nav-no">4</div>
+                <div class="nav-text">Submission</div>
+            </a>
+        </div>
+        <div class="nav-item col">
+            <a class="nav-link disabled" href="#">
+                <div class="nav-no">5</div>
+                <div class="nav-text">Approvals</div>
+            </a>
+        </div>
+    </nav>
+</div>
+<h2>Claim Summary</h2>
+<p>Please ensure all details are correct before sumitting your claim!</p>
+<hr />
+<div class="row mb-3">
+    @if (Model.PoliciesDT != null)
+    {
+        @foreach (DataRow DR in Model.PoliciesDT.Rows)
+        {
+            <h3>Client: @DR["MemberName"].ToString()</h3>
+            <hr />
+            <table class="table table-hover">
+                <tr>
+                    <th>Entry</th>
+                    <th>Commencement</th>
+                    <th>Policy No</th>
+                    <th>Policy</th>
+                    <th>Investment Content</th>
+                </tr>
+                <tr>
+                    <td>@DR["EntryNo"]</td>
+                    <td>@DR["CommencementDate"]</td>
+                    <td>@DR["PolicyNo"]</td>
+                    <td>@DR["PolicyTypeName"]</td>
+                    <td>@DR["InvestmentContentBalance"]</td>
+                </tr>
+            </table>
+        }
+    }
+</div>
+<div class="row mb-3">
+    @if ((Model.UnitTrustBalancesDT != null) && (Model.UnitTrustBalancesDT.Rows.Count > 0))
+    {
+        <h3>Proposed Sell</h3>
+        <hr />
+        <table class="table table-hover">
+            <tr>
+                <th>Fund</th>
+                <th>Available Units</th>
+                <th>Bid Price</th>
+                <th>ProposedUnits</th>
+                <th>Value</th>
+            </tr>
+            @foreach (DataRow DR in Model.UnitTrustBalancesDT.Rows)
+            {
+                <tr>
+                    <td>@DR["UnitTrust"]</td>
+                    <td>@DR["AvailableUnits"]</td>
+                    <td>@DR["BidPrice"]</td>
+                    <td>@DR["ProposedUnits"]</td>
+                    <td>@DR["Value"]</td>
+                </tr>
+            } 
+        </table> 
+    }
+</div>
+@if ((Model.CoverDT != null) && (Model.CoverDT.Rows.Count > 0))
+{
+    <h3>Supplementary Cover Details</h3>
+    <div class="row mb-3">
+        <div class="row mb-3">
+            <table class="table table-striped">
+                <tr>
+                    <th class="col-md-3">Product</th>
+                    <th class="col-md-3">Commencement</th>
+                    <th class="col-md-3">Premium</th>
+                    <th class="col-md-3">Cover</th>
+                </tr>
+                @foreach (DataRow DR in Model.CoverDT.Rows)
+                {
+                    <tr>
+                        <td>@DR["Product"]</td>
+                        <td>@DR["Commencement"]</td>
+                        <td>@DR["Premium"]</td>
+                        <td>@DR["Cover"]</td>
+                    </tr>
+                }
+            </table>
+        </div>
+    </div>
+}
+<h2>Uploaded Documents</h2>
+<div class="row"> 
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Document Name</th>
+                    <th>Filing No</th>
+                    <th> Added</th> 
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (int i = 0; i < Model.FileUploadModelList.Count; i++)
+                {
+                    <tr>
+                        <td>@Model.FileUploadModelList[i].DocumentName</td>
+                        <td>@Model.FileUploadModelList[i].FilingNo</td>
+                        <td>@Model.FileUploadModelList[i].AddedOn</td> 
+                        <td>
+                            @if (Model.FileUploadModelList[i].Uploaded)
+                            {
+                                <button type="button" data-bs-toggle="modal" data-bs-target="#pdfModal" data-url="ClaimDocuments?handler=DownloadPdfFromDatabase&docId=@Model.FileUploadModelList[i].MediaUploadID" class="btn btn-success">View</button>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>  
+</div>
+<!-- Modal -->
+<div class="modal fade" id="pdfModal" tabindex="-1" role="dialog" aria-labelledby="pdfModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="pdfModalLabel">PDF Viewer</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Add an iframe for displaying the PDF -->
+                <iframe id="pdfIframe" width="100%" height="400px" frameborder="0"></iframe>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<h3>Unallocated Balance: @Model.AllocationBalance</h3>
+@if (Model.BeneficiarySharesDT != null)
+{
+    <div class="row mb-3">
+        <hr />
+        <h5>Beneficiary Shares</h5>
+        <div class="row mb-3">
+            <table class="table table-striped">
+                <tr>
+                    <th>Role</th>
+                    <th>Full Name</th>
+                    <th>R\ship</th>
+                    <th>D.O.B</th>
+                    <th>ID Type</th>
+                    <th>ID</th>
+                    <th>%</th>
+                </tr>
+                @if (Model.BeneficiarySharesDT != null)
+                {
+                    @foreach (DataRow DR in Model.BeneficiarySharesDT.Rows)
+                    {
+                        <tr>
+                            <td>@DR["Role"]</td>
+                            <td>@DR["FullName"]</td>
+                            <td>@DR["Relationship"]</td>
+                            <td>@DR["DOB"]</td>
+                            <td>@DR["IDType"]</td>
+                            <td>@DR["IDDocument"]</td>
+                            <td>@DR["SplitPercentage"]</td>
+                        </tr>
+                    }
+                }
+            </table>
+        </div>
+    </div>
+    <hr />
+
+}
+
+@if ((Model.ClaimantsDT != null) && (Model.ClaimantsDT.Rows.Count > 0))
+{
+    <div class="row mb-3">
+        <form method="post">
+            <input type="hidden" asp-for="@Model.ProposerID" />
+            <input type="hidden" asp-for="@Model.RequestID" />
+            <h5>Split Values</h5>
+            <table class="table table-striped">
+                <tr>
+                    <th>Member</th>
+                    <th>Role</th>
+                    <th>Bank</th>
+                    <th>Account No</th>
+                    <th>Allocated</th>
+                    <th></th>
+                </tr>
+                @foreach (DataRow DR in Model.ClaimantsDT.Rows)
+                {
+                    <tr>
+                        <td>@DR["MemberName"]</td>
+                        <td>@DR["RoleName"]</td>
+                        <td>@DR["Bank"]</td>
+                        <td>@DR["BankAccountNo"]</td>
+                        <td>@DR["Amount"]</td>
+                        <td>
+                            @* <button type="submit" asp-route-id="@DR["ID"]" asp-page-handler="Remove" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to remove this item?');">Remove</button> *@
+                        </td>
+                    </tr>
+                }
+            </table>
+        </form>
+    </div>
+}
+<div class="row">
+     <form method="post">
+            <input type="hidden" asp-for="ReturnUrl" /> 
+            <input type="hidden" asp-for="@Model.ProposerID" />
+            <input type="hidden" asp-for="@Model.RequestID" />
+        @if ((Model.SubmittedByDT != null) && (Model.SubmittedByDT.Rows.Count > 0))
+        {
+            <h3>Submitted By</h3>
+            <div class="row mb-3">
+                <table class="table table-striped">
+                    <tr>
+                        <th class="col-md-4">Member Name</th>
+                        <th class="col-md-3">National ID</th>
+                        <th class="col-md-3">Added On</th>
+                        <th class="col-md-2"></th>
+                    </tr>
+                    @foreach (DataRow DR in Model.SubmittedByDT.Rows)
+                    {
+                        <tr>
+                            <td>@DR["MemberName"]</td>
+                            <td>@DR["NationalID"]</td>
+                            <td>@DR["AddedOn"]</td>                           
+                            <td class="text-end">
+                                <button type="submit" asp-route-id="@DR["ID"]" asp-page-handler="RemoveSubmittedByEntry" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to remove this entry?');">Remove</button>
+                            </td>
+                        </tr>
+                    } 
+                </table>
+            </div>
+        }
+        <h3>Submission Details</h3>
+        <div class="row mb-3">
+            <!-- Signed On -->
+            <div class="col-md-2">
+                <label asp-for="SignedOn"><b>Signed On</b></label>
+                <input asp-for="SignedOn" type="date" required class="form-control" />
+                <span asp-validation-for="SignedOn" class="text-danger"></span>
+            </div>
+
+            <!-- Submitted By choice -->
+            <div class="col-md-3">
+                <label><b>Submitted by</b></label>
+                <div>
+                    <div class="form-check form-check-inline">
+                        <input asp-for="SubmittedByType"
+                               class="form-check-input"
+                               type="radio"
+                               id="submittedByPolicyHolder"
+                               value="PolicyHolder" />
+                        <label class="form-check-label" for="submittedByPolicyHolder">
+                            PolicyHolder
+                        </label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input asp-for="SubmittedByType"
+                               class="form-check-input"
+                               type="radio"
+                               id="submittedByOther"
+                               value="Other"
+                               checked />
+                        <label class="form-check-label" for="submittedByOther">
+                            Other
+                        </label>
+                    </div>
+                </div>
+                <span asp-validation-for="SubmittedByType" class="text-danger"></span>
+            </div>
+
+            <!-- The button now shows only when “Other” is selected -->
+            <div class="col-md-2" id="submitByButtonContainer">
+                <label><b>Add submitter</b></label><br />
+                <button type="button"
+                        class="btn btn-info"
+                        data-bs-toggle="modal"
+                        data-bs-target="#SubmittedByModal">
+                    Submitted By
+                </button>
+            </div>
+
+            <!-- Branch selector -->
+            <div class="col-md-5">
+                <label asp-for="SubmittedBankBranchID"><b>Branch</b></label>
+                <select asp-for="SubmittedBankBranchID"
+                        asp-items="Model.MyBankBranches"
+                        required
+                        class="form-control">
+                    <option value="">Select Branch</option>
+                </select>
+                <span asp-validation-for="SubmittedBankBranchID" class="text-danger"></span>
+            </div> 
+        </div>
+        <h3>Claim Expenses</h3>
+        <div class="row mb-3">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Item</th>
+                        <th>Price</th>
+                        <th>Select</th>
+                        <th>Total Price</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (var i = 0; i < Model.ClaimExpenses.Count; i++)
+                    {
+                        var expense = Model.ClaimExpenses[i];
+                        <tr>
+                            <td>@expense.ID</td>
+                            <td>@expense.Item</td>
+                            <td>@expense.Price.ToString("C")</td>
+                            <td class="d-flex align-items-center"> 
+                                <input type="checkbox"
+                                       class="expense-checkbox form-check-input me-2"
+                                       data-id="@expense.ID"
+                                       data-price="@expense.Price"
+                                       data-app-type="@expense.ApplicationType"
+                                       name="ClaimExpenses[@i].IsSelected"
+                                       value="true"
+                                @(expense.ApplicationType == 1
+                                    ? "checked disabled"
+                                    : (expense.IsSelected ? "checked" : "")) />
+
+                                @* Copy all other properties back into the form so they post back *@
+                                <input type="hidden" name="ClaimExpenses[@i].ID" value="@expense.ID" />
+                                <input type="hidden" name="ClaimExpenses[@i].Item" value="@expense.Item" />
+                                <input type="hidden" name="ClaimExpenses[@i].ApplicationType" value="@expense.ApplicationType" />
+
+                                @if (expense.ApplicationType == 1)
+                                {
+                                    <input type="hidden" name="ClaimExpenses[@i].Price" value="@expense.Price" />
+                                }
+                                else
+                                {
+                                    <input type="text"
+                                           class="expense-price-input form-control form-control-sm w-auto"
+                                           name="ClaimExpenses[@i].Price"
+                                           value="@expense.Price.ToString("F2")"
+                                           style="max-width: 150px;"
+                                    @(expense.IsSelected ? "" : "disabled") />
+                                }
+                            </td>
+                            <td class="total-price">
+                                @(
+                                    expense.ApplicationType == 1
+                                    ? expense.Price.ToString("F2")
+                                    : (expense.IsSelected ? expense.Price.ToString("F2") : "0.00")
+                                    )
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="4" class="text-right"><strong>Overall Total:</strong></td>
+                        <td id="overall-total" class="bold">@Model.OverallTotal.ToString("F2")</td>
+                    </tr>
+                </tfoot>
+            </table>
+
+        </div>
+        <div class="row mb-3">
+            <!-- Signed On -->
+            <div class="col-md-10"> 
+            </div> 
+            <!-- Submit -->
+            <div class="col-md-2">
+                <br />
+                <button type="submit" class="btn btn-primary float-end">
+                    Submit
+                </button>
+            </div>
+        </div> 
+    </form>
+</div>
+<form method="post">
+    <div class="modal fade" id="SubmittedByModal" tabindex="-1" aria-labelledby="SubmittedByModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-light">
+                    <h5 class="modal-title" id="SubmittedByModalLabel">Submitted By</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    @if (TempData["PostbackSuccess"] != null && (bool)TempData["PostbackSuccess"])
+                    {
+                        <script>
+                            closeModal('claimant');
+                        </script>
+                    }
+                    <div asp-validation-summary="All" class="text-danger"></div>
+                    <input type="hidden" asp-for="ReturnUrl" /> 
+                    <input type="hidden" asp-for="@Model.ProposerID" />
+                    <input type="hidden" asp-for="@Model.RequestID" />
+                    <div class="accordion" id="modalAccordion">
+                        <!-- Personal Details Section -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="headingOne">
+                                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                    <h5>Add Personal Details</h5>
+                                </button>
+                            </h2>
+                            <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#modalAccordion">
+                                <div class="accordion-body">
+                                    <div class="row mb-3">
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label asp-for="@Model.RelationshipID"><b>Relationship</b></label>
+                                                <select asp-for="@Model.RelationshipID" class="form-control" asp-items="Model.MyRelationships" onchange="toggleDiv()">
+                                                    <option value="">Select Option</option>
+                                                </select>
+                                                <span asp-validation-for="@Model.RelationshipID" class="text-danger"></span>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4" id="idContentDiv">
+                                            <div class="form-group">
+                                                <label asp-for="@Model.IDContent"><b>ID</b></label>
+                                                <input asp-for="@Model.IDContent" required onpaste="return preventPaste(event)" class="form-control" autocomplete="off" />
+                                                <span asp-validation-for="@Model.IDContent" class="text-danger"></span>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4" id="confirmIDContentDiv">
+                                            <div class="form-group">
+                                                <label asp-for="@Model.ConfirmIDContent"><b>Confirm ID</b></label>
+                                                <input asp-for="@Model.ConfirmIDContent" required onpaste="return preventPaste(event)" class="form-control" autocomplete="off" />
+                                                <span asp-validation-for="@Model.ConfirmIDContent" class="text-danger"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row mb-3">
+                                        <div class="col-md-4" id="name1Div">
+                                            <div class="form-group">
+                                                <label asp-for="NewMember.Name1"><b>First Name</b></label>
+                                                <input asp-for="NewMember.Name1" class="form-control" autocomplete="off" />
+                                                <span asp-validation-for="NewMember.Name1" class="text-danger"></span>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4" id="name2Div">
+                                            <div class="form-group">
+                                                <label asp-for="NewMember.Name2"><b>Middle Name</b></label>
+                                                <input asp-for="NewMember.Name2" class="form-control" autocomplete="off" />
+                                                <span asp-validation-for="NewMember.Name2" class="text-danger"></span>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4" id="name3Div">
+                                            <div class="form-group">
+                                                <label asp-for="NewMember.Name3"><b>Surname</b></label>
+                                                <input asp-for="NewMember.Name3" class="form-control" autocomplete="off" />
+                                                <span asp-validation-for="NewMember.Name3" class="text-danger"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row mb-3" id="sexDiv">
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label asp-for="NewMember.GenderID"><b>Gender</b></label>
+                                                <select asp-for="NewMember.GenderID" asp-items="Model.GenderList" class="form-control">
+                                                    <option value="">Select Gender</option>
+                                                </select>
+                                                <span asp-validation-for="NewMember.GenderID" class="text-danger"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Contacts Section -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="headingTwo">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                    <h5>Contacts</h5>
+                                </button>
+                            </h2>
+                            <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#modalAccordion">
+                                <div class="accordion-body">
+                                    <div class="row mb-3">
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label asp-for="ContactCard.CellPhone"><b>Mobile No</b></label>
+                                                <input asp-for="ContactCard.CellPhone" required class="form-control" autocomplete="off" />
+                                                <span asp-validation-for="ContactCard.CellPhone" class="text-danger"></span>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label asp-for="ContactCard.Telephone"><b>Telephone No</b></label>
+                                                <input asp-for="ContactCard.Telephone" class="form-control" autocomplete="off" />
+                                                <span asp-validation-for="ContactCard.Telephone" class="text-danger"></span>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label asp-for="ContactCard.EmailAddress"><b>Email Address</b></label>
+                                                <input type="email" asp-for="ContactCard.EmailAddress" class="form-control" autocomplete="off" />
+                                                <span asp-validation-for="ContactCard.EmailAddress" class="text-danger"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Address Section -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="headingThree">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                                    <h5>Address</h5>
+                                </button>
+                            </h2>
+                            <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#modalAccordion">
+                                <div class="accordion-body">
+                                    <div class="row mb-3">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label asp-for="ContactCard.AddressLine1" class="control-label"><b>Address Line 1</b></label>
+                                                <input asp-for="ContactCard.AddressLine1" class="form-control" />
+                                                <span asp-validation-for="ContactCard.AddressLine1" class="text-danger"></span>
+                                            </div>
+                                            <div class="form-group">
+                                                <label asp-for="ContactCard.AddressLine2" class="control-label"><b>Address Line 2</b></label>
+                                                <input asp-for="ContactCard.AddressLine2" class="form-control" />
+                                                <span asp-validation-for="ContactCard.AddressLine2" class="text-danger"></span>
+                                            </div>
+                                            <div class="form-group">
+                                                <label asp-for="ContactCard.AddressLine3" class="control-label"><b>Address Line 3</b></label>
+                                                <input asp-for="ContactCard.AddressLine3" class="form-control" />
+                                                <span asp-validation-for="ContactCard.AddressLine3" class="text-danger"></span>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label asp-for="CountryID" class="control-label"><b>Country</b></label>
+                                                <select asp-for="CountryID" asp-items="@(new SelectList(Model.Countries, "CountryID", "CountryName"))" class="form-control" id="countryDropdown">
+                                                    <option value="">Select Country</option>
+                                                </select>
+                                            </div>
+                                            <div class="form-group">
+                                                <label asp-for="ContactCard.City" class="control-label"><b>City</b></label>
+                                                <select asp-for="ContactCard.City" id="cityDropdown" class="form-control"></select>
+                                            </div>
+                                            <div class="form-group">
+                                                <label asp-for="CustomCity" class="control-label"><b>Or Enter City</b></label>
+                                                <input asp-for="CustomCity" class="form-control" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-12 text-end">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <input type="submit" value="Save Changes" asp-page-handler="SubmittedBy" class="btn btn-primary" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+@section scripts {
+    <script>
+        function toggleDiv() {
+            var ActionDl = document.getElementById("RelationshipID");
+            var name1Div = document.getElementById("name1Div");
+            var name2Div = document.getElementById("name2Div");
+            var name3Div = document.getElementById("name3Div");
+            var sexDiv = document.getElementById("sexDiv");
+            if (ActionDl.selectedIndex === 1) {
+                name1Div.style.display = "none";
+                name2Div.style.display = "none";
+                name3Div.style.display = "none";
+                sexDiv.style.display = "none";
+            }
+            else {
+                idContentDiv.style.display = "block";
+                confirmIDContentDiv.style.display = "block";
+                name1Div.style.display = "block";
+                name2Div.style.display = "block";
+                name3Div.style.display = "block";
+                sexDiv.style.display = "block";
+            }
+        }
+    </script>
+    <script>
+        $(document).ready(function () {
+            $('#pdfModal').on('show.bs.modal', function (event) {
+                var button = $(event.relatedTarget);
+                var url = button.data('url');
+                openPdfModal(url);
+            });
+        });
+        function openPdfModal(pdfSource) {
+            // Make a Fetch API request to fetch PDF data from the server
+            fetch(pdfSource, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/pdf', // Adjust the content type as needed
+                },
+                responseType: 'blob', // Specify that you want the response as a Blob
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.blob(); // Get the response as a Blob
+                })
+                .then(blobData => {
+                    try {
+                        console.log('Blob created:', blobData);
+
+                        // Create a data URL from the Blob
+                        var pdfUrl = URL.createObjectURL(blobData);
+                        console.log('PDF URL created:', pdfUrl);
+
+                        // Update the iframe source with the PDF data URL
+                        $('#pdfIframe').attr('src', pdfUrl);
+                        console.log('IFrame src:', pdfUrl);
+
+                        // Show the modal
+                        $('#pdfModal').modal('show');
+                    } catch (error) {
+                        console.error('Error processing PDF data:', error);
+                    }
+                })
+                .catch(error => {
+                    console.error('Fetch error:', error);
+                });
+        }
+    </script>
+    <script>
+        $(function () {
+            $("#countryDropdown").on("change", function () {
+                var countryId = $(this).val();
+                $("#cityDropdown").empty();
+                $("#cityDropdown").append("<option value='0'>Select City</option>");
+                $.getJSON(`?handler=CitiesByCountry&countryid=${countryId}`, (data) => {
+                    $.each(data, function (i, city) {
+                        $("#cityDropdown").append(`<option value="${city.id}">${city.cityName}</option>`);
+                    });
+                });
+            });
+        });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+          const checkboxes    = document.querySelectorAll('.expense-checkbox');
+          const overallTotal  = document.getElementById('overall-total');
+
+          // initialize price-inputs disabled state for ApplicationType 2
+          checkboxes.forEach(cb => {
+            const tr    = cb.closest('tr');
+            const app   = parseInt(cb.dataset.appType, 10);
+            if (app === 2) {
+              const txt = tr.querySelector('.expense-price-input');
+              txt.disabled = !cb.checked;
+            }
+          });
+
+          // checkbox change handler
+          checkboxes.forEach(cb => cb.addEventListener('change', () => {
+            const tr    = cb.closest('tr');
+            const app   = parseInt(cb.dataset.appType, 10);
+            const price = parseFloat(cb.dataset.price);
+            const totalCell = tr.querySelector('.total-price');
+
+            if (app === 1) {
+              // type 1 stays checked & disabled → always add data-price
+              totalCell.textContent = price.toFixed(2);
+            } else {
+              const input = tr.querySelector('.expense-price-input');
+              if (cb.checked) {
+                input.disabled = false;
+                totalCell.textContent = parseFloat(input.value || 0).toFixed(2);
+              } else {
+                input.disabled = true;
+                totalCell.textContent = '0.00';
+              }
+            }
+
+            updateOverall();
+          }));
+
+          // allow live editing of type 2 prices
+          document.querySelectorAll('.expense-price-input').forEach(input =>
+            input.addEventListener('input', () => {
+              const tr        = input.closest('tr');
+              const cb        = tr.querySelector('.expense-checkbox');
+              if (!cb.checked) return;
+              tr.querySelector('.total-price')
+                .textContent = parseFloat(input.value || 0).toFixed(2);
+              updateOverall();
+            })
+          );
+
+          // sum logic
+          function updateOverall() {
+            let sum = 0;
+            checkboxes.forEach(cb => {
+              if (!cb.checked) return;
+              const app   = parseInt(cb.dataset.appType, 10);
+              if (app === 1) {
+                sum += parseFloat(cb.dataset.price);
+              } else {
+                const val = parseFloat(cb.closest('tr')
+                              .querySelector('.expense-price-input')
+                              .value || 0);
+                sum += val;
+              }
+            });
+            overallTotal.textContent = sum.toFixed(2);
+          }
+
+          // initial total
+          updateOverall();
+        });
+    </script>
+
+    <script>
+        (function() {
+            const policyRadio = document.getElementById('submittedByPolicyHolder');
+            const otherRadio  = document.getElementById('submittedByOther');
+            const btnContainer = document.getElementById('submitByButtonContainer');
+
+            function toggleButton() {
+                // show when “Other” is checked, hide otherwise
+                btnContainer.style.display = otherRadio.checked ? '' : 'none';
+            }
+
+            policyRadio.addEventListener('change', toggleButton);
+            otherRadio.addEventListener('change', toggleButton);
+
+            document.addEventListener('DOMContentLoaded', toggleButton);
+        })();
+    </script>
+}

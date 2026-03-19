@@ -1,0 +1,34 @@
+﻿@page
+@using System.Data;
+@using Microsoft.AspNetCore.Http.Extensions;
+@model LAIMS.Areas.UTools.Pages.ManageDocuments.EditModel
+@{
+}
+@{
+    Layout = "/Pages/Shared/_LayoutProducts.cshtml";
+}
+<h2>Add Document Types</h2>
+@if (!string.IsNullOrEmpty(ViewData["ErrorMessage"]?.ToString()))
+{
+    <p class="text-danger">@ViewData["ErrorMessage"]</p>
+}
+<hr />
+<div class="row">
+    <div class="col-md-8">
+        <form method="post">
+            <input type="hidden" asp-for="ReturnUrl" />
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="mb-3">
+                <label asp-for="Document.DocumentName" class="control-label"><b>Type</b></label>
+                <input asp-for="Document.DocumentName" class="form-control" maxlength="200" />
+                <span asp-validation-for="Document.DocumentName" class="text-danger"></span>
+            </div>
+            <input type="submit" value="Update" class="btn btn-primary" />
+        </form>
+    </div> 
+</div>
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+} 

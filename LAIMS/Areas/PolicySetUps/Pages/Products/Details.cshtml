@@ -1,0 +1,86 @@
+﻿@page
+@using System.Data;
+@{
+    Layout = "/Pages/Shared/_LayoutProducts.cshtml";
+}
+@model LAIMS.Areas.PolicySetUps.Pages.Products.DetailsModel
+@{
+}
+<h1>Product Details</h1>
+<hr />
+@if (!string.IsNullOrEmpty(ViewData["ErrorMessage"]?.ToString()))
+{
+    <p class="text-danger">@ViewData["ErrorMessage"]</p>
+}
+<form method="post">
+    <input type="hidden" asp-for="ReturnUrl" />
+    <div class="row">
+        @if (Model.ProductsDT != null)
+        {
+            @foreach (DataRow DR in Model.ProductsDT.Rows)
+            {
+                <table class="table table-hover">
+                    <tr>
+                        <th class="col-sm-4">Field</th>
+                        <th class="col-sm-8">Value</th>
+                    </tr>
+                    <tr>
+                        <td>
+                            <b>Product Name:</b>
+                        </td>
+                        <td>
+                            @DR["Product"]
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <b>Description:</b>
+                        </td>
+                        <td>
+                            @DR["Description"]
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <b>Category:</b>
+                        </td>
+                        <td>
+                            @DR["Category"]
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <b>Term Type:</b>
+                        </td>
+                        <td>
+                            @DR["Term"]
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <b>Added On:</b>
+                        </td>
+                        <td>
+                            @DR["AddedOn"]
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <b>AddedBy:</b>
+                        </td>
+                        <td>
+                            @DR["Username"]
+                        </td>
+                    </tr>
+                </table>
+            }
+        }
+
+    </div>
+    <a asp-page="Edit" asp-route-id="@Model.ProductID" class="btn btn-warning btn-sm">Edit Product</a> 
+    <a class="btn btn-primary btn-sm" asp-page="Create">Add New Product</a>
+    <a class="btn btn-success btn-sm" asp-page="Index"> View Full List</a>
+    <a asp-page="Documents" asp-route-id="@Model.ProductID" class="btn btn-outline-info btn-sm">AP Documents</a>
+    <a asp-page="PQuestionnaires" asp-route-id="@Model.ProductID" class="btn btn-outline-info btn-sm">Questionnaires</a>
+
+</form>

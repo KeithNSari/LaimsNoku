@@ -1,0 +1,141 @@
+﻿@page
+@using System.Data
+@model LAIMS.Areas.SalesCommission.Pages.IndexModel
+@{
+}
+@{
+    Layout = "/Pages/Shared/_LayoutSearch.cshtml";
+}
+<h1>Commissions Index</h1>
+<p>To search for all commissions in a period, leave Agent Code blank. To search for records for a single agent, include the agent code filter.</p>
+<hr />
+@if (!string.IsNullOrEmpty(ViewData["ErrorMessage"]?.ToString()))
+{
+    <p class="text-danger">@ViewData["ErrorMessage"]</p>
+}
+
+<form method="post">
+    <div class="row mb-3"> 
+        <div class="col-md-2">
+            <label asp-for="@Model.Year"><b>Year</b></label>
+            <input asp-for="@Model.Year" type="number" class="form-control" />
+            <span asp-validation-for="@Model.Year" class="text-danger"></span>
+        </div>
+        <div class="col-md-2">
+            <label asp-for="@Model.StartMonth"><b>Start Month</b></label>
+            <select asp-for="@Model.StartMonth" required class="form-control">
+                <option value="">Select Month</option>
+                <option value=1>January</option>
+                <option value=2>February</option>
+                <option value=3>March</option>
+                <option value=4>April</option>
+                <option value=5>May</option>
+                <option value=6>June</option>
+                <option value=7>July</option>
+                <option value=8>August</option>
+                <option value=9>September</option>
+                <option value=10>October</option>
+                <option value=11>November</option>
+                <option value=12>December</option>
+            </select>
+            <span asp-validation-for="@Model.StartMonth" class="text-danger"></span>
+        </div>
+        <div class="col-md-2">
+            <label asp-for="@Model.EndMonth"><b>End Month</b></label>
+            <select asp-for="@Model.EndMonth" required class="form-control">
+                <option value="">Select Month</option>
+                <option value=1>January</option>
+                <option value=2>February</option>
+                <option value=3>March</option>
+                <option value=4>April</option>
+                <option value=5>May</option>
+                <option value=6>June</option>
+                <option value=7>July</option>
+                <option value=8>August</option>
+                <option value=9>September</option>
+                <option value=10>October</option>
+                <option value=11>November</option>
+                <option value=12>December</option>
+            </select>
+            <span asp-validation-for="@Model.EndMonth" class="text-danger"></span>
+        </div>
+        <div class="col-md-2">
+            <label asp-for="@Model.AgentCode"><b>Agent Code</b></label>
+            <input asp-for="@Model.AgentCode" type="text" class="form-control" /> 
+        </div>
+        <div class="col-md-2">
+            <label asp-for="@Model.CurrencyID" class="control-label"><b>Currency</b></label>
+            <select asp-for="@Model.CurrencyID" required class="form-control" asp-items="Model.Currencies">
+                <option value="">Select Currency</option>
+            </select>
+            <span asp-validation-for="@Model.CurrencyID" class="text-danger"></span>
+        </div>
+        <div class="col-md-2">
+            <br/>
+            <button type="submit" class="btn btn-primary float-end">View</button> 
+        </div>        
+    </div>
+</form>
+@if((Model.CommissionSearchHeader != null) && (Model.FilterLevel>0))
+{
+    @if (Model.FilterLevel==1)
+    {
+        <hr />
+        <div class="row">
+            <div class="col-md-8">
+                <h4>Agent: @Model.CommissionSearchHeader.AgentName</h4>
+            </div>
+            <div class="col-md-4">
+                <h4>Agent Code: @Model.CommissionSearchHeader.AgentCode</h4>
+            </div>
+        </div>
+    }   
+    <hr />
+    <div class="row">
+        <div class="col-md-4">
+            <h4>Intermediary Commission: @Model.CommissionSearchHeader.IntermediaryCommission </h4>
+        </div>
+        <div class="col-md-4">
+        </div>
+        <div class="col-md-4">
+            <h4>Overriding Commission: @Model.CommissionSearchHeader.OverridingCommission</h4>
+        </div>
+    </div>
+}
+<hr />
+<div class="row mb-3"> 
+    <div class="row mb-3">
+        <table class="table table-hover">
+            <tr>
+                <th>Year</th>
+                <th>Month</th>
+                <th>Policy</th>
+                <th>Agent Code</th>
+                <th>Employee No</th>
+                <th>Agent Name</th>
+                <th>Currency</th>
+                <th>Intermediary</th>
+                <th>Overriding</th>
+                <th>ZB Life</th> 
+            </tr>
+            @if (Model.CommissionsDT != null)
+            {
+                @foreach (DataRow DR in Model.CommissionsDT.Rows)
+                {
+                    <tr>
+                        <td>@DR["Year"]</td> 
+                        <td>@DR["Month"]</td>
+                        <th>@DR["PolicyNo"]</th>
+                        <td>@DR["AgentCode"]</td>
+                        <td>@DR["EmployeeNo"]</td>
+                        <td>@DR["AgentName"]</td>
+                        <td>@DR["Currency"]</td>
+                        <td>@DR["IntermediaryCommission"]</td>
+                        <td>@DR["OverridingCommission"]</td>
+                        <td>@DR["ZBLifeCommission"]</td> 
+                    </tr>
+                }
+            }
+        </table>
+    </div>
+</div>

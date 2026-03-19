@@ -1,0 +1,161 @@
+﻿@page
+@using System.Data
+@model LAIMS.Areas.Claims.Pages.PUClaimDocumentsModel
+@{
+}
+@{
+    Layout = "/Pages/Shared/_LayoutProducts.cshtml";
+}
+<h2>Upload Claim Documents</h2>
+<div class="nav-wizards-container">
+    <nav class="nav nav-wizards-1 mb-2">
+        <div class="nav-item col">
+            <a class="nav-link completed" href="#">
+                <div class="nav-no">1</div>
+                <div class="nav-text">Create Claim</div>
+            </a>
+        </div>
+        <div class="nav-item col">
+            <a class="nav-link active" href="#">
+                <div class="nav-no">2</div>
+                <div class="nav-text">Add Documents</div>
+            </a>
+        </div>
+        <div class="nav-item col">
+            <a class="nav-link disabled" href="#">
+                <div class="nav-no">3</div>
+                <div class="nav-text">Payment Details</div>
+            </a>
+        </div>
+        <div class="nav-item col">
+            <a class="nav-link disabled" href="#">
+                <div class="nav-no">4</div>
+                <div class="nav-text">Submission</div>
+            </a>
+        </div>
+        <div class="nav-item col">
+            <a class="nav-link disabled" href="#">
+                <div class="nav-no">5</div>
+                <div class="nav-text">Approvals</div>
+            </a>
+        </div> 
+    </nav>
+</div>
+<hr />
+<h2>Upload Documents</h2>
+<div class="row">
+    <form asp-action="Upload" method="post" enctype="multipart/form-data"> 
+        <input type="hidden" asp-for="@Model.ProposerID" />
+        <input type="hidden" asp-for="@Model.RequestID" />
+        <div class="row mb-3">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Document Name</th>
+                    <th>Filing No</th>
+                    <th> Added</th>
+                    <th>Upload</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (int i = 0; i < Model.FileUploadModelList.Count; i++)
+                {
+                    <tr>
+                        <td>@Model.FileUploadModelList[i].DocumentName</td>
+                        <td>@Model.FileUploadModelList[i].FilingNo</td>
+                        <td>@Model.FileUploadModelList[i].AddedOn</td>
+                        <td>
+                            <input class="form-control" multiple="multiple" type="file" asp-for="FileUploadModelList[i].UploadedFile" />
+                            <input type="hidden" asp-for="@Model.FileUploadModelList[i].DocumentID" />
+                        </td>
+                        <td>
+                            @if (Model.FileUploadModelList[i].Uploaded)
+                            {
+                                <button type="button" data-bs-toggle="modal" data-bs-target="#pdfModal" data-url="ClaimDocuments?handler=DownloadPdfFromDatabase&docId=@Model.FileUploadModelList[i].MediaUploadID" class="btn btn-success">View</button>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        </div>
+        <div class="row">
+            <div class="col-md-1">
+                <button type="submit" class="btn btn-primary" asp-page-handler="UploadFile">Upload</button>
+            </div>
+            <div class="col-md-1">
+                <button type="submit" asp-page-handler="Next" class="btn btn-info text-end">Next>></button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="pdfModal" tabindex="-1" role="dialog" aria-labelledby="pdfModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="pdfModalLabel">PDF Viewer</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Add an iframe for displaying the PDF -->
+                <iframe id="pdfIframe" width="100%" height="400px" frameborder="0"></iframe>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+@section scripts {
+    <script>
+        $(document).ready(function () {
+            $('#pdfModal').on('show.bs.modal', function (event) {
+                var button = $(event.relatedTarget);
+                var url = button.data('url');
+                openPdfModal(url);
+            });
+        });
+        function openPdfModal(pdfSource) {
+            // Make a Fetch API request to fetch PDF data from the server
+            fetch(pdfSource, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/pdf', // Adjust the content type as needed
+                },
+                responseType: 'blob', // Specify that you want the response as a Blob
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.blob(); // Get the response as a Blob
+                })
+                .then(blobData => {
+                    try {
+                        console.log('Blob created:', blobData);
+
+                        // Create a data URL from the Blob
+                        var pdfUrl = URL.createObjectURL(blobData);
+                        console.log('PDF URL created:', pdfUrl);
+
+                        // Update the iframe source with the PDF data URL
+                        $('#pdfIframe').attr('src', pdfUrl);
+                        console.log('IFrame src:', pdfUrl);
+
+                        // Show the modal
+                        $('#pdfModal').modal('show');
+                    } catch (error) {
+                        console.error('Error processing PDF data:', error);
+                    }
+                })
+                .catch(error => {
+                    console.error('Fetch error:', error);
+                });
+        }
+    </script>
+}

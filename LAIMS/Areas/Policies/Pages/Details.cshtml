@@ -1,0 +1,860 @@
+﻿@page
+@using System.Data
+@model LAIMS.Areas.Policies.Pages.DetailsModel
+@{
+}
+@{
+    Layout = "/Pages/Shared/_LayoutProducts.cshtml";
+}  
+<h1>Policy Details</h1>
+<div class="bg-light">
+    <hr />
+    <h3>Policy: @Model.Policy.PolicyName</h3> 
+    <hr />
+    <h5>Policy No: @Model.Policy.PolicyNo</h5> 
+</div>
+ <div id="tabs-container mb-3 border border-primary">
+    <div class="row">
+        <div class="tab col-sm-1" onclick="openTab('tab1')"><b>Details</b></div>
+        <div class="tab col-sm-2" onclick="openTab('tab2')"><b>Allocation Suspense</b></div>
+        <div class="tab col-sm-2" onclick="openTab('tab3')"><b>Policy Suspense</b></div>
+        <div class="tab col-sm-1" onclick="openTab('tab4')"><b>Unpaid</b></div>
+        <div class="tab col-sm-2" onclick="openTab('tab5')"><b>Statii</b></div>
+        <div class="tab col-sm-1" onclick="openTab('tab6')"><b>Messages</b></div>
+        <div class="tab col-sm-1" onclick="openTab('tab7')"><b>Claims</b></div>
+        <div class="tab col-sm-2" onclick="openTab('tab8')"><b>Settlements</b></div>
+    </div> 
+    <div class="row">       
+        <div id="tab1" class="tab-content show active border-0 bg-white">
+            <div>
+                <h3 class="text-end">Policy Details</h3> 
+<h3>Proposer</h3>
+<table class="table table-hover">
+    <tr>
+        <th class="col-md-2"></th>
+        <th class="col-md-2"></th>
+        <th class="col-md-2"></th>
+        <th class="col-md-2"></th>
+        <th class="col-md-2"></th>
+        <th class="col-md-2"></th>
+        <th class="col-md-2"></th>
+    </tr>
+    <tr>
+        <td><b>First Name:</b></td>
+        <td>@Model.Member.Name1</td>
+        <td><b>Middle Name:</b></td>
+        <td>@Model.Member.Name2</td>
+        <td><b>Surname:</b></td>
+        <td>@Model.Member.Name3</td>
+    </tr>
+    <tr>
+        <td><b>Gender:</b></td>
+        <td>@Model.Member.Gender</td>
+        <td><b>Title:</b></td>
+        <td>@Model.Member.Title</td>
+        <td><b>Marital Status:</b></td>
+        <td>@Model.Member.MaritalStatus</td>
+    </tr>
+    <tr>
+        <td><b>D.O.B:</b></td>
+        <td>@Model.Member.DOB</td>
+        <td><b>Birth Country:</b></td>
+        <td>@Model.Member.BirthCountry</td>
+        <td><b>Place Of Birth:</b></td>
+        <td>@Model.Member.PlaceOfBirth</td>
+    </tr>
+    <tr>
+        <td><b>Citizenship:</b></td>
+        <td>@Model.Member.Country</td>
+        <td><b>Member No:</b></td>
+        <td>@Model.Member.MemberNo</td>
+        <td><b>National ID:</b></td>
+        <td>@Model.Member.NationalID</td>
+    </tr>
+    <tr>
+        <td><b>Passport:</b></td>
+        <td>@Model.Member.Passport</td>
+        <td><b>Birth Certificate:</b></td>
+        <td>@Model.Member.BirthCertificate</td>
+        <td><b>Policy No</b></td>
+        <td>@Model.Policy.PolicyNo</td>
+    </tr>
+</table>
+<h2>Participants List</h2>
+<div class="row mb-3">
+    <table class="table table-striped">
+        <tr>
+            <th>Role</th>
+            <th>Full Name</th>
+            <th>R\ship</th>
+            <th>D.O.B</th>
+            <th>ID Type</th>
+            <th>ID</th>
+        </tr>
+        @if (Model.BeneficiariesDT != null)
+        {
+            @foreach (DataRow DR in Model.BeneficiariesDT.Rows)
+            {
+                <tr>
+                    <td>@DR["Role"]</td>
+                    <td>@DR["FullName"]</td>
+                    <td>@DR["Relationship"]</td>
+                    <td>@DR["DOB"]</td>
+                    <td>@DR["IDType"]</td>
+                    <td>@DR["IDDocument"]</td>
+                </tr>
+            }
+        }
+    </table>
+</div>
+<h2>Premiums</h2>
+<hr />
+<div class="row mb-3">
+    @for (var i = 0; i < Model.PolicyBeneficiaryLineDetails.Count; i++)
+    {
+        var beneficiary = Model.PolicyBeneficiaryLineDetails[i];
+        @if (i > 0 && (@Model.PolicyBeneficiaryLineDetails[i].Product != @Model.PolicyBeneficiaryLineDetails[i - 1].Product))
+        {
+            <h5>@beneficiary.Product</h5>
+        }
+        else if (i == 0)
+        {
+            <h5>@beneficiary.Product</h5>
+        }
+        <div>
+            @if (i > 0 && (@Model.PolicyBeneficiaryLineDetails[i].Product != @Model.PolicyBeneficiaryLineDetails[i - 1].Product))
+            {
+                <div class="row">
+                    <div class="col-md-2"><b>LineID</b></div>
+                    <div class="col-md-2"><b>Full Name</b></div> 
+                    <div class="col-md-2"><b>ID</b></div>
+                    <div class="col-md-2"><b>Commencement</b></div>
+                    <div class="col-md-2 text-end"><b>Premium</b></div>
+                    @if (!((@Model.PolicyBeneficiaryLineDetails[i].CategoryID == 1) || ((@Model.PolicyBeneficiaryLineDetails[i].CategoryID == 3))))
+                    {
+                        <div class="col-md-2 text-end"><b>Cover</b></div>
+                    }
+                </div>
+                <hr />
+            }
+            else if (i == 0)
+            {
+                <div class="row">
+                    <div class="col-md-2"><b>LineID</b></div>
+                    <div class="col-md-2"><b>Full Name</b></div> 
+                    <div class="col-md-2"><b>ID</b></div>
+                    <div class="col-md-2"><b>Commencement</b></div>
+                    <div class="col-md-2 text-end"><b>Premium</b></div>
+                    @if (!((@Model.PolicyBeneficiaryLineDetails[i].CategoryID == 1) || ((@Model.PolicyBeneficiaryLineDetails[i].CategoryID == 3))))
+                    {
+                        <div class="col-md-2 text-end"><b>Cover</b></div>
+                    }
+                </div>
+                <hr />
+            }
+            @if (i % 2 == 0)
+            {
+                <div class="row bg-light">
+                    <div class="col-md-2">
+                        <input type="hidden" asp-for="@Model.PolicyBeneficiaryLineDetails[i].LineId" />
+                        @beneficiary.LineId
+                    </div>
+                    <div class="col-md-2">@beneficiary.FullName</div>
+                                    <div class="col-md-2">@beneficiary.ID</div>
+                                    <div class="col-md-2">
+                                        @if (@beneficiary.CommencementDate.HasValue)
+                                        {
+                                            @beneficiary.CommencementDate.Value.ToString("yyyy-MMM-dd")
+                                        }
+                                    </div>
+                                    <div class="col-md-2 text-end">
+                                        <b>@Model.PolicyBeneficiaryLineDetails[i].Premium</b>
+                                    </div>
+                    @if (!((@Model.PolicyBeneficiaryLineDetails[i].CategoryID == 1) || ((@Model.PolicyBeneficiaryLineDetails[i].CategoryID == 3))))
+                    {
+                        <div class="col-md-2 text-end">
+                            <b>@Model.PolicyBeneficiaryLineDetails[i].Cover</b>
+                        </div>
+                    }
+                </div>
+            }
+            else
+            {
+                <div class="row">
+                    <div class="col-md-2">
+                        <input type="hidden" asp-for="@Model.PolicyBeneficiaryLineDetails[i].LineId" />
+                        @beneficiary.LineId
+                    </div>
+                    <div class="col-md-2">@beneficiary.FullName</div> 
+                    <div class="col-md-2">@beneficiary.ID</div>
+                                    <div class="col-md-2">
+                                        @if (@beneficiary.CommencementDate.HasValue)
+                                        {
+                                            @beneficiary.CommencementDate.Value.ToString("yyyy-MMM-dd")
+                                        }
+                                    </div>
+                    <div class="col-md-2 text-end">
+                        @Model.PolicyBeneficiaryLineDetails[i].Premium
+                    </div>
+                    @if (!((@Model.PolicyBeneficiaryLineDetails[i].CategoryID == 1) || ((@Model.PolicyBeneficiaryLineDetails[i].CategoryID == 3))))
+                    {
+                        <div class="col-md-2 text-end">
+                            <b>@Model.PolicyBeneficiaryLineDetails[i].Cover</b>
+                        </div>
+                    }
+                </div>
+            }
+
+        </div>
+        <br />
+    }
+    <div class="row">
+        <div class="col-md-8">
+        </div>
+        <div class="col-md-2">
+            <b>Total Premium:</b>
+        </div>
+        <div class="col-md-2 text-end  p-0 m-0">
+             <b>@Model.CoverDetails.Premium</b>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-8">
+        </div>
+        <div class="col-md-2">
+            <b>Total Cover:</b>
+        </div>
+        <div class="col-md-2 text-end  p-0 m-0">
+            <b>@Model.CoverDetails.Cover</b> 
+        </div>
+    </div>
+</div>
+<hr />
+<h3>Documents</h3>
+<hr />
+<div class="row mb-3 rounded">
+    <form method="post" enctype="multipart/form-data">
+        <div class="p-3 bg-white mb-3">
+            @for (var i = 0; i < Model.FileUploadModelList.Count; i++)
+            {
+                @if (i > 0 && (@Model.FileUploadModelList[i].FullName != @Model.FileUploadModelList[i - 1].FullName))
+                {
+                    <div class="row mb-3 text-end bg-light">
+                        <h5>Documents for @Model.FileUploadModelList[i].FullName</h5>
+                    </div>
+                }
+                else if (i == 0)
+                {
+                    <div class="row mb-3 text-end bg-light">
+                        <h5>Documents for @Model.FileUploadModelList[i].FullName</h5>
+                    </div>
+                }
+                <div class="row">
+                    <div class="col-md-1 file-node">
+                        <span class="file-icon"><i class="far fa-file-image fa-lg text-success"></i></span>
+                    </div>
+                    <div class="col-md-7 file-node">
+                        <h6>@Model.FileUploadModelList[i].DocumentName</h6>
+                        <b>VG:</b> @Model.FileUploadModelList[i].ValidationGroup
+                    </div>
+                    @if (Model.FileUploadModelList[i].UploadStatus == "Uploaded")
+                    {
+                        <div class="col-md-2">
+                            <span class="text-success">@Model.FileUploadModelList[i].UploadStatus</span><br />
+                            @Model.FileUploadModelList[i].UploadedOn
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="col-md-2 text-danger">@Model.FileUploadModelList[i].UploadStatus</div>
+                    }
+                    @if (Model.FileUploadModelList[i].Uploaded)
+                    {
+                        <div class="col-md-2">
+                            <button type="button" data-bs-toggle="modal" data-bs-target="#pdfModal" data-url="PolicyDetails?handler=DownloadPdfFromDatabase&docId=@Model.FileUploadModelList[i].MediaUploadID" class="btn btn-success">View</button>
+                        </div>
+                    }
+                </div>
+                <hr />
+            }
+        </div>
+    </form>
+</div>
+<!-- Modal -->
+<div class="modal fade" id="pdfModal" tabindex="-1" role="dialog" aria-labelledby="pdfModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="pdfModalLabel">PDF Viewer</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Add an iframe for displaying the PDF -->
+                <iframe id="pdfIframe" width="100%" height="400px" frameborder="0"></iframe>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div> 
+        </div>
+    </div>
+</div>
+<hr />
+<h3>Questionnaires</h3>
+<hr />
+<div class="row mb-3 rounded">
+    <form method="post" enctype="multipart/form-data">
+        <div class="p-3 bg-white mb-3">
+            @for (var i = 0; i < Model.QuestionnaireResponses.Count; i++)
+            {
+                @if (i > 0 && (@Model.QuestionnaireResponses[i].MemberName != @Model.QuestionnaireResponses[i - 1].MemberName))
+                {
+                    <div class="row mb-3 text-end bg-light">
+                        <h5>Questionnaires for @Model.QuestionnaireResponses[i].MemberName</h5>
+                    </div>
+                }
+                else if (i == 0)
+                {
+                    <div class="row mb-3 text-end bg-light">
+                        <h5>Questionnaires for @Model.QuestionnaireResponses[i].MemberName</h5>
+                    </div>
+                }
+                <div class="row">
+                    <div class="col-md-1">
+                        <span class="file-icon"><i class="far fa-file-image fa-lg text-success"></i></span>
+                    </div>
+                    <div class="col-md-8">
+                        <h6>@Model.QuestionnaireResponses[i].QuestionnaireTitle</h6>
+                    </div>
+                    @if (Model.QuestionnaireResponses[i].Submitted == 1)
+                    {
+                        <div class="col-md-2">
+                            <span class="text-success">Submitted</span><br />
+                            @Model.QuestionnaireResponses[i].SubmittedOn
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="col-md-2 text-danger">
+                            Not Submitted
+                        </div>
+                    }
+                    <div class="col-md-1">
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#qsnModal" data-url="PolicyQuestionnairesResponses?questionnaireId=@Model.QuestionnaireResponses[i].Questionnaire&memberUID=@Model.QuestionnaireResponses[i].MemberUID&ID=@Model.QuestionnaireResponses[i].ID">
+                            Open
+                        </button>
+                    </div>
+                </div>
+                <hr />
+            }
+        </div>
+    </form>
+</div>
+<!-- Modal -->
+<div class="modal" id="qsnModal">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title">Questionnaire</h4>
+                <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
+            </div>
+
+            <!-- Modal Body with iframe -->
+            <div class="modal-body">
+                <iframe id="modalIframe" style="width: 100%; height: 400px; overflow: hidden;"></iframe>
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+<div class="row mb-3">
+    <h3>Premium Payer</h3>
+    @if (Model.PremiumPayerID > 0)
+    {
+        <table class="table table-hover">
+            <tr>
+                <th class="col-md-2"></th>
+                <th class="col-md-2"></th>
+                <th class="col-md-2"></th>
+                <th class="col-md-2"></th>
+                <th class="col-md-2"></th>
+                <th class="col-md-2"></th>
+                <th class="col-md-2"></th>
+            </tr>
+            <tr>
+                <td><b>First Name:</b></td>
+                <td>@Model.PremiumPayer.Name1</td>
+                <td><b>Middle Name:</b></td>
+                <td>@Model.PremiumPayer.Name2</td>
+                <td><b>Surname:</b></td>
+                <td>@Model.PremiumPayer.Name3</td>
+            </tr>
+            <tr>
+                <td><b>Gender:</b></td>
+                <td>@Model.PremiumPayer.Gender</td>
+                <td><b>Title:</b></td>
+                <td>@Model.PremiumPayer.Title</td>
+                <td><b>Marital Status:</b></td>
+                <td>@Model.PremiumPayer.MaritalStatus</td>
+            </tr>
+            <tr>
+                <td><b>D.O.B:</b></td>
+                <td>@Model.PremiumPayer.DOB</td>
+                <td><b>Birth Country:</b></td>
+                <td>@Model.PremiumPayer.BirthCountry</td>
+                <td><b>Place Of Birth:</b></td>
+                <td>@Model.PremiumPayer.PlaceOfBirth</td>
+            </tr>
+            <tr>
+                <td><b>Citizenship:</b></td>
+                <td>@Model.PremiumPayer.Country</td>
+                <td><b>Member No:</b></td>
+                <td>@Model.PremiumPayer.MemberNo</td>
+                <td><b>National ID:</b></td>
+                <td>@Model.PremiumPayer.NationalID</td>
+            </tr>
+            <tr>
+                <td><b>Passport:</b></td>
+                <td>@Model.PremiumPayer.Passport</td>
+                <td><b>Birth Certificate:</b></td>
+                <td>@Model.PremiumPayer.BirthCertificate</td>
+                <td></td>
+                <td></td>
+            </tr>
+        </table>
+    }
+    else
+    {
+        <p>No premimum payer has been added to this policy as yet!</p>
+    }
+</div>
+<div class="row mb-3">
+    @if ((Model.PremiumDetails != null) && (Model.PremiumDetails.Rows.Count > 0))
+    {
+        <h3>Payment Collection Details</h3>
+        DataRow DR = @Model.PremiumDetails.Rows[0];
+        <div class="row">
+            <div class="row mb-3">
+                <div class="form-group">
+                    <label class="control-label"><b>Bank/ Service Provider</b></label><br />
+                    @DR["PaymentProvider"]
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label><b>Branch Code</b></label><br />
+                        @DR["BranchCode"]
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label><b>Account No</b></label><br />
+                        @DR["BankAccountNo"]
+                    </div>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label><b>Method</b></label><br />
+                        @DR["PaymentMethod"]
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label><b>Frequency</b></label><br />
+                        @DR["PaymentFrequency"]
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+<hr />
+<div class="row mb-3">
+    @if ((Model.EmploymentDT != null) && (Model.EmploymentDT.Rows.Count > 0))
+    {
+        <h3>Employment Details</h3>
+        DataRow DR = @Model.EmploymentDT.Rows[0];
+        <div class="row">
+            <div class="row mb-3">
+                <div class="form-group">
+                    <label class="control-label"><b>Employer</b></label><br />
+                    @DR["Employer"]
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label><b>Job Title</b></label><br />
+                        @DR["JobTitle"]
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label><b>Employment No</b></label><br />
+                        @DR["EmploymentNo"]
+                    </div>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label><b>Gross Salary</b></label><br />
+                        @DR["Currency"]@DR["GrossSalary"]
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label><b>Net Salary</b></label><br />
+                        @DR["Currency"]@DR["NetSalary"]
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+<hr />
+<div class="row mb-3">
+    <div class="col-sm-2"></div>
+    <div class="col-sm-4">
+    </div>
+    <div class="col-sm-4">
+        <label asp-for="@Model.PolicyDates.ApplicationDate" class="control-label"><b>Application Received On</b></label>
+        @Model.PolicyDates.ApplicationDate
+    </div>
+    <div class="col-sm-2">
+        <label asp-for="@Model.PolicyDates.PreferredBillingDay" class="control-label"><b>Preferred Billing Day</b></label>
+        @Model.PolicyDates.PreferredBillingDay
+    </div>
+</div>
+<div class="row mb-3">
+    <h3>Intermediaries</h3>
+    <table class="table table-hover">
+        <tr>
+            <th class="col-md-4">Agent Name</th>
+            <th class="col-md-2">Agent Code</th>
+            <th class="col-md-2">Type</th>
+            <th class="col-md-4">Reports To</th>
+        </tr>
+        @if (Model.IntermediariesDT != null)
+        {
+            @foreach (DataRow DR in Model.IntermediariesDT.Rows)
+            {
+                <tr>
+                    <td>@DR["AgentName"]</td>
+                    <td>@DR["AgentCode"]</td>
+                    <td>@DR["Type"]</td>
+                    <td>@DR["ReportsTo"]</td>
+                </tr>
+            }
+        }
+    </table>
+</div> 
+</div>
+        </div>
+        <div id="tab2" class="tab-content border-0 bg-white">
+            <h3>Allocation Suspense</h3>
+            <div class="row mb-3">
+                <table class="table table-hover">
+                    <tr>
+                        <th>Due Date</th>
+                        <th>Proposer</th>
+                        <th>Invoice No</th>
+                        <th>Receipt No</th>
+                        <th>Rec. Date</th>
+                        <th>Policy</th>
+                        <th>Reference</th>
+                        <th>Currency</th>
+                        <th>Amount</th>
+                    </tr>
+                    @if (Model.AllocationSuspenseDT != null)
+                    {
+                        @foreach (DataRow DR in Model.AllocationSuspenseDT.Rows)
+                        {
+                            <tr>
+                                <td>@DR["DateDue"]</td>
+                                <td>@DR["MemberName"]</td>
+                                <td>@DR["InvoiceNo"]</td>
+                                <td>@DR["ReceiptNo"]</td>
+                                <td>@DR["DatePaymentReceived"]</td>
+                                <td>@DR["Policies"]</td>
+                                <td>@DR["ReferenceSummary"]</td>
+                                <td>@DR["Currency"]</td>
+                                <td>@DR["TotalAmount"]</td>
+                            </tr>
+                        }
+                    }
+                </table>
+            </div>
+        </div>        
+        <div id="tab3" class="tab-content  bg-white"> 
+            <h2>Policy Suspense</h2>
+            <p>Allocation Suspense entries.</p>
+            <hr />
+            <table class="table table-hover">
+                <tr>
+                    <th>Paid</th>
+                    <th>Policy</th>
+                    <th>Proposer</th>
+                    <th>National ID</th>
+                    <th>Method</th>
+                    <th>Reference</th>
+                    <th>Currency</th>
+                    <th>Balance</th>
+                </tr>
+                @if (Model.PolicySuspenseDT != null)
+                {
+                    @foreach (DataRow DR in Model.PolicySuspenseDT.Rows)
+                    {
+                        <tr>
+                            <td>@DR["PaymentDate"]</td>
+                            <td>@DR["PolicyNo"]</td>
+                            <td>@DR["MemberName"]</td>
+                            <td>@DR["NationalID"]</td>
+                            <td>@DR["Method"]</td>
+                            <td>@DR["Reference"]</td>
+                            <td>@DR["Currency"]</td>
+                            <td>@DR["Balance"]</td>
+                        </tr>
+                    }
+                }
+            </table>
+        </div>
+        <div id="tab4" class="tab-content bg-white ">
+            <h2>Unpaid</h2>
+            <p>Unpaid entries for the selected batch.</p>
+            <hr />
+            <table class="table table-hover">
+                <tr>
+                    <th>Due Date</th>
+                    <th>Policy No</th>
+                    <th>Full Name</th>
+                    <th>Invoice No</th>
+                    <th>Currency</th>
+                    <th>Amount</th>
+                </tr>
+                @if (Model.UnpaidDT != null)
+                {
+                    @foreach (DataRow DR in Model.UnpaidDT.Rows)
+                    {
+                        <tr>
+                            <td>@DR["DueDate"]</td>
+                            <td>@DR["PolicyNo"]</td>
+                            <td>@DR["FullName"]</td>
+                            <td>@DR["InvoiceNo"]</td>
+                            <td>@DR["Currency"]</td>
+                            <td>@DR["Amount"]</td>
+                        </tr>
+                    }
+                }
+            </table>
+        </div>
+        <div id="tab5" class="tab-content bg-white ">
+            <h3>Policy Status History</h3>  
+      <div class="row mb-3"> 
+    <table class="table table-hover">
+        <tr>
+            <th class="col-md-3">Status</th>
+            <th class="col-md-4">Comment</th>
+            <th class="col-md-2">Date</th>
+            <th class="col-md-3">Added By</th>
+        </tr>
+        @if (Model.IntermediariesDT != null)
+        {
+            @foreach (DataRow DR in Model.StatiiHistoryDT.Rows)
+            {
+                <tr>
+                    <td>@DR["Status"]</td>
+                    <td>@DR["PolicyStatusComment"]</td>
+                    <td>@DR["PolicyStatusDate"]</td>
+                    <td>@DR["UserName"]</td>
+                </tr>
+            }
+        }
+    </table>
+</div>  
+        </div>
+         <div id="tab6" class="tab-content bg-white ">
+            <h3>Messages</h3> 
+            <p>Client messages.</p>
+            <hr /> 
+            <div class="row mb-3">
+                <table class="table table-hover">
+                    <tr>
+                        <th>ID</th>
+                        <th>Invoice</th>
+                        <th>Policies</th>
+                        <th>Status</th> 
+                        <th>Message</th>
+                        <th>Date</th>
+                    </tr>
+                    @if (Model.MessagesDT != null)
+                    {
+                        @foreach (DataRow DR in Model.MessagesDT.Rows)
+                        {
+                            <tr>
+                                <td>@DR["ID"]</td>
+                                <td>@DR["InvoiceNo"]</td>
+                                <td>@DR["Policies"]</td>
+                                <td>@DR["Status"]</td> 
+                                <td>@DR["Message"]</td>
+                                <td>@DR["AddedOn"]</td>
+                            </tr>
+                        }
+                    }
+                </table>
+        </div>
+        </div>
+        <div id="tab7" class="tab-content bg-white ">
+            <h3>Claims</h3>
+               <table class="table table-hover">
+            <tr>
+                <th>Entry </th>
+                <th>Policy No</th>
+                <th>PolicyName</th>
+                <th>Policy Owner</th>
+                <th>Status</th>
+                <th>Status Date</th> 
+            </tr>
+            @if (Model.ClaimsDT != null)
+            {
+                @foreach (DataRow DR in Model.ClaimsDT.Rows)
+                {
+                    <tr>
+                        <td>@DR["EntryNo"]</td>
+                        <td>@DR["PolicyNo"]</td>
+                        <td>@DR["PolicyName"]</td>
+                        <td>@DR["PolicyOwner"]</td>
+                        <td>@DR["Status"]</td>
+                        <td>@DR["StatusDate"]</td> 
+                    </tr>
+                }
+            }
+        </table>
+            
+        </div>
+         <div id="tab8" class="tab-content bg-white ">
+            <h3>Settlements</h3>
+            <table class="table table-hover">
+                <tr>
+                    <th>Entry </th>
+                    <th>Policy No</th>
+                    <th>PolicyName</th>
+                    <th>Policy Owner</th>
+                    <th>Currency</th>
+                    <th>Gross</th>
+                    <th>Deductions</th>
+                    <th>Net</th>
+                    <th>Approved</th> 
+                </tr>
+                @if (Model.SettlementsDT != null)
+                {
+                    @foreach (DataRow DR in Model.SettlementsDT.Rows)
+                    {
+                        <tr>
+                            <td>@DR["EntryNo"]</td>
+                            <td>@DR["PolicyNo"]</td>
+                            <td>@DR["PolicyName"]</td>
+                            <td>@DR["PolicyOwner"]</td>
+                            <td>@DR["Currency"]</td>
+                            <td>@DR["DisbursementAmount"]</td>
+                            <td>@DR["Deductions"]</td>
+                            <td>@DR["NetAmount"]</td>
+                            <td>@DR["AddedOn"]</td> 
+                        </tr>
+                    }
+                }
+            </table>
+            
+        </div>
+    </div>
+</div>
+@section scripts { 
+    <script>
+        function openTab(tabId) {
+            // Hide all tab content
+            var tabContents = document.getElementsByClassName('tab-content');
+            for (var i = 0; i < tabContents.length; i++) {
+                tabContents[i].classList.remove('show');
+            }
+
+            // Show the selected tab content
+            var selectedTab = document.getElementById(tabId);
+            if (selectedTab) {
+                selectedTab.classList.add('show');
+            }
+        }
+    </script>
+    <script>
+        $(document).ready(function () {
+            $('#qsnModal').on('show.bs.modal', function (event) {
+                var button = $(event.relatedTarget);
+                var url = button.data('url');
+                $('#modalIframe').attr('src', url);
+            });
+
+        });
+    </script>
+    <script>
+        function closeModal(modalName) {
+            var modal = document.getElementById(modalName);
+            modal.style.display = 'none';
+        }
+    </script>
+    <script>
+        $(document).ready(function () {
+            $('#pdfModal').on('show.bs.modal', function (event) {
+                var button = $(event.relatedTarget);
+                var url = button.data('url');
+                openPdfModal(url);
+            });
+        });
+        function openPdfModal(pdfSource) {
+            // Make a Fetch API request to fetch PDF data from the server
+            fetch(pdfSource, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/pdf', // Adjust the content type as needed
+                },
+                responseType: 'blob', // Specify that you want the response as a Blob
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.blob(); // Get the response as a Blob
+                })
+                .then(blobData => {
+                    try {
+                        console.log('Blob created:', blobData);
+
+                        // Create a data URL from the Blob
+                        var pdfUrl = URL.createObjectURL(blobData);
+                        console.log('PDF URL created:', pdfUrl);
+
+                        // Update the iframe source with the PDF data URL
+                        $('#pdfIframe').attr('src', pdfUrl);
+                        console.log('IFrame src:', pdfUrl);
+
+                        // Show the modal
+                        $('#pdfModal').modal('show');
+                    } catch (error) {
+                        console.error('Error processing PDF data:', error);
+                    }
+                })
+                .catch(error => {
+                    console.error('Fetch error:', error);
+                });
+        }
+    </script> 
+}

@@ -1,0 +1,132 @@
+﻿@page
+@model LAIMS.Areas.PolicyServicing.Pages.People.EditModel
+@{
+}
+@{
+    Layout = "/Pages/Shared/_LayoutProducts.cshtml";
+}
+<h2>Edit Member</h2>
+@if (!string.IsNullOrEmpty(ViewData["ErrorMessage"]?.ToString()))
+{
+    <p class="text-danger">@ViewData["ErrorMessage"]</p>
+}
+<form method="post">
+    <div class="row mb-3">
+        <div class="col-md-4">
+            <div class="form-group">
+                <label asp-for="Member.NationalID">National ID</label>
+                <input asp-for="Member.NationalID" class="form-control" />
+                <span asp-validation-for="Member.NationalID" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-group">
+                <label asp-for="Member.Passport"></label>
+                <input asp-for="Member.Passport" class="form-control" />
+                <span asp-validation-for="Member.Passport" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-group">
+                <label asp-for="Member.BirthCertificate">Birth Certificate</label>
+                <input asp-for="Member.BirthCertificate" class="form-control" />
+                <span asp-validation-for="Member.BirthCertificate" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-group">
+                <label asp-for="Member.Name1">First Name</label>
+                <input asp-for="Member.Name1" class="form-control" />
+                <span asp-validation-for="Member.Name1" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="form-group">
+                <label asp-for="Member.Name2">Middle Name</label>
+                <input asp-for="Member.Name2" class="form-control" />
+                <span asp-validation-for="Member.Name2" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-group">
+                <label asp-for="Member.Name3">Surname</label>
+                <input asp-for="Member.Name3" class="form-control" />
+                <span asp-validation-for="Member.Name3" class="text-danger"></span>
+            </div>
+        </div>
+        <!-- Add other fields of the Member model... -->
+
+        <div class="col-md-4">
+            <div class="form-group">
+                <label asp-for="Member.GenderID">Gender</label>
+                <select asp-for="Member.GenderID" asp-items="@(new SelectList(Model.Genders, "Id", "GenderName"))" class="form-control">
+                    <option value="">Select Gender</option>
+                </select>
+                <span asp-validation-for="Member.GenderID" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="form-group">
+                <label asp-for="Member.TitleID">Title</label>
+                <select asp-for="Member.TitleID" asp-items="@(new SelectList(Model.Titles, "TitleID", "TitleName"))" class="form-control">
+                    <option value="">Select Title</option>
+                </select>
+                <span asp-validation-for="Member.TitleID" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-group">
+                <label asp-for="Member.MaritalStatusID">Marital Status</label>
+                <select asp-for="Member.MaritalStatusID" asp-items="@(new SelectList(Model.MaritalStatii, "MaritalStatusID", "MaritalStatusName"))" class="form-control">
+                    <option value="">Select Status</option>
+                </select>
+                <span asp-validation-for="Member.MaritalStatusID" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-group">
+                <label asp-for="Member.DOB"></label>
+                <input asp-for="Member.DOB" type="date" class="form-control" />
+                <span asp-validation-for="Member.DOB" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-group">
+                <label asp-for="Member.BirthCountryID">Birth Country</label>
+                <select asp-for="Member.BirthCountryID" asp-items="@(new SelectList(Model.Countries, "CountryID", "CountryName"))" class="form-control">
+                    <option value="">Select Birth Country</option>
+                </select>
+                <span asp-validation-for="Member.BirthCountryID" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-group">
+                <label asp-for="Member.PlaceOfBirth"></label>
+                <input asp-for="Member.PlaceOfBirth" class="form-control" />
+                <span asp-validation-for="Member.PlaceOfBirth" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-group">
+                <label asp-for="Member.CountryID">Citizenship</label>
+                <select asp-for="Member.CountryID" asp-items="@(new SelectList(Model.Countries, "CountryID", "CountryName"))" class="form-control">
+                    <option value="">Select Country</option>
+                </select>
+                <span asp-validation-for="Member.CountryID" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-group">
+                <label asp-for="Member.MemberNo">Member No</label>
+                <input asp-for="Member.MemberNo" class="form-control" />
+                <span asp-validation-for="Member.MemberNo" class="text-danger"></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <input type="submit" value="Submit" class="btn btn-primary" />
+    </div>
+</form> 
