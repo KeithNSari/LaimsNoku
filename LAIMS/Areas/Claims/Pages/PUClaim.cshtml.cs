@@ -14,6 +14,7 @@ using LAIMS.Pages.NewBusiness.Pages.policies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System.Data;
 using System.Transactions;
@@ -38,6 +39,7 @@ namespace LAIMS.Areas.Claims.Pages
         public DataTable UnitTrustBalancesDT;
 		public DataTable UnitTransactionsHistoryDT; 
         public DataTable CoverDT;
+        public List<SelectListItem> ClaimTypesList { get; set; } = new List<SelectListItem>();
         public string SearchPageUrl;
 
         [BindProperty]
@@ -86,6 +88,7 @@ namespace LAIMS.Areas.Claims.Pages
 						UnitTransactionsHistoryDT = _unitTrustRepository.GetLatestTransactions(policyID);
 						ResultsCount = PoliciesDT.Rows.Count;
 						CoverDT = _policyClaimRepository.GetNonInvestmentSuppementaryCover(SearchTerm);
+                        LoadClaimTypesSelectList();
 					}
 				}
                 else
@@ -99,6 +102,38 @@ namespace LAIMS.Areas.Claims.Pages
 			}
             return Page();			
         }
+        private void LoadClaimTypesSelectList()
+        {
+            ClaimTypesList = new List<SelectListItem>();
+            if ((CoverDT == null) || (CoverDT.Rows.Count == 0) || (!CoverDT.Columns.Contains("ProductID")))
+            {
+                return;
+            }
+
+            HashSet<int> addedClaimTypeIds = new HashSet<int>();
+            IEnumerable<Guid> productIds = CoverDT.AsEnumerable()
+                .Where(row => row["ProductID"] != DBNull.Value)
+                .Select(row => Guid.Parse(row["ProductID"].ToString()))
+                .Distinct();
+
+            foreach (Guid productId in productIds)
+            {
+                DataTable claimTypes = _policyClaimRepository.GetClaimTypes(productId);
+                foreach (DataRow row in claimTypes.Rows)
+                {
+                    int claimTypeId = Convert.ToInt32(row["ID"]);
+                    if (addedClaimTypeIds.Add(claimTypeId))
+                    {
+                        ClaimTypesList.Add(new SelectListItem
+                        {
+                            Value = claimTypeId.ToString(),
+                            Text = row["ClaimType"].ToString()
+                        });
+                    }
+                }
+            }
+        }
+
         public IActionResult OnPost(Guid[] UnitTrustIDS, decimal[] PurchaseQuantities)
         {
             string url = "/Claims/PolicyUnitsSell?handler=search&search=" + SearchTerm;
@@ -166,6 +201,7 @@ namespace LAIMS.Areas.Claims.Pages
 					if (ClaimTypeID == 7)
 					{
 						CoverDT = _policyClaimRepository.GetNonInvestmentSuppementaryCover(SearchTerm);
+                        LoadClaimTypesSelectList();
 						foreach (DataRow DR in CoverDT.Rows)
 						{
 							totalValue += Convert.ToDecimal(DR["Cover"].ToString());
