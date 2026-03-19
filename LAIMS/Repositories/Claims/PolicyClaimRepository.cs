@@ -782,7 +782,7 @@ namespace LAIMS.Repositories.Claims
             connection.ConnectionString = Database;
             SqlCommand cmd = connection.CreateCommand();
             cmd.CommandType = CommandType.StoredProcedure;
-            cmd.CommandText = "ClaimTypes_GetAll";
+            cmd.CommandText = "ClaimTypes_GetConfigured";
             cmd.Parameters.AddWithValue("ProductID", ProductID);
             SqlDataAdapter da = new SqlDataAdapter(cmd);
             da.Fill(DT);
