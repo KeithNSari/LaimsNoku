@@ -15,12 +15,10 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System.Data;
 using System.Transactions;
 using Microsoft.AspNetCore.Authorization;
 using LAIMS.Models.Security;
-using System.Security.Policy;
 
 namespace LAIMS.Areas.Claims.Pages
 {
@@ -76,25 +74,7 @@ namespace LAIMS.Areas.Claims.Pages
 			string ReturnUrl = Request.Path + Request.QueryString;
 			try
             {
-				SearchTerm = search.Trim();
-				SearchPageUrl = "PUClaim";
-				if (!string.IsNullOrEmpty(SearchTerm))
-				{
-					Guid policyID = _policyRepository.GetPolicyID(SearchTerm);
-					if (policyID != Guid.Empty)
-					{
-						PoliciesDT = _policyRepository.PolicyInvestmentSummary(SearchTerm);
-						UnitTrustBalancesDT = _unitTrustRepository.GetSalesDetails(SearchTerm);
-						UnitTransactionsHistoryDT = _unitTrustRepository.GetLatestTransactions(policyID);
-						ResultsCount = PoliciesDT.Rows.Count;
-						CoverDT = _policyClaimRepository.GetNonInvestmentSuppementaryCover(SearchTerm);
-                        LoadClaimTypesSelectList();
-					}
-				}
-                else
-                {
-                    ResultsCount = 0;
-				}
+				LoadSearchResults(search);
 			}
 			catch (Exception ex)
 			{
@@ -134,18 +114,65 @@ namespace LAIMS.Areas.Claims.Pages
             }
         }
 
+        private void LoadSearchResults(string searchTerm)
+        {
+            SearchTerm = searchTerm?.Trim();
+            SearchPageUrl = "PUClaim";
+            ResultsCount = 0;
+            PoliciesDT = null;
+            UnitTrustBalancesDT = null;
+            UnitTransactionsHistoryDT = null;
+            CoverDT = null;
+            ClaimTypesList = new List<SelectListItem>();
+
+            if (string.IsNullOrWhiteSpace(SearchTerm))
+            {
+                return;
+            }
+
+            Guid policyID = _policyRepository.GetPolicyID(SearchTerm);
+            if (policyID == Guid.Empty)
+            {
+                return;
+            }
+
+            PoliciesDT = _policyRepository.PolicyInvestmentSummary(SearchTerm);
+            UnitTrustBalancesDT = _unitTrustRepository.GetSalesDetails(SearchTerm);
+            UnitTransactionsHistoryDT = _unitTrustRepository.GetLatestTransactions(policyID);
+            ResultsCount = PoliciesDT.Rows.Count;
+            CoverDT = _policyClaimRepository.GetNonInvestmentSuppementaryCover(SearchTerm);
+            LoadClaimTypesSelectList();
+        }
+
+        private bool IsValidClaimTypeSelection()
+        {
+            return ClaimTypeID > 0 && ClaimTypesList.Any(item => item.Value == ClaimTypeID.ToString());
+        }
+
         public IActionResult OnPost(Guid[] UnitTrustIDS, decimal[] PurchaseQuantities)
         {
             string url = "/Claims/PolicyUnitsSell?handler=search&search=" + SearchTerm;
             try
-            {               
+            {
+                Guid policyID = _policyRepository.GetPolicyID(SearchTerm);
+                if (policyID == Guid.Empty)
+                {
+                    throw new Exception("The selected policy could not be found.");
+                }
+
+                LoadSearchResults(SearchTerm);
+                if (!IsValidClaimTypeSelection())
+                {
+                    ModelState.AddModelError(nameof(ClaimTypeID), "The selected claim type is not configured for this policy.");
+                    return Page();
+                }
+
                 Guid RequestID = Guid.NewGuid();
                 Guid proposerID = _policyRepository.GetProposerUID(SearchTerm);
                 using (TransactionScope TS = new TransactionScope())
                 {
                     int CurrencyID = _policyRepository.GetPolicyCurrency(SearchTerm);
                     string addedBy = _userManager.GetUserId(User).ToString();
-                    Guid policyID = _policyRepository.GetPolicyID(SearchTerm);
                     Guid policyTypeID = _policyRepository.GetPolicyTypeID(SearchTerm);
                     PolicyClaim policyClaim = new()
                     {
