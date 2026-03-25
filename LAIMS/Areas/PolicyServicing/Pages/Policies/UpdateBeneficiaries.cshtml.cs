@@ -105,11 +105,7 @@ namespace LAIMS.Areas.PolicyServicing.Pages.Policies
                 Titles = _titleRepository.GetAllTitles();
                 Countries = _countryRepository.GetAllCountries();
                 MaritalStatii = _maritalStatusRepository.GetAllMaritalStatuses();
-                LoadRelationshipsSelectList();
-                LoadGenderSelectList();
-                LoadTitleSelectList();
-                LoadMaritalSelectList();
-                LoadCountrySelectList();
+                LoadPageLookups();
             }
             catch (Exception ex)
             {
@@ -172,6 +168,20 @@ namespace LAIMS.Areas.PolicyServicing.Pages.Policies
                 });
             }
         }
+        private void LoadPageLookups()
+        {
+            LoadRelationshipsSelectList();
+            LoadGenderSelectList();
+            LoadTitleSelectList();
+            LoadMaritalSelectList();
+            LoadCountrySelectList();
+        }
+        private static int CalculateAgeInYears(DateTime dob, DateTime onDate)
+        {
+            int age = onDate.Year - dob.Year;
+            if (dob.Date > onDate.AddYears(-age)) age--;
+            return age;
+        }
         public IActionResult OnPostAddParticipant(Guid id, Guid policyTypeid, Guid policyid)
         {
             try
@@ -185,15 +195,12 @@ namespace LAIMS.Areas.PolicyServicing.Pages.Policies
                 {
                     return NotFound();
                 }
+                Policy = _policyRepository.GetPolicyById(policyid);
                 Genders = _genderRepository.GetAllGenders();
                 Titles = _titleRepository.GetAllTitles();
                 Countries = _countryRepository.GetAllCountries();
-                MaritalStatii = _maritalStatusRepository.GetAllMaritalStatuses(); 
-                LoadRelationshipsSelectList(); 
-                LoadGenderSelectList();
-                LoadTitleSelectList();
-                LoadMaritalSelectList();
-                LoadCountrySelectList();
+                MaritalStatii = _maritalStatusRepository.GetAllMaritalStatuses();
+                LoadPageLookups();
                 if (string.IsNullOrEmpty((IDContent)) || string.IsNullOrEmpty(ConfirmIDContent) || (IDType == 0))
                 {
                     throw new Exception("Please select a valid identity option and add the corresponding values!");
@@ -244,7 +251,25 @@ namespace LAIMS.Areas.PolicyServicing.Pages.Policies
                     NewMember.AddedOn = DateTime.Now;
                     _memberRepository.AddMember(NewMember);
                     member = _memberRepository.GetMemberById(IDContent);
-                }    
+                }
+
+                if (member == null || member.DOB == null)
+                {
+                    throw new Exception("Unable to validate beneficiary age because Date of Birth is missing.");
+                }
+
+                Guid policyTypeID = Policy.PolicyType;
+                var ageLimits = _policyBeneficiaryRepository.GetPolicyTypeRelationshipAgeLimits(policyTypeID, RelationshipID);
+                int age = CalculateAgeInYears(member.DOB.Value.Date, DateTime.Today);
+                if (ageLimits.MinAgeAtEntry.HasValue && age < ageLimits.MinAgeAtEntry.Value)
+                {
+                    throw new Exception($"Beneficiary age ({age}) is less than the minimum entry age ({ageLimits.MinAgeAtEntry.Value}) configured for this policy type relationship.");
+                }
+                if (ageLimits.MaxAgeAtEntry.HasValue && age > ageLimits.MaxAgeAtEntry.Value)
+                {
+                    throw new Exception($"Beneficiary age ({age}) is greater than the maximum entry age ({ageLimits.MaxAgeAtEntry.Value}) configured for this policy type relationship.");
+                }
+
                 PolicyBeneficiary policyBeneficiary = new PolicyBeneficiary();                
                 policyBeneficiary.MemberID = member.ID;
                 policyBeneficiary.HeaderID = policyid;  
