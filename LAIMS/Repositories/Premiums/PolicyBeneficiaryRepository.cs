@@ -84,9 +84,10 @@ namespace LAIMS.Repositories.Premiums
             using (SqlConnection connection = new SqlConnection(Database))
             {
                 connection.Open();
-                string query = "DECLARE @ID int=0; SELECT @ID=[ID] FROM [dbo].[PolicyBeneficiaries] WHERE ([Archived]=0) AND [HeaderID]=@HeaderID AND [MemberID]=@MemberID; IF(@ID=0) BEGIN INSERT INTO PolicyBeneficiaries (HeaderID, MemberID, RelationshipID, LIRole,Insured,Beneficiary,IDType,RiskGroupID, AddedOn, AddedBy) VALUES (@HeaderID, @MemberID, @RelationshipID, @LIRole,@Insured,@Beneficiary,@IDType,@RiskGroupID, @AddedOn, @AddedBy); SELECT @ID=SCOPE_IDENTITY() END; SELECT @ID";
+                string query = "PolicyBeneficiaries_Upsert";
                 using (SqlCommand command = new SqlCommand(query, connection))
                 {
+                    command.CommandType = CommandType.StoredProcedure;
                     command.Parameters.AddWithValue("@HeaderID", beneficiary.HeaderID);
                     command.Parameters.AddWithValue("@MemberID", beneficiary.MemberID);
                     command.Parameters.AddWithValue("@RelationshipID", beneficiary.RelationshipID);
@@ -127,7 +128,7 @@ namespace LAIMS.Repositories.Premiums
             using (SqlConnection connection = new SqlConnection(Database))
             {
                 connection.Open();
-                using (SqlCommand command = new SqlCommand("PolicyTypeRelationships_GetAgeLimits", connection))
+                using (SqlCommand command = new SqlCommand("PolicyTypeRelationships_CheckAgeLimits", connection))
                 {
                     command.CommandType = CommandType.StoredProcedure;
                     command.Parameters.AddWithValue("@PolicyTypeID", policyTypeID);
