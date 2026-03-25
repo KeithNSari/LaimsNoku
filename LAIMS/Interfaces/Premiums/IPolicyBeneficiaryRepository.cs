@@ -9,6 +9,7 @@ namespace LAIMS.Interfaces.Premiums
         int CountPrincipalMembers(Guid PolicyID);
         int InsertPolicyBeneficiary(PolicyBeneficiary beneficiary);
         int InsertPolicyBeneficiaryStaging(PolicyBeneficiary beneficiary, Guid RequestID);
+        (int? MinAgeAtEntry, int? MaxAgeAtEntry) GetPolicyTypeRelationshipAgeLimits(Guid policyTypeID, int relationshipID);
         int ProposeAdditionalLifeAssured(PolicyBeneficiary beneficiary, Guid RequestID);
         int GetRiskGroup(List<int> Parameters);
         int GetPolicyBeneficiaryRiskGroup(int PolicyBeneficiaryID);

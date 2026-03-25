@@ -106,16 +106,14 @@ namespace LAIMS.Repositories.Premiums
             using (SqlConnection connection = new SqlConnection(Database))
             {
                 connection.Open();
-                string query = "DECLARE @ID int=0; SELECT @ID=[ID] FROM [dbo].[PolicyBeneficiariesStaging] WHERE ([Archived]=0) AND [HeaderID]=@HeaderID AND [MemberID]=@MemberID AND [RequestID]=@RequestID; IF(@ID=0) BEGIN INSERT INTO PolicyBeneficiariesStaging (RequestID, HeaderID, MemberID, RelationshipID,Beneficiary,IDType,AddedOn, AddedBy) VALUES (@RequestID, @HeaderID, @MemberID, @RelationshipID,@Beneficiary,@IDType,@AddedOn, @AddedBy); SELECT @ID=SCOPE_IDENTITY() END; ELSE BEGIN UPDATE PolicyBeneficiariesStaging SET Beneficiary=@Beneficiary WHERE [ID]=@ID END SELECT @ID";
+                string query = "PolicyBeneficiariesStaging_Upsert";
                 using (SqlCommand command = new SqlCommand(query, connection))
                 {
+                    command.CommandType = CommandType.StoredProcedure;
                     command.Parameters.AddWithValue("@HeaderID", beneficiary.HeaderID);
                     command.Parameters.AddWithValue("@MemberID", beneficiary.MemberID);
                     command.Parameters.AddWithValue("@RelationshipID", beneficiary.RelationshipID);
                     command.Parameters.AddWithValue("@IDType", beneficiary.IDType);
-                    command.Parameters.AddWithValue("@LIRole", beneficiary.LIRole);
-                    command.Parameters.AddWithValue("@Insured", beneficiary.Insured);
-                    command.Parameters.AddWithValue("@RiskGroupID", beneficiary.RiskGroupID);
                     command.Parameters.AddWithValue("@Beneficiary", beneficiary.Beneficiary);
                     command.Parameters.AddWithValue("@RequestID", RequestID);
                     command.Parameters.AddWithValue("@AddedOn", beneficiary.AddedOn ?? (object)DBNull.Value);
@@ -123,6 +121,29 @@ namespace LAIMS.Repositories.Premiums
                     return Convert.ToInt32(command.ExecuteScalar());
                 }
             }
+        }
+        public (int? MinAgeAtEntry, int? MaxAgeAtEntry) GetPolicyTypeRelationshipAgeLimits(Guid policyTypeID, int relationshipID)
+        {
+            using (SqlConnection connection = new SqlConnection(Database))
+            {
+                connection.Open();
+                using (SqlCommand command = new SqlCommand("PolicyTypeRelationships_GetAgeLimits", connection))
+                {
+                    command.CommandType = CommandType.StoredProcedure;
+                    command.Parameters.AddWithValue("@PolicyTypeID", policyTypeID);
+                    command.Parameters.AddWithValue("@RelationshipID", relationshipID);
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+                            int? minAge = reader["MinAgeAtEntry"] == DBNull.Value ? null : Convert.ToInt32(reader["MinAgeAtEntry"]);
+                            int? maxAge = reader["MaxAgeAtEntry"] == DBNull.Value ? null : Convert.ToInt32(reader["MaxAgeAtEntry"]);
+                            return (minAge, maxAge);
+                        }
+                    }
+                }
+            }
+            return (null, null);
         }
         public int ProposeAdditionalLifeAssured(PolicyBeneficiary beneficiary, Guid RequestID)
         {
