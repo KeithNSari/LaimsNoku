@@ -16,6 +16,8 @@ namespace LAIMS.Interfaces.Premiums
         DataTable GetLatestPremiumRatesHeaders();
         DataTable GetLatestAllocationRates();
         DataTable GetLatestCoverRates();
+        DataTable GetCoverLevels();
+        void UploadCoverLevels(DataTable coverLevelsDT);
         void UpdatePayment(Payment payment);
         void DeletePayment(int id);
     }

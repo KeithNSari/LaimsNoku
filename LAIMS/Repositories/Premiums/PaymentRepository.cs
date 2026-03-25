@@ -969,5 +969,83 @@ namespace LAIMS.Repositories.Premiums
             da.Fill(DT);
             return DT;
         }
+
+        public DataTable GetCoverLevels()
+        {
+            DataTable DT = new DataTable();
+            using (SqlConnection connection = new SqlConnection(Database))
+            {
+                using (SqlCommand cmd = connection.CreateCommand())
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.CommandText = "CoverLevels_GetAll";
+                    SqlDataAdapter da = new SqlDataAdapter(cmd);
+                    da.Fill(DT);
+                }
+            }
+            return DT;
+        }
+
+        public void UploadCoverLevels(DataTable coverLevelsDT)
+        {
+            using (SqlConnection connection = new SqlConnection(Database))
+            {
+                connection.Open();
+                using (SqlTransaction transaction = connection.BeginTransaction())
+                {
+                    try
+                    {
+                        foreach (DataRow row in coverLevelsDT.Rows)
+                        {
+                            string policyTypeName = Convert.ToString(row["PolicyType"]).Trim();
+                            if (string.IsNullOrWhiteSpace(policyTypeName))
+                            {
+                                continue;
+                            }
+
+                            if (!decimal.TryParse(Convert.ToString(row["MinCover"]), out decimal minCover))
+                            {
+                                throw new Exception($"Invalid MinCover for PolicyType '{policyTypeName}'.");
+                            }
+                            if (!decimal.TryParse(Convert.ToString(row["MaxCover"]), out decimal maxCover))
+                            {
+                                throw new Exception($"Invalid MaxCover for PolicyType '{policyTypeName}'.");
+                            }
+                            if (!int.TryParse(Convert.ToString(row["RelationshipClusterID"]), out int relationshipClusterID))
+                            {
+                                throw new Exception($"Invalid RelationshipClusterID for PolicyType '{policyTypeName}'.");
+                            }
+                            if (!int.TryParse(Convert.ToString(row["MinAge"]), out int minAge))
+                            {
+                                throw new Exception($"Invalid MinAge for PolicyType '{policyTypeName}'.");
+                            }
+                            if (!int.TryParse(Convert.ToString(row["MaxAge"]), out int maxAge))
+                            {
+                                throw new Exception($"Invalid MaxAge for PolicyType '{policyTypeName}'.");
+                            }
+
+                            using (SqlCommand cmd = new SqlCommand("CoverLevels_Upsert", connection, transaction))
+                            {
+                                cmd.CommandType = CommandType.StoredProcedure;
+                                cmd.Parameters.AddWithValue("@PolicyTypeName", policyTypeName);
+                                cmd.Parameters.AddWithValue("@MinCover", minCover);
+                                cmd.Parameters.AddWithValue("@MaxCover", maxCover);
+                                cmd.Parameters.AddWithValue("@RelationshipClusterID", relationshipClusterID);
+                                cmd.Parameters.AddWithValue("@MinAge", minAge);
+                                cmd.Parameters.AddWithValue("@MaxAge", maxAge);
+                                cmd.ExecuteNonQuery();
+                            }
+                        }
+
+                        transaction.Commit();
+                    }
+                    catch
+                    {
+                        transaction.Rollback();
+                        throw;
+                    }
+                }
+            }
+        }
     }
 }

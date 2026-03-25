@@ -1,0 +1,59 @@
+@page
+@using System.Data
+@model LAIMS.Areas.UTools.Pages.Rates.CoverLevelsIndexModel
+@{
+    Layout = "/Pages/Shared/_LayoutProducts.cshtml";
+}
+
+<h1>Cover Levels Setup</h1>
+@if (!string.IsNullOrEmpty(ViewData["ErrorMessage"]?.ToString()))
+{
+    <p class="text-danger">@ViewData["ErrorMessage"]</p>
+}
+<p>Please upload an Excel workbook with columns: <b>PolicyType</b>, <b>MinCover</b>, <b>MaxCover</b>, <b>RelationshipClusterID</b>, <b>MinAge</b>, <b>MaxAge</b>.</p>
+<hr />
+<form method="post" enctype="multipart/form-data">
+    <h3>Upload Cover Levels File</h3>
+    <div class="row mb-3">
+        <div class="col-md-10">
+            <label class="control-label"><b>Select file</b></label>
+            <input class="form-control" required type="file" asp-for="Upload" />
+        </div>
+        <div class="col-md-2">
+            <br />
+            <input class="btn btn-primary" type="submit" value="Upload File" />
+        </div>
+    </div>
+</form>
+
+@if (Model.CoverLevelsDT != null && Model.CoverLevelsDT.Rows.Count > 0)
+{
+    <hr />
+    <div class="row mb-3">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Policy Type</th>
+                    <th>Min Cover</th>
+                    <th>Max Cover</th>
+                    <th>Relationship Cluster ID</th>
+                    <th>Min Age</th>
+                    <th>Max Age</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (DataRow DR in Model.CoverLevelsDT.Rows)
+                {
+                    <tr>
+                        <td>@DR["PolicyType"]</td>
+                        <td>@DR["MinCover"]</td>
+                        <td>@DR["MaxCover"]</td>
+                        <td>@DR["RelationshipClusterID"]</td>
+                        <td>@DR["MinAge"]</td>
+                        <td>@DR["MaxAge"]</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
