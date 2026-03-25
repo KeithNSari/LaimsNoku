@@ -115,6 +115,7 @@
   <ItemGroup>
     <Folder Include="Areas\PolicySetUps\Pages\Commissions\Intermediaries\" />
     <Folder Include="Areas\Reports\Pages\" />
+    <Folder Include="Database\" />
     <Folder Include="wwwroot\Uploads\" />
   </ItemGroup>
 
