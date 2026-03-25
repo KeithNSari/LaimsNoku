@@ -398,6 +398,12 @@ namespace LAIMS.Areas.PolicyServicing.Pages.Policies
                     });
                 }
             }
+            private static int CalculateAgeInYears(DateTime dob, DateTime onDate)
+            {
+                int age = onDate.Year - dob.Year;
+                if (dob.Date > onDate.AddYears(-age)) age--;
+                return age;
+            }
             public IActionResult OnPostAddRoles(Guid id, Guid policyTypeid, Guid policyid)
             {
                 string AddedBy = _userManager.GetUserId(User).ToString();
@@ -567,6 +573,22 @@ namespace LAIMS.Areas.PolicyServicing.Pages.Policies
                     //    // _policyRepository.UpdatePolicyStatus(PolicyID, statusReport.StatusID, statusReport.StatusReasonID, statusReport.StatusMessage, AddedBy);
                     //    throw new Exception(statusReport.StatusMessage);
                     //}
+                    if (member == null || member.DOB == null)
+                    {
+                        throw new Exception("Unable to validate participant age because Date of Birth is missing.");
+                    }
+
+                    var ageLimits = _policyBeneficiaryRepository.GetPolicyTypeRelationshipAgeLimits(policyTypeid, RelationshipID);
+                    int age = CalculateAgeInYears(member.DOB.Value.Date, DateTime.Today);
+                    if (ageLimits.MinAgeAtEntry.HasValue && age < ageLimits.MinAgeAtEntry.Value)
+                    {
+                        throw new Exception($"Participant age ({age}) is less than the minimum entry age ({ageLimits.MinAgeAtEntry.Value}) configured for this policy type relationship.");
+                    }
+                    if (ageLimits.MaxAgeAtEntry.HasValue && age > ageLimits.MaxAgeAtEntry.Value)
+                    {
+                        throw new Exception($"Participant age ({age}) is greater than the maximum entry age ({ageLimits.MaxAgeAtEntry.Value}) configured for this policy type relationship.");
+                    }
+
                     PolicyBeneficiary policyBeneficiary = new PolicyBeneficiary();
                     HasRiskProduct = _policyTypeRepository.HasRiskProduct(policyTypeid);
 
