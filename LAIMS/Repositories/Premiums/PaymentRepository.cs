@@ -698,9 +698,6 @@ namespace LAIMS.Repositories.Premiums
                                                 case "Allocation Rates":
                                                        SaveAllocationRates(batchID,age,policyTerm,rate);
                                                     break;
-                                                case "Cover Levels":
-                                                    SaveCoverLevels(batchID, age, policyTerm, rate);
-                                                    break;
                                                 default:
                                                     break;
                                             } 
@@ -719,9 +716,6 @@ namespace LAIMS.Repositories.Premiums
                     break;
                 case "Allocation Rates": 
                     SaveAllocationRatesHeader(batchID, MediaUploadID, currencyID, productID,EffectiveDate, sumAssured, AddedBy);
-                    break;
-                case "Cover Levels":
-                    SaveCoverLevelsHeader(batchID, MediaUploadID, currencyID, productID, EffectiveDate, sumAssured, AddedBy);
                     break;
                 default:
                     break;
@@ -939,44 +933,6 @@ namespace LAIMS.Repositories.Premiums
             }
         }
 
-        private void SaveCoverLevelsHeader(long BatchID, Guid MediaUploadID, int CurrencyID, Guid ProductID, DateTime EffectiveDate, decimal SumAssured, string AddedBy)
-        {
-            using (SqlConnection connection = new SqlConnection(Database))
-            {
-                connection.Open();
-                string sql = "INSERT INTO [CoverLevelsHeader] ([SumAssured],[BatchID],[MediaUploadID],[CurrencyID],[ProductID],[EffectiveDate],[AddedBy],[AddedOn]) " +
-                    "VALUES (@SumAssured,@BatchID,@MediaUploadID,@CurrencyID,@ProductID,@EffectiveDate,@AddedBy,GetDate())";
-                using (SqlCommand command = new SqlCommand(sql, connection))
-                {
-                    command.Parameters.AddWithValue("@SumAssured", SumAssured);
-                    command.Parameters.AddWithValue("@BatchID", BatchID);
-                    command.Parameters.AddWithValue("@MediaUploadID", MediaUploadID);
-                    command.Parameters.AddWithValue("@CurrencyID", CurrencyID);
-                    command.Parameters.AddWithValue("@ProductID", ProductID);
-                    command.Parameters.AddWithValue("@EffectiveDate", EffectiveDate);
-                    command.Parameters.AddWithValue("@AddedBy", AddedBy);
-                    command.ExecuteNonQuery();
-                }
-            }
-        }
-        private void SaveCoverLevels(long BatchID, int PolicyAge, int PolicyTerm, decimal CoverLevel)
-        {
-            using (SqlConnection connection = new SqlConnection(Database))
-            {
-                connection.Open();
-                string sql = "INSERT INTO [CoverLevels] ([BatchID],[PolicyTerm],[PolicyAge],[Level]) " +
-                    "VALUES (@BatchID, @PolicyTerm,@PolicyAge,@Level)";
-                using (SqlCommand command = new SqlCommand(sql, connection))
-                {
-                    command.Parameters.AddWithValue("@PolicyAge", PolicyAge);
-                    command.Parameters.AddWithValue("@PolicyTerm", PolicyTerm);
-                    command.Parameters.AddWithValue("@Level", CoverLevel);
-                    command.Parameters.AddWithValue("@BatchID", BatchID);
-                    command.ExecuteNonQuery();
-                }
-            }
-        }
-
         public DataTable GetLatestPremiumRatesHeaders()
         { 
             DataTable DT = new DataTable();
@@ -997,19 +953,6 @@ namespace LAIMS.Repositories.Premiums
             SqlCommand cmd = connection.CreateCommand();
             cmd.CommandType = CommandType.StoredProcedure;
             cmd.CommandText = "CoverRateFiles_GetLatest";
-            SqlDataAdapter da = new SqlDataAdapter(cmd);
-            da.Fill(DT);
-            return DT;
-        }
-
-        public DataTable GetLatestCoverLevels()
-        {
-            DataTable DT = new DataTable();
-            SqlConnection connection = new SqlConnection();
-            connection.ConnectionString = Database;
-            SqlCommand cmd = connection.CreateCommand();
-            cmd.CommandType = CommandType.StoredProcedure;
-            cmd.CommandText = "CoverLevelFiles_GetLatest";
             SqlDataAdapter da = new SqlDataAdapter(cmd);
             da.Fill(DT);
             return DT;
