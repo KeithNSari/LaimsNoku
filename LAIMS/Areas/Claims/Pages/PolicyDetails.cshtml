@@ -577,9 +577,8 @@
 
     </div>
     <div class="col-md-3">      
-        <select asp-for="ClaimTypeID" class="form-control" required aria-required="true">
-            <option value="">Select Claim Type</option> 
-            <option value=1>Death Claim</option> 
+        <select asp-for="ClaimTypeID" class="form-control" required aria-required="true" asp-items="Model.ClaimTypesList">
+            <option value="">Select Claim Type</option>
         </select>
         <span asp-validation-for="ClaimTypeID" class="text-danger"></span>
     </div>

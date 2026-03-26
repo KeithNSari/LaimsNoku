@@ -20,6 +20,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Data;
 
 namespace LAIMS.Areas.Claims.Pages
@@ -133,6 +134,7 @@ namespace LAIMS.Areas.Claims.Pages
         public string StatusComment { get; set; }
         [BindProperty]
         public int ClaimTypeID { get; set; }
+        public List<SelectListItem> ClaimTypesList { get; set; } = new List<SelectListItem>();
         [BindProperty] 
         public CoverDetails CoverDetails {get;set;}
         public IActionResult OnGet(Guid id, Guid policyTypeid, Guid policyid)
@@ -166,6 +168,7 @@ namespace LAIMS.Areas.Claims.Pages
 				IntermediariesDT = _policyPremiumRepository.GetInitialPremiumAgents(policyid);
 				StatiiHistoryDT = _policyRepository.GetPolicyStatusHistory(policyid);
 				CoverDetails = _policyPremiumRepository.GetCoverDetails(policyid);
+                LoadClaimTypesSelectList(policyTypeid);
 			}
 			catch (Exception ex)
 			{
@@ -208,6 +211,14 @@ namespace LAIMS.Areas.Claims.Pages
         {
             try
             {
+                LoadClaimTypesSelectList(policyTypeid);
+                if (ClaimTypeID <= 0 || !ClaimTypesList.Any(item => item.Value == ClaimTypeID.ToString()))
+                {
+                    ModelState.AddModelError(nameof(ClaimTypeID), "The selected claim type is not configured for this policy.");
+                    OnGet(id, policyTypeid, policyid);
+                    return Page();
+                }
+
                 string addedBy = _userManager.GetUserId(User).ToString();
                 Guid requestID = Guid.NewGuid();
                 PolicyClaim policyClaim = new()
@@ -236,6 +247,20 @@ namespace LAIMS.Areas.Claims.Pages
             catch (Exception ex)
             {
                 return RedirectToPage("/Error", new { errorMessage = "An error occurred during processing. " + ex.Message, returnUrl = ReturnUrl });
+            }
+        }
+        private void LoadClaimTypesSelectList(Guid policyTypeID)
+        {
+            ClaimTypesList = new List<SelectListItem>();
+            DataTable claimTypesTable = _policyClaimRepository.GetClaimTypesByPolicyType(policyTypeID);
+
+            foreach (DataRow row in claimTypesTable.Rows)
+            {
+                ClaimTypesList.Add(new SelectListItem
+                {
+                    Value = row["ID"].ToString(),
+                    Text = row["ClaimType"].ToString()
+                });
             }
         }
         private void CheckInitiationRules(Guid PolicyTypeID, Guid RequestID, string AddedBy)

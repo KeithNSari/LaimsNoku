@@ -20,6 +20,7 @@ namespace LAIMS.Interfaces.Claims
         DataTable GetClaimCover(int ClaimID);
         DataTable GetNonInvestmentSuppementaryCover(string PolicyNo);
         DataTable GetClaimTypes(Guid ProductID);
+        DataTable GetClaimTypesByPolicyType(Guid PolicyTypeID);
         DataTable GetUnpaidPremiums(Guid PolicyID);
         decimal GetUnpaidPremiumsBalance(Guid PolicyID);
         bool CheckProductWaitingPeriod(Guid PolicyID, Guid ProductID);
