@@ -788,6 +788,20 @@ namespace LAIMS.Repositories.Claims
             da.Fill(DT);
             return DT;
         }
+        public DataTable GetClaimTypesByPolicyType(Guid PolicyTypeID)
+        {
+            var Database = _configuration.GetConnectionString("DefaultConnection");
+            DataTable DT = new DataTable();
+            SqlConnection connection = new SqlConnection();
+            connection.ConnectionString = Database;
+            SqlCommand cmd = connection.CreateCommand();
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.CommandText = "ClaimTypes_GetByPolicyType";
+            cmd.Parameters.AddWithValue("PolicyTypeID", PolicyTypeID);
+            SqlDataAdapter da = new SqlDataAdapter(cmd);
+            da.Fill(DT);
+            return DT;
+        }
         public DataTable GetUnpaidPremiums(Guid PolicyID)
         {
             var Database = _configuration.GetConnectionString("DefaultConnection");
