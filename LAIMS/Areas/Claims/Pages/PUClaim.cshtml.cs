@@ -166,12 +166,6 @@ namespace LAIMS.Areas.Claims.Pages
                     ModelState.AddModelError(nameof(ClaimTypeID), "The selected claim type is not configured for this policy.");
                     return Page();
                 }
-                Guid policyTypeID = _policyRepository.GetPolicyTypeID(SearchTerm);
-                if (!_policyClaimRepository.IsClaimTypeConfiguredForPolicyType(policyTypeID, ClaimTypeID))
-                {
-                    ModelState.AddModelError(nameof(ClaimTypeID), "The selected claim type is not configured for the policy type on this claim.");
-                    return Page();
-                }
 
                 Guid RequestID = Guid.NewGuid();
                 Guid proposerID = _policyRepository.GetProposerUID(SearchTerm);
@@ -179,6 +173,7 @@ namespace LAIMS.Areas.Claims.Pages
                 {
                     int CurrencyID = _policyRepository.GetPolicyCurrency(SearchTerm);
                     string addedBy = _userManager.GetUserId(User).ToString();
+                    Guid policyTypeID = _policyRepository.GetPolicyTypeID(SearchTerm);
                     PolicyClaim policyClaim = new()
                     {
                         RequestID = RequestID,
