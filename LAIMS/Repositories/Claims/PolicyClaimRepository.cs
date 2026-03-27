@@ -802,6 +802,21 @@ namespace LAIMS.Repositories.Claims
             da.Fill(DT);
             return DT;
         }
+        public bool IsClaimTypeConfiguredForPolicyType(Guid PolicyTypeID, int ClaimTypeID)
+        {
+            using (SqlConnection connection = new SqlConnection(Database))
+            {
+                connection.Open();
+                string query = "ClaimTypeLines_CheckPolicyTypeClaimType";
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    command.CommandType = CommandType.StoredProcedure;
+                    command.Parameters.AddWithValue("@PolicyTypeID", PolicyTypeID);
+                    command.Parameters.AddWithValue("@ClaimTypeID", ClaimTypeID);
+                    return Convert.ToBoolean(command.ExecuteScalar());
+                }
+            }
+        }
         public DataTable GetUnpaidPremiums(Guid PolicyID)
         {
             var Database = _configuration.GetConnectionString("DefaultConnection");
