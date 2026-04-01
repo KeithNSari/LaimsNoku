@@ -135,6 +135,7 @@ builder.Services.AddScoped<IJobsRepository, JobsRepository>();
 builder.Services.AddScoped<IBilledPremiumRepository, BilledPremiumRepository>();
 builder.Services.AddScoped<IPolicyClaimRepository,PolicyClaimRepository>();
 builder.Services.AddScoped <IPolicyClaimsLineRepository,PolicyClaimsLineRepository  >();
+builder.Services.AddScoped<IPremiumWaiverRepository, PremiumWaiverRepository>();
 builder.Services.AddScoped<IUnitTrustRepository, UnitTrustRepository>();
 builder.Services.AddScoped<IUnitsPricesListRepository, UnitsPricesListRepository>();
 builder.Services.AddScoped<IPolicyUnitsRepository, PolicyUnitsRepository>();
