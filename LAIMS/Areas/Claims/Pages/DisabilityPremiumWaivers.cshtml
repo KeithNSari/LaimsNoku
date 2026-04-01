@@ -1,0 +1,27 @@
+@page
+@using System.Data
+@model LAIMS.Areas.Claims.Pages.DisabilityPremiumWaiversModel
+@{
+}
+<h3>Disability Premium Waiver Claims</h3>
+<form method="post" class="mb-4">
+    <div class="row">
+        <div class="col-sm-3"><label>Policy ID</label><input asp-for="DisabilityPremiumWaiver.PolicyID" class="form-control" /></div>
+        <div class="col-sm-2"><label>Member ID</label><input asp-for="DisabilityPremiumWaiver.MemberID" class="form-control" /></div>
+        <div class="col-sm-2"><label>Notification Date</label><input asp-for="DisabilityPremiumWaiver.NotificationDate" type="date" class="form-control" /></div>
+        <div class="col-sm-2"><label>Effective Date</label><input asp-for="DisabilityPremiumWaiver.EffectiveDate" type="date" class="form-control" /></div>
+        <div class="col-sm-1"><label>Status</label><input asp-for="DisabilityPremiumWaiver.StatusID" class="form-control" value="3000" /></div>
+        <div class="col-sm-2"><label>Notes</label><input asp-for="DisabilityPremiumWaiver.Notes" class="form-control" /></div>
+    </div>
+    <button type="submit" class="btn btn-primary mt-2">Submit Disability Waiver</button>
+</form>
+
+<table class="table table-striped">
+    <tr><th>RequestID</th><th>PolicyID</th><th>MemberID</th><th>Notification</th><th>Effective</th><th>Status</th></tr>
+    @foreach (DataRow row in Model.WaiversDT.Rows)
+    {
+        <tr>
+            <td>@row["RequestID"]</td><td>@row["PolicyID"]</td><td>@row["MemberID"]</td><td>@row["NotificationDate"]</td><td>@row["EffectiveDate"]</td><td>@row["StatusID"]</td>
+        </tr>
+    }
+</table>

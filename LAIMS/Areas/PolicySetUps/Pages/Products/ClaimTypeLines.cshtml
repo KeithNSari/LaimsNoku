@@ -1,0 +1,51 @@
+@page
+@using System.Data
+@model LAIMS.Areas.PolicySetUps.Pages.Products.ClaimTypeLinesModel
+@{
+    Layout = "/Pages/Shared/_LayoutProducts.cshtml";
+}
+
+<h3>Configure Product Claim Types</h3>
+@if (!string.IsNullOrEmpty(ViewData["ErrorMessage"]?.ToString()))
+{
+    <p class="text-danger">@ViewData["ErrorMessage"]</p>
+}
+
+<form method="get" class="mb-3">
+    <label><b>Product</b></label>
+    <select asp-for="ProductID" asp-items="Model.ProductsList" class="form-control" onchange="this.form.submit()"></select>
+</form>
+
+@if (Model.ProductID != Guid.Empty)
+{
+    <form method="post">
+        <input type="hidden" asp-for="ProductID" />
+        <div class="row mb-3">
+            <div class="col-sm-8">
+                <label><b>Claim Type</b></label>
+                <select asp-for="ClaimTypeLine.ClaimTypeID" asp-items="Model.ClaimTypesList" class="form-control"></select>
+            </div>
+            <div class="col-sm-4 d-flex align-items-end">
+                <button type="submit" asp-page-handler="Add" class="btn btn-primary">Add</button>
+            </div>
+        </div>
+
+        <table class="table table-striped">
+            <tr>
+                <th>Claim Type</th>
+                <th>Added On</th>
+                <th></th>
+            </tr>
+            @foreach (DataRow row in Model.ClaimTypeLinesDT.Rows)
+            {
+                <tr>
+                    <td>@row["ClaimType"]</td>
+                    <td>@row["AddedOn"]</td>
+                    <td class="text-end">
+                        <button type="submit" asp-page-handler="Archive" asp-route-id="@row["ID"]" class="btn btn-danger btn-sm">Archive</button>
+                    </td>
+                </tr>
+            }
+        </table>
+    </form>
+}
